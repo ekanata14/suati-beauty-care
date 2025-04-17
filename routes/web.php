@@ -11,7 +11,7 @@ use App\Http\Controllers\Admin\ProductController as AdminProductDashboardControl
 use App\Http\Controllers\Admin\TransactionController as AdminTransactionDashboardController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/login');
 });
 
 Route::get('/dashboard', function () {
