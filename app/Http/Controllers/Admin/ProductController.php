@@ -16,7 +16,7 @@ class ProductController extends Controller
     public function index()
     { 
         $viewData = [
-            'title' => 'Admin Management',
+            'title' => 'Produk Management',
             'datas' => Produk::all(),
         ];
 

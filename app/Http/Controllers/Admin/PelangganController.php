@@ -16,7 +16,7 @@ class PelangganController extends Controller
     public function index()
     { 
         $viewData = [
-            'title' => 'Admin Management',
+            'title' => 'Pelanggan Management',
             'datas' => User::where('role', 'pelanggan')->get(),
         ];
 
