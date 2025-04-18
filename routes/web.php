@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\AdminController as AdminAdminDashboardController;
 use App\Http\Controllers\Admin\PelangganController as AdminPelangganDashboardController;
+use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\ProductController as AdminProductDashboardController;
 use App\Http\Controllers\Admin\TransactionController as AdminTransactionDashboardController;
 
@@ -38,12 +39,23 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::put('/admin/pelanggan/update', [AdminPelangganDashboardController::class, 'update'])->name('admin.pelanggan.update');
     Route::delete('/admin/pelanggan/delete', [AdminPelangganDashboardController::class, 'destroy'])->name('admin.pelanggan.destroy');
 
+    // Admin Category Routes
+    Route::get('/admin/category', [AdminCategoryController::class, 'index'])->name('admin.category.index');
+    Route::get('/admin/category/create', [AdminCategoryController::class, 'create'])->name('admin.category.create');
+    Route::post('/admin/category', [AdminCategoryController::class, 'store'])->name('admin.category.store');
+    Route::get('/admin/category/edit/{id}', [AdminCategoryController::class, 'edit'])->name('admin.category.edit');
+    Route::put('/admin/category/update', [AdminCategoryController::class, 'update'])->name('admin.category.update');
+    Route::delete('/admin/category/delete', [AdminCategoryController::class, 'destroy'])->name('admin.category.destroy');
+
+    // Admin Product Routes
     Route::get('/admin/product', [AdminProductDashboardController::class, 'index'])->name('admin.product.index');
     Route::get('/admin/product/create', [AdminProductDashboardController::class, 'create'])->name('admin.product.create');
     Route::post('/admin/product', [AdminProductDashboardController::class, 'store'])->name('admin.product.store');
     Route::get('/admin/product/edit/{id}', [AdminProductDashboardController::class, 'edit'])->name('admin.product.edit');
     Route::put('/admin/product/update', [AdminProductDashboardController::class, 'update'])->name('admin.product.update');
     Route::delete('/admin/product/delete', [AdminProductDashboardController::class, 'destroy'])->name('admin.product.destroy');
+
+    // Admin Transaction Routes
     Route::get('/admin/transaction', [AdminTransactionDashboardController::class, 'index'])->name('admin.transaction.index');
 });
 
