@@ -35,6 +35,11 @@
                             {{ __('Transaksi') }}
                         </x-nav-link>
                     @endif
+                    @if (Auth::user()->role == 'pelanggan')
+                        <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                            {{ __('Dashboard') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 

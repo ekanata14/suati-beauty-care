@@ -18,16 +18,19 @@
                                         No
                                     </th>
                                     <th scope="col" class="px-6 py-3">
-                                        Name
+                                        Order ID
                                     </th>
                                     <th scope="col" class="px-6 py-3">
-                                        Username
+                                        Total Quantity
                                     </th>
                                     <th scope="col" class="px-6 py-3">
-                                        Email
+                                        Total Payment
                                     </th>
                                     <th scope="col" class="px-6 py-3">
-                                        Role
+                                        Payment Proof
+                                    </th>
+                                    <th scope="col" class="px-6 py-3">
+                                        Payment Status
                                     </th>
                                 </tr>
                             </thead>
@@ -38,21 +41,27 @@
                                             {{ $loop->iteration }}
                                         </td>
                                         <td class="px-6 py-4">
-                                            {{ $item->name }}
+                                            {{ $item->id_order }}
                                         </td>
                                         <td class="px-6 py-4">
-                                            {{ $item->username }}
+                                            {{ $item->total_qty_item }}
                                         </td>
                                         <td class="px-6 py-4">
-                                            {{ $item->email }}
+                                            {{ $item->total_bayar }}
                                         </td>
                                         <td class="px-6 py-4">
-                                            {{ $item->role }}
+                                            <a href="{{ $item->bukti_pembayaran }}" target="_blank"
+                                                class="text-blue-500 hover:underline">
+                                                View Proof
+                                            </a>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            {{ $item->status_pembayaran }}
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="4" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                                        <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
                                             No data available.
                                         </td>
                                     </tr>
