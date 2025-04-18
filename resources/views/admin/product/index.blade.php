@@ -112,8 +112,8 @@
                             modal.classList.add('fixed', 'inset-0', 'z-50', 'flex', 'items-center', 'justify-center', 'bg-black',
                                 'bg-opacity-50');
                             modal.innerHTML = `
-                                <div class="bg-white p-4 rounded-lg shadow-lg">
-                                    <img src="${imageUrl}" alt="Foto Produk" class="max-w-full h-auto">
+                                <div class="bg-white p-4 rounded-lg shadow-lg h-1/2">
+                                    <img src="${imageUrl}" alt="Foto Produk" class="max-w-full h-3/4">
                                     <button onclick="closeModal()" class="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg">Close</button>
                                 </div>
                             `;
