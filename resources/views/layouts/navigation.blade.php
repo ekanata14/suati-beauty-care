@@ -26,6 +26,9 @@
                             {{ __('Pelanggan') }}
                         </x-nav-link>
                         <x-nav-link :href="route('admin.product.index')" :active="request()->routeIs('admin.product*')">
+                            {{ __('Kategori') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.product.index')" :active="request()->routeIs('admin.product*')">
                             {{ __('Produk') }}
                         </x-nav-link>
                         <x-nav-link :href="route('admin.transaction.index')" :active="request()->routeIs('admin.transaction*')">

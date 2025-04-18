@@ -39,6 +39,11 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::delete('/admin/pelanggan/delete', [AdminPelangganDashboardController::class, 'destroy'])->name('admin.pelanggan.destroy');
 
     Route::get('/admin/product', [AdminProductDashboardController::class, 'index'])->name('admin.product.index');
+    Route::get('/admin/product/create', [AdminProductDashboardController::class, 'create'])->name('admin.product.create');
+    Route::post('/admin/product', [AdminProductDashboardController::class, 'store'])->name('admin.product.store');
+    Route::get('/admin/product/edit/{id}', [AdminProductDashboardController::class, 'edit'])->name('admin.product.edit');
+    Route::put('/admin/product/update', [AdminProductDashboardController::class, 'update'])->name('admin.product.update');
+    Route::delete('/admin/product/delete', [AdminProductDashboardController::class, 'destroy'])->name('admin.product.destroy');
     Route::get('/admin/transaction', [AdminTransactionDashboardController::class, 'index'])->name('admin.transaction.index');
 });
 

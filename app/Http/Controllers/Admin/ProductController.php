@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 // Models
 use App\Models\Produk;
+use App\Models\Kategori;
 
 class ProductController extends Controller
 {
@@ -14,7 +15,7 @@ class ProductController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    { 
+    {
         $viewData = [
             'title' => 'Produk Management',
             'datas' => Produk::all(),
@@ -28,7 +29,11 @@ class ProductController extends Controller
      */
     public function create()
     {
-        //
+        $viewData = [
+            'title' => 'Create Produk',
+            'categories' => Kategori::all(),
+        ];
+        return view('admin.product.create', $viewData);
     }
 
     /**
