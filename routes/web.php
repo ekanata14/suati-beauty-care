@@ -22,13 +22,21 @@ Route::get('/dashboard', function () {
 Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
+    // Admin Admin Routes
     Route::get('/admin/admin', [AdminAdminDashboardController::class, 'index'])->name('admin.admin.index');
     Route::get('/admin/admin/create', [AdminAdminDashboardController::class, 'create'])->name('admin.admin.create');
     Route::post('/admin/admin', [AdminAdminDashboardController::class, 'store'])->name('admin.admin.store');
     Route::get('/admin/admin/edit/{id}', [AdminAdminDashboardController::class, 'edit'])->name('admin.admin.edit');
     Route::put('/admin/admin/update', [AdminAdminDashboardController::class, 'update'])->name('admin.admin.update');
     Route::delete('/admin/admin/delete', [AdminAdminDashboardController::class, 'destroy'])->name('admin.admin.destroy');
+
+    // Admin Pelanggan Routes
     Route::get('/admin/pelanggan', [AdminPelangganDashboardController::class, 'index'])->name('admin.pelanggan.index');
+    Route::get('/admin/pelanggan/create', [AdminPelangganDashboardController::class, 'create'])->name('admin.pelanggan.create');
+    Route::post('/admin/pelanggan', [AdminPelangganDashboardController::class, 'store'])->name('admin.pelanggan.store');
+    Route::get('/admin/pelanggan/edit/{id}', [AdminPelangganDashboardController::class, 'edit'])->name('admin.pelanggan.edit');
+    Route::put('/admin/pelanggan/update', [AdminPelangganDashboardController::class, 'update'])->name('admin.pelanggan.update');
+    Route::delete('/admin/pelanggan/delete', [AdminPelangganDashboardController::class, 'destroy'])->name('admin.pelanggan.destroy');
 
     Route::get('/admin/product', [AdminProductDashboardController::class, 'index'])->name('admin.product.index');
     Route::get('/admin/transaction', [AdminTransactionDashboardController::class, 'index'])->name('admin.transaction.index');

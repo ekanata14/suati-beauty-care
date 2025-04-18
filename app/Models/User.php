@@ -47,4 +47,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function Konsumen()
+    {
+        return $this->hasOne(Konsumen::class, 'id_user', 'id');
+    }
 }
