@@ -13,7 +13,10 @@ use App\Http\Controllers\Admin\ProductController as AdminProductDashboardControl
 use App\Http\Controllers\Admin\TransactionController as AdminTransactionDashboardController;
 
 Route::get('/', function () {
-    return redirect('/login');
+    $viewData = [
+        'title' => 'Home',
+    ];
+    return view('welcome', $viewData);
 });
 
 Route::get('/dashboard', function () {
