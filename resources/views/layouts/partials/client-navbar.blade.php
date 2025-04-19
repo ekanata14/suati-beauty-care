@@ -1,19 +1,27 @@
-<nav x-data="{ open: false }" class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 h-[100px] flex items-center justify-between">
+<nav x-data="{ open: false }"
+    class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 h-[100px] flex items-center justify-between">
     <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
+    <div class="max-w-7xl px-4 sm:px-6 lg:px-8 flex justify-between w-full mx-auto">
+        <div class="h-16 flex items-center justify-center">
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
+                    <a href="{{ route('home') }}">
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
                     </a>
                 </div>
 
-                <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                </div>
             </div>
+        </div>
+        <!-- Navigation Links -->
+        <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+            <ul class="flex justcify-center items-center gap-12">
+                <li><a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Home</a></li>
+                <li><a href="{{ route('about') }}" class="{{ request()->routeIs('about') ? 'active' : '' }}">About</a></li>
+                <li><a href="{{ route('products') }}" class="{{ request()->routeIs('products*') ? 'active' : '' }}">Products</a></li>
+            </ul>
+        </div>
+        <div class="flex items-center">
 
             @if (Auth::user())
                 <!-- Settings Dropdown -->
@@ -53,9 +61,13 @@
                         </x-slot>
                     </x-dropdown>
                 </div>
+            @else
+                <div class="flex items-center">
+                    <a href="{{ route('login') }}" class="btn-primary">Login</a>
+                </div>
             @endif
 
-            <!-- Hamburger -->
+            {{-- <!-- Hamburger -->
             <div class="-me-2 flex items-center sm:hidden">
                 <button @click="open = ! open"
                     class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out">
@@ -67,7 +79,7 @@
                             stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
-            </div>
+            </div> --}}
         </div>
     </div>
 
@@ -80,7 +92,7 @@
         </div>
 
         @if (Auth::user())
-            <!-- Responsive Settings Options -->
+            {{-- <!-- Responsive Settings Options -->
             <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
                 <div class="px-4">
                     <div class="font-medium text-base text-gray-800 dark:text-gray-200">{{ Auth::user()->name }}</div>
@@ -102,6 +114,12 @@
                             {{ __('Log Out') }}
                         </x-responsive-nav-link>
                     </form>
+                </div>
+            </div> --}}
+        @else
+            <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
+                <div class="flex items-center">
+                    <a href="{{ route('login') }}" class="btn-primary">Login</a>
                 </div>
             </div>
         @endif

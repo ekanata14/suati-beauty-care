@@ -4,7 +4,6 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 // Admin Controller
-
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\AdminController as AdminAdminDashboardController;
 use App\Http\Controllers\Admin\PelangganController as AdminPelangganDashboardController;
@@ -12,12 +11,14 @@ use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\ProductController as AdminProductDashboardController;
 use App\Http\Controllers\Admin\TransactionController as AdminTransactionDashboardController;
 
-Route::get('/', function () {
-    $viewData = [
-        'title' => 'Home',
-    ];
-    return view('welcome', $viewData);
-});
+// Client Controller
+use App\Http\Controllers\Client\DashboardController as ClientDashboardController;
+
+Route::get('/', [ClientDashboardController::class, 'index'])->name('home');
+Route::get('/about', [ClientDashboardController::class, 'about'])->name('about');
+Route::get('/products', [ClientDashboardController::class, 'products'])->name('products');
+Route::get('/products/category/{id}', [ClientDashboardController::class, 'productsCategory'])->name('products.category');
+Route::get('/products/search', [ClientDashboardController::class, 'searchProducts'])->name('products.search');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
