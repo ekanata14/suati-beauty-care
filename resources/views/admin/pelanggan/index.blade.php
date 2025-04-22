@@ -69,7 +69,7 @@
                                             {{ $item->Konsumen->jenis_kelamin }}
                                         </td>
                                         <td class="px-6 py-4">
-                                            <img src="{{ Storage::url($item->Konsumen->foto_profil) }}" alt="Foto Profil" class="w-10 h-10 rounded-full">
+                                            <img src="{{ asset('storage/' . $item->Konsumen->foto_profil) }}" alt="Foto Profil" class="w-10 h-10 rounded-full">
                                         </td>
                                         <td class="px-6 py-4">
                                             {{ $item->Konsumen->telepon }}
