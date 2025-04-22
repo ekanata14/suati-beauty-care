@@ -42,12 +42,13 @@ class RegisteredUserController extends Controller
                 'name' => ['required', 'string', 'max:255'],
                 'username' => ['required', 'string', 'max:255'],
                 'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
-                'password' => ['required', 'confirmed', Rules\Password::defaults()],
+                'password' => ['required', 'confirmed', 'min:8'],
                 'tanggal_lahir' => ['required', 'date'],
                 'jenis_kelamin' => ['required', 'string'],
                 'foto_profil' => ['nullable', 'file', 'image', 'max:2048'],
                 'telepon' => ['required', 'string', 'max:15'],
             ]);
+
             $fotoProfilPath = null;
             if ($request->hasFile('foto_profil')) {
                 $fotoProfilPath = $request->file('foto_profil')->store('foto_profil', 'public');
@@ -75,10 +76,10 @@ class RegisteredUserController extends Controller
 
             DB::commit();
 
-            return redirect(route('products', absolute: false))->with('success', 'Welcome ' . auth()->user()->name . ', please choose your items');
+            return redirect(route('products'))->with('success', 'Welcome ' . auth()->user()->name . ', please choose your items');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->withErrors(['error' => 'Registration failed: ' . $e->getMessage()]);
+            return redirect()->back()->with(['error' => 'Registration failed: ' . $e->getMessage()]);
         }
     }
 }
