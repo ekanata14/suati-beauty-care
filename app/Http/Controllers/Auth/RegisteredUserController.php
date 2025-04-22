@@ -75,7 +75,7 @@ class RegisteredUserController extends Controller
 
             DB::commit();
 
-            return redirect(route('products', absolute: false))->with('success', 'You\'ve been registered, please choose your items');
+            return redirect(route('products', absolute: false))->with('success', 'Welcome ' . auth()->user()->name . ', please choose your items');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->withErrors(['error' => 'Registration failed: ' . $e->getMessage()]);
