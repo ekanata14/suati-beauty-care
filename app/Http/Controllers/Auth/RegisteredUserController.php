@@ -48,10 +48,10 @@ class RegisteredUserController extends Controller
                 'foto_profil' => ['nullable', 'file', 'image', 'max:2048'],
                 'telepon' => ['required', 'string', 'max:15'],
             ]);
-
-            $fotoProfilPath = $request->file('foto_profil')
-                ? $request->file('foto_profil')->store('foto_profil', 'public')
-                : null;
+            $fotoProfilPath = null;
+            if ($request->hasFile('foto_profil')) {
+                $fotoProfilPath = $request->file('foto_profil')->store('foto_profil', 'public');
+            }
 
             $user = User::create([
                 'name' => $request->name,
@@ -65,7 +65,7 @@ class RegisteredUserController extends Controller
                 'id_user' => $user->id,
                 'tanggal_lahir' => $request->tanggal_lahir,
                 'jenis_kelamin' => $request->jenis_kelamin,
-                'foto_profil' => $fotoProfilPath ? asset('storage/' . $fotoProfilPath) : null,
+                'foto_profil' => $fotoProfilPath,
                 'telepon' => $request->telepon,
             ]);
 
@@ -75,7 +75,7 @@ class RegisteredUserController extends Controller
 
             DB::commit();
 
-            return redirect(route('home', absolute: false));
+            return redirect(route('products', absolute: false))->with('success', 'You\'ve been registered, please choose your items');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->withErrors(['error' => 'Registration failed: ' . $e->getMessage()]);

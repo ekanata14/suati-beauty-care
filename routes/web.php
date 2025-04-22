@@ -35,6 +35,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::post('/upload-payment', [ClientDashboardController::class, 'uploadPaymentStore'])->name('upload.payment.store');
     Route::get('/history', [ClientDashboardController::class, 'history'])->name('history');
     Route::get('/history/detail/{id}', [ClientDashboardController::class, 'historyDetail'])->name('history.detail');
+    Route::post('/user-update-profile', [ClientDashboardController::class, 'updateProfile'])->name('user.update.profile');
 });
 
 Route::group(['middleware' => ['auth', 'verified']], function () {

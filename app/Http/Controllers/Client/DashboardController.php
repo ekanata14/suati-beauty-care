@@ -26,6 +26,52 @@ class DashboardController extends Controller
         return view('welcome', $viewData);
     }
 
+    public function updateProfile(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255',
+                'username' => 'required|string|max:255|unique:users,username,' . auth()->user()->id,
+                'email' => 'required|email|max:255|unique:users,email,' . auth()->user()->id,
+                'tanggal_lahir' => 'required|date',
+                'jenis_kelamin' => 'required',
+                'foto_profil' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+                'telepon' => 'required|string|max:15',
+            ]);
+
+            $user = auth()->user();
+            $user->update([
+                'name' => $validatedData['name'],
+                'username' => $validatedData['username'],
+                'email' => $validatedData['email'],
+            ]);
+
+            $konsumen = $user->konsumen;
+            if ($request->hasFile('foto_profil')) {
+                if ($konsumen->foto_profil) {
+                    Storage::disk('public')->delete($konsumen->foto_profil);
+                }
+                $validatedData['foto_profil'] = $request->file('foto_profil')->store('foto_profil', 'public');
+            }
+
+            $konsumen->update([
+                'tanggal_lahir' => $validatedData['tanggal_lahir'],
+                'jenis_kelamin' => $validatedData['jenis_kelamin'],
+                'foto_profil' => $validatedData['foto_profil'] ?? $konsumen->foto_profil,
+                'telepon' => $validatedData['telepon'],
+            ]);
+
+            DB::commit();
+            return back()->with('success', 'Profil berhasil diperbarui.');
+        } catch (\Exception $e) {
+            return $e->getMessage();
+            DB::rollBack();
+            return back()->with('error', 'Terjadi kesalahan saat memperbarui profil.');
+        }
+    }
+
     public function about()
     {
         $viewData = [

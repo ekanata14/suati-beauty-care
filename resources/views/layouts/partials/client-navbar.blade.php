@@ -67,6 +67,7 @@
             @else
                 <div class="flex items-center">
                     <a href="{{ route('login') }}" class="btn-primary">Login</a>
+                    <a href="{{ route('register') }}" class="btn-alternative">Register</a>
                 </div>
             @endif
 
