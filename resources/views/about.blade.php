@@ -1,7 +1,7 @@
 @extends('layouts.client')
 
 @section('content')
-    <section class="h-[80vh] flex flex-col md:flex-row justify-center items-center">
+    <section class="h-screen flex flex-col md:flex-row justify-center items-center">
         <div class="container mx-auto px-4 py-8">
             <h1 class="text-3xl font-bold mb-4">LOGOOOOOOOOOOOO</h1>
         </div>

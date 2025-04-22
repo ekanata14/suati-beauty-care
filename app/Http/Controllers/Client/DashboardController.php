@@ -255,7 +255,6 @@ class DashboardController extends Controller
             DB::commit();
             return redirect()->route('history')->with('success', 'Bukti pembayaran berhasil diupload.');
         } catch (\Exception $e) {
-            return $e->getMessage();
             DB::rollBack();
             return back()->with('error', 'Terjadi kesalahan saat mengupload bukti pembayaran.');
         }
@@ -267,7 +266,7 @@ class DashboardController extends Controller
             'title' => 'History',
             'transactions' => Transaksi::with('order.detailOrder.produk')->whereHas('order', function ($query) {
                 $query->where('id_user', auth()->user()->id);
-            })->latest()->get(),
+            })->latest()->paginate(10),
             'categories' => Kategori::all(),
         ];
 

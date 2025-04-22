@@ -1,7 +1,7 @@
 @extends('layouts.client')
 
 @section('content')
-    <section class="h-full flex justify-center items-start">
+    <section class="h-full flex justify-center items-start min-h-screen">
         <div class="container mx-auto px-4 py-8">
             <h1 class="text-3xl font-bold mb-4 text-center">Products</h1>
             <form class="max-w-md mx-auto mb-4" method="GET" action="{{ route('products.search') }}">

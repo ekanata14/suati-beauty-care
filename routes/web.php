@@ -74,6 +74,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
 
     // Admin Transaction Routes
     Route::get('/admin/transaction', [AdminTransactionDashboardController::class, 'index'])->name('admin.transaction.index');
+    Route::put('/admin/transaction/update-status', [AdminTransactionDashboardController::class, 'updateStatus'])->name('admin.transaction.update.status');
 });
 
 

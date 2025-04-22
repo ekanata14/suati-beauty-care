@@ -18,7 +18,7 @@
                                         No
                                     </th>
                                     <th scope="col" class="px-6 py-3">
-                                        Order ID
+                                        Invoice ID
                                     </th>
                                     <th scope="col" class="px-6 py-3">
                                         Total Quantity
@@ -32,6 +32,9 @@
                                     <th scope="col" class="px-6 py-3">
                                         Payment Status
                                     </th>
+                                    <th scope="col" class="px-6 py-3">
+                                        Actions
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -41,7 +44,7 @@
                                             {{ $loop->iteration }}
                                         </td>
                                         <td class="px-6 py-4">
-                                            {{ $item->id_order }}
+                                            {{ $item->invoice_id }}
                                         </td>
                                         <td class="px-6 py-4">
                                             {{ $item->total_qty_item }}
@@ -56,7 +59,77 @@
                                             </a>
                                         </td>
                                         <td class="px-6 py-4">
-                                            {{ $item->status_pembayaran }}
+                                            <span
+                                                class="px-2 py-1 rounded text-sm 
+                @if ($item->status_pembayaran === 'pending') status-pending 
+                @elseif ($item->status_pembayaran === 'waiting') status-waiting 
+                @elseif ($item->status_pembayaran === 'denied') status-denied 
+                @elseif ($item->status_pembayaran === 'paid') status-paid @endif">
+                                                {{ ucfirst($item->status_pembayaran) }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            @if ($item->status_pembayaran == 'pending' || $item->status_pembayaran == 'waiting')
+                                                <div class="flex space-x-2">
+                                                    <form action="{{ route('admin.transaction.update.status') }}"
+                                                        method="POST" class="confirm-form">
+                                                        @csrf
+                                                        @method('PUT')
+                                                        <input type="hidden" name="id" value="{{ $item->id }}">
+                                                        <input type="hidden" name="status_pembayaran" value="denied">
+                                                        <button type="submit"
+                                                            class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 confirm-button"
+                                                            data-message="Are you sure you want to deny this payment?">
+                                                            Denied
+                                                        </button>
+                                                    </form>
+                                                    <form action="{{ route('admin.transaction.update.status') }}"
+                                                        method="POST" class="confirm-form">
+                                                        @csrf
+                                                        @method('PUT')
+                                                        <input type="hidden" name="id" value="{{ $item->id }}">
+                                                        <input type="hidden" name="status_pembayaran" value="paid">
+                                                        <button type="submit"
+                                                            class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 confirm-button"
+                                                            data-message="Are you sure you want to confirm this payment?">
+                                                            Confirm
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                                <script>
+                                                    document.querySelectorAll('.confirm-button').forEach(button => {
+                                                        button.addEventListener('click', function(e) {
+                                                            e.preventDefault();
+                                                            const form = this.closest('.confirm-form');
+                                                            const message = this.getAttribute('data-message');
+                                                            Swal.fire({
+                                                                title: 'Confirmation',
+                                                                text: message,
+                                                                icon: 'warning',
+                                                                showCancelButton: true,
+                                                                confirmButtonColor: '#3085d6',
+                                                                cancelButtonColor: '#d33',
+                                                                confirmButtonText: 'Yes',
+                                                                cancelButtonText: 'No'
+                                                            }).then((result) => {
+                                                                if (result.isConfirmed) {
+                                                                    form.submit();
+                                                                }
+                                                            });
+                                                        });
+                                                    });
+                                                </script>
+                                            @else
+                                                @if ($item->status_pembayaran == 'denied')
+                                                    <div class="px-4 py-2 bg-red-500 text-white rounded w-fit">
+                                                        Payment Denied
+                                                    </div>
+                                                @elseif($item->status_pembayaran == 'paid')
+                                                    <div class="px-4 py-2 bg-green-500 text-white rounded w-fit">
+                                                        Payment Confirmed
+                                                    </div>
+                                                @endif
+                                            @endif
                                         </td>
                                     </tr>
                                 @empty

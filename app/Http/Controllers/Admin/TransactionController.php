@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 use App\Models\Transaksi;
 
@@ -20,6 +21,29 @@ class TransactionController extends Controller
         ];
 
         return view('admin.transaction.index', $viewData);
+    }
+
+    public function updateStatus(Request $request)
+    {
+        $validatedData = $request->validate([
+            'id' => 'required',
+            'status_pembayaran' => 'required|string',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $transaksi = Transaksi::findOrFail($validatedData['id']);
+            $transaksi->status_pembayaran = $validatedData['status_pembayaran'];
+            $transaksi->save();
+
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Status updated successfully');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Failed to update status: ' . $e->getMessage());
+        }
     }
 
     /**
