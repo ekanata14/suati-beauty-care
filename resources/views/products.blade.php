@@ -23,10 +23,12 @@
                 </div>
             </form>
             <div class="flex justify-center items-center gap-4">
-                @if (route('products') == request()->url())
-                    <a href="{{ route('products') }}" class="btn-primary">All</a>
-                @else
-                    <a href="{{ route('products') }}" class="btn-alternative">All</a>
+                @if ($categories)
+                    @if (route('products') == request()->url())
+                        <a href="{{ route('products') }}" class="btn-primary">All</a>
+                    @else
+                        <a href="{{ route('products') }}" class="btn-alternative">All</a>
+                    @endif
                 @endif
                 @forelse ($categories as $item)
                     @if ($item->id == $id)
@@ -59,9 +61,9 @@
                                 {{ $product->deskripsi }}
                             </p>
                             <p class="mb-3 font-bold text-gray-900 dark:text-white">
-                                ${{ $product->harga }}
+                                IDR. {{ $product->harga }}
                             </p>
-                            <a href="#"
+                            <a href="{{ route('products.detail', $product->id) }}"
                                 class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                                 View Details
                                 <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true"

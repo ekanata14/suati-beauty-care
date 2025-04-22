@@ -75,7 +75,7 @@ class RegisteredUserController extends Controller
 
             DB::commit();
 
-            return redirect(route('dashboard', absolute: false));
+            return redirect(route('home', absolute: false));
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->withErrors(['error' => 'Registration failed: ' . $e->getMessage()]);

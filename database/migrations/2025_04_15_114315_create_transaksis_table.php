@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('id_order');
             $table->foreign('id_order')->references('id')->on('orders')->onDelete('cascade');
+            $table->string('invoice_id');
             $table->integer('total_qty_item');
             $table->decimal('total_bayar');
             $table->string('bukti_pembayaran');

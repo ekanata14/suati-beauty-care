@@ -18,11 +18,24 @@ Route::get('/', [ClientDashboardController::class, 'index'])->name('home');
 Route::get('/about', [ClientDashboardController::class, 'about'])->name('about');
 Route::get('/products', [ClientDashboardController::class, 'products'])->name('products');
 Route::get('/products/category/{id}', [ClientDashboardController::class, 'productsCategory'])->name('products.category');
+Route::get('/products/{id}', [ClientDashboardController::class, 'productDetail'])->name('products.detail');
 Route::get('/products/search', [ClientDashboardController::class, 'searchProducts'])->name('products.search');
+
+Route::post('/order/addToOrder', [ClientDashboardController::class, 'addToOrder'])->name('addToOrder');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::group(['middleware' => ['auth', 'verified']], function () {
+    Route::get('/cart', [ClientDashboardController::class, 'cart'])->name('cart');
+    Route::post('/order/delete-from-cart', [ClientDashboardController::class, 'deleteFromCart'])->name('delete.item');
+    Route::post('/checkout', [ClientDashboardController::class, 'checkout'])->name('checkout');
+    Route::get('/upload-payment/{id}', [ClientDashboardController::class, 'uploadPayment'])->name('cart.upload.payment');
+    Route::post('/upload-payment', [ClientDashboardController::class, 'uploadPaymentStore'])->name('upload.payment.store');
+    Route::get('/history', [ClientDashboardController::class, 'history'])->name('history');
+    Route::get('/history/detail/{id}', [ClientDashboardController::class, 'historyDetail'])->name('history.detail');
+});
 
 Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');

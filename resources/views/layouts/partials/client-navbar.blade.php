@@ -10,7 +10,6 @@
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
                     </a>
                 </div>
-
             </div>
         </div>
         <!-- Navigation Links -->
@@ -19,6 +18,10 @@
                 <li><a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Home</a></li>
                 <li><a href="{{ route('about') }}" class="{{ request()->routeIs('about') ? 'active' : '' }}">About</a></li>
                 <li><a href="{{ route('products') }}" class="{{ request()->routeIs('products*') ? 'active' : '' }}">Products</a></li>
+                @if (Auth::user())
+                    <li><a href="{{ route('cart') }}" class="{{ request()->routeIs('cart*') ? 'active' : '' }}">Carts</a></li>
+                    <li><a href="{{ route('history') }}" class="{{ request()->routeIs('history*') ? 'active' : '' }}">History</a></li> 
+                @endif
             </ul>
         </div>
         <div class="flex items-center">
