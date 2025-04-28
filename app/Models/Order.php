@@ -17,11 +17,6 @@ class Order extends Model
         return $this->belongsTo(Konsumen::class, 'id_konsumen');
     }
 
-    public function order()
-    {
-        return $this->hasOne(Order::class, 'id_user');
-    }
-
     public function Transaksi()
     {
         return $this->hasOne(Transaksi::class, 'id_order');

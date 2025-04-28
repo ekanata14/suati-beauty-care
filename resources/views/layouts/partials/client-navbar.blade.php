@@ -16,11 +16,15 @@
         <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
             <ul class="flex justcify-center items-center gap-12">
                 <li><a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Home</a></li>
-                <li><a href="{{ route('about') }}" class="{{ request()->routeIs('about') ? 'active' : '' }}">About</a></li>
-                <li><a href="{{ route('products') }}" class="{{ request()->routeIs('products*') ? 'active' : '' }}">Products</a></li>
+                <li><a href="{{ route('about') }}" class="{{ request()->routeIs('about') ? 'active' : '' }}">About</a>
+                </li>
+                <li><a href="{{ route('products') }}"
+                        class="{{ request()->routeIs('products*') ? 'active' : '' }}">Products</a></li>
                 @if (Auth::user())
-                    <li><a href="{{ route('cart') }}" class="{{ request()->routeIs('cart*') ? 'active' : '' }}">Carts</a></li>
-                    <li><a href="{{ route('history') }}" class="{{ request()->routeIs('history*') ? 'active' : '' }}">History</a></li> 
+                    <li><a href="{{ route('cart') }}"
+                            class="{{ request()->routeIs('cart*') ? 'active' : '' }}">Carts</a></li>
+                    <li><a href="{{ route('history') }}"
+                            class="{{ request()->routeIs('history*') ? 'active' : '' }}">History</a></li>
                 @endif
             </ul>
         </div>
@@ -70,8 +74,7 @@
                     <a href="{{ route('register') }}" class="btn-alternative">Register</a>
                 </div>
             @endif
-
-            {{-- <!-- Hamburger -->
+            <!-- Hamburger -->
             <div class="-me-2 flex items-center sm:hidden">
                 <button @click="open = ! open"
                     class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out">
@@ -83,17 +86,76 @@
                             stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
-            </div> --}}
+            </div>
+
+            <!-- Sidebar -->
+            <div :class="{ 'translate-x-0': open, '-translate-x-full': !open }"
+                class="fixed inset-y-0 left-0 w-64 bg-white dark:bg-gray-800 transform -translate-x-full transition-transform duration-300 ease-in-out z-50">
+                <div class="flex flex-col h-full">
+                    <div
+                        class="flex items-center justify-between px-4 py-4 border-b border-gray-200 dark:border-gray-700">
+                        <a href="{{ route('home') }}"
+                            class="text-lg font-semibold text-gray-800 dark:text-gray-200">Menu</a>
+                        <button @click="open = false"
+                            class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
+                            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <nav class="flex-1 px-4 py-6 space-y-4">
+                        <ul class="space-y-4">
+                            <li><a href="{{ route('home') }}"
+                                    class="block text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400">{{ __('Home') }}</a>
+                            </li>
+                            <li><a href="{{ route('about') }}"
+                                    class="block text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400">{{ __('About') }}</a>
+                            </li>
+                            <li><a href="{{ route('products') }}"
+                                    class="block text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400">{{ __('Products') }}</a>
+                            </li>
+                            @if (Auth::user())
+                                <li><a href="{{ route('cart') }}"
+                                        class="block text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400">{{ __('Carts') }}</a>
+                                </li>
+                                <li><a href="{{ route('history') }}"
+                                        class="block text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400">{{ __('History') }}</a>
+                                </li>
+                            @endif
+                        </ul>
+                    </nav>
+                    @if (Auth::user())
+                        <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-4">
+                            <div class="text-gray-800 dark:text-gray-200 font-medium">{{ Auth::user()->name }}</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400">{{ Auth::user()->email }}</div>
+                            <form method="POST" action="{{ route('logout') }}" class="mt-4">
+                                @csrf
+                                <button type="submit"
+                                    class="w-full text-left text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400">{{ __('Log Out') }}</button>
+                            </form>
+                        </div>
+                    @else
+                        <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-4">
+                            <a href="{{ route('login') }}"
+                                class="btn-primary">{{ __('Login') }}</a>
+                            <a href="{{ route('register') }}"
+                                class="btn-alternative">{{ __('Register') }}</a>
+                        </div>
+                    @endif
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Responsive Navigation Menu -->
     <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden">
-        <div class="pt-2 pb-3 space-y-1">
+        {{-- <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
-        </div>
+        </div> --}}
 
         @if (Auth::user())
             {{-- <!-- Responsive Settings Options -->
@@ -121,11 +183,11 @@
                 </div>
             </div> --}}
         @else
-            <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
+            {{-- <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
                 <div class="flex items-center">
                     <a href="{{ route('login') }}" class="btn-primary">Login</a>
                 </div>
-            </div>
+            </div> --}}
         @endif
     </div>
 </nav>
