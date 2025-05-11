@@ -43,11 +43,11 @@
                     </div>
                 @endforelse
             </div>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
                 @forelse ($products as $product)
                     <div
                         class="max-w-sm bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
-                        <a href="#">
+                        <a href="{{ route('products.detail', $product->id) }}">
                             <img class="rounded-t-lg" src="{{ asset('storage/' . $product->foto_produk) }}"
                                 alt="{{ $product->nama }}" />
                         </a>

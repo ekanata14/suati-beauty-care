@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\PelangganController as AdminPelangganDashboardCon
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\ProductController as AdminProductDashboardController;
 use App\Http\Controllers\Admin\TransactionController as AdminTransactionDashboardController;
+use App\Http\Controllers\Admin\ReviewController as AdminReviewDashboardController;
 
 // Client Controller
 use App\Http\Controllers\Client\DashboardController as ClientDashboardController;
@@ -72,6 +73,13 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('/admin/product/edit/{id}', [AdminProductDashboardController::class, 'edit'])->name('admin.product.edit');
     Route::put('/admin/product/update', [AdminProductDashboardController::class, 'update'])->name('admin.product.update');
     Route::delete('/admin/product/delete', [AdminProductDashboardController::class, 'destroy'])->name('admin.product.destroy');
+    // Admin Review Routes
+    Route::get('/admin/review', [AdminReviewDashboardController::class, 'index'])->name('admin.review.index');
+    Route::get('/admin/review/create', [AdminReviewDashboardController::class, 'create'])->name('admin.review.create');
+    Route::post('/admin/review', [AdminReviewDashboardController::class, 'store'])->name('admin.review.store');
+    Route::get('/admin/review/edit/{id}', [AdminReviewDashboardController::class, 'edit'])->name('admin.review.edit');
+    Route::put('/admin/review/update', [AdminReviewDashboardController::class, 'update'])->name('admin.review.update');
+    Route::delete('/admin/review/delete', [AdminReviewDashboardController::class, 'destroy'])->name('admin.review.destroy');
 
     // Admin Transaction Routes
     Route::get('/admin/transaction', [AdminTransactionDashboardController::class, 'index'])->name('admin.transaction.index');
