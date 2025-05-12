@@ -22,16 +22,23 @@ Route::get('/products/category/{id}', [ClientDashboardController::class, 'produc
 Route::get('/products/{id}', [ClientDashboardController::class, 'productDetail'])->name('products.detail');
 Route::get('/products/search', [ClientDashboardController::class, 'searchProducts'])->name('products.search');
 
-Route::post('/order/addToOrder', [ClientDashboardController::class, 'addToOrder'])->name('addToOrder');
-
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::group(['middleware' => ['auth', 'verified']], function () {
+    Route::get('/wishlist', [ClientDashboardController::class, 'wishlists'])->name('wishlists');
+    Route::post('/wishlist/add', [ClientDashboardController::class, 'addWishlists'])->name('addToWishlist');
+    Route::delete('/wishlist/remove', [ClientDashboardController::class, 'removeWishlists'])->name('removeFromWishlist');
+    Route::get('/review/{id}', [ClientDashboardController::class, 'review'])->name('review');
+    Route::post('/review/store', [ClientDashboardController::class, 'storeReview'])->name('review.store');
+    Route::post('/order/addToOrder', [ClientDashboardController::class, 'addToOrderAndCheckout'])->name('addToOrder');
+    Route::post('/order/addToCart', [ClientDashboardController::class, 'addToCart'])->name('addToCart');
     Route::get('/cart', [ClientDashboardController::class, 'cart'])->name('cart');
+    Route::get('/cart/delete/{id}', [ClientDashboardController::class, 'removeFromCart'])->name('cart.delete');
     Route::post('/order/delete-from-cart', [ClientDashboardController::class, 'deleteFromCart'])->name('delete.item');
     Route::post('/checkout', [ClientDashboardController::class, 'checkout'])->name('checkout');
+    Route::post('/checkout/multiple', [ClientDashboardController::class, 'checkoutMultiples'])->name('checkout.multiple');
     Route::get('/upload-payment/{id}', [ClientDashboardController::class, 'uploadPayment'])->name('cart.upload.payment');
     Route::post('/upload-payment', [ClientDashboardController::class, 'uploadPaymentStore'])->name('upload.payment.store');
     Route::get('/history', [ClientDashboardController::class, 'history'])->name('history');
@@ -75,10 +82,10 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::delete('/admin/product/delete', [AdminProductDashboardController::class, 'destroy'])->name('admin.product.destroy');
     // Admin Review Routes
     Route::get('/admin/review', [AdminReviewDashboardController::class, 'index'])->name('admin.review.index');
-    Route::get('/admin/review/create', [AdminReviewDashboardController::class, 'create'])->name('admin.review.create');
-    Route::post('/admin/review', [AdminReviewDashboardController::class, 'store'])->name('admin.review.store');
-    Route::get('/admin/review/edit/{id}', [AdminReviewDashboardController::class, 'edit'])->name('admin.review.edit');
-    Route::put('/admin/review/update', [AdminReviewDashboardController::class, 'update'])->name('admin.review.update');
+    // Route::get('/admin/review/create', [AdminReviewDashboardController::class, 'create'])->name('admin.review.create');
+    // Route::post('/admin/review', [AdminReviewDashboardController::class, 'store'])->name('admin.review.store');
+    // Route::get('/admin/review/edit/{id}', [AdminReviewDashboardController::class, 'edit'])->name('admin.review.edit');
+    // Route::put('/admin/review/update', [AdminReviewDashboardController::class, 'update'])->name('admin.review.update');
     Route::delete('/admin/review/delete', [AdminReviewDashboardController::class, 'destroy'])->name('admin.review.destroy');
 
     // Admin Transaction Routes

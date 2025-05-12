@@ -10,9 +10,12 @@ use Illuminate\Support\Facades\Storage;
 // Models
 use App\Models\Produk;
 use App\Models\Kategori;
+use App\Models\Review;
 use App\Models\Order;
 use App\Models\DetailOrder;
 use App\Models\Transaksi;
+use App\Models\Cart;
+use App\Models\Wishlist;
 
 class DashboardController extends Controller
 {
@@ -66,9 +69,95 @@ class DashboardController extends Controller
             DB::commit();
             return back()->with('success', 'Profil berhasil diperbarui.');
         } catch (\Exception $e) {
-            return $e->getMessage();
             DB::rollBack();
             return back()->with('error', 'Terjadi kesalahan saat memperbarui profil.');
+        }
+    }
+
+    public function review(string $id)
+    {
+        $viewData = [
+            'title' => 'Review',
+            'product' => Produk::find($id),
+            'categories' => Kategori::all(),
+        ];
+
+        return view('review', $viewData);
+    }
+
+    public function storeReview(Request $request)
+    {
+        $validatedData = $request->validate([
+            'id_product' => 'required|exists:produks,id',
+            'rating' => 'required|integer|min:1|max:5',
+            'review' => 'required|string|max:255',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            Review::create([
+                'id_product' => $validatedData['id_product'],
+                'id_user' => auth()->user()->id,
+                'rating' => $validatedData['rating'],
+                'review' => $validatedData['review'],
+            ]);
+
+            DB::commit();
+            return redirect()->route('products.detail', $request->id_product)->with('success', 'Review berhasil disimpan.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Terjadi kesalahan saat menyimpan review.');
+        }
+    }
+
+    public function wishlists()
+    {
+        $viewData = [
+            'title' => 'Wishlists',
+            'wishlists' => Wishlist::where('id_user', auth()->user()->id)->latest()->paginate(),
+            'categories' => Kategori::all(),
+        ];
+
+        return view('wishlists', $viewData);
+    }
+
+    public function addWishlists(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $wishlist = Wishlist::where('id_user', auth()->user()->id)->where('id_produk', $request->id_produk)->first();
+            if ($wishlist == null) {
+                Wishlist::create([
+                    'id_user' => auth()->user()->id,
+                    'id_produk' => $request->id_produk,
+                ]);
+            }
+
+            DB::commit();
+            return back()->with('success', 'Produk berhasil ditambahkan ke wishlist.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Terjadi kesalahan saat menambahkan produk ke wishlist.');
+        }
+    }
+
+    public function removeWishlists(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $wishlist = Wishlist::where('id_user', auth()->user()->id)->where('id', $request->wishlist_id)->first();
+            if ($wishlist != null) {
+                $wishlist->delete();
+            }
+
+            DB::commit();
+            return back()->with('success', 'Produk berhasil dihapus dari wishlist.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Terjadi kesalahan saat menghapus produk dari wishlist.');
         }
     }
 
@@ -127,55 +216,90 @@ class DashboardController extends Controller
 
     public function productDetail(string $id)
     {
+        $isReview = null;
+        if (auth()->user()) {
+            $isReview = Review::where('id_product', $id)->where('id_user', auth()->user()->id)->first();
+        }
         $viewData = [
             'title' => 'Products',
             'product' => Produk::find($id),
             'id' => 0,
             'categories' => Kategori::all(),
+            'reviews' => Review::where('id_product', $id)->latest()->get(),
+            'isReview' => $isReview,
         ];
 
         return view('product-detail', $viewData);
     }
 
-    public function addToOrder(Request $request)
+    public function addToCart(Request $request)
     {
         try {
             DB::beginTransaction();
 
-            $order = Order::where('id_user', auth()->user()->id)->where('status', 'pending')->latest()->first();
-
-            if ($order == null) {
-                $order = Order::create([
+            $cart = Cart::where('id_user', auth()->user()->id)->where('id_produk', $request->id_produk)->first();
+            if ($cart == null) {
+                Cart::create([
                     'id_user' => auth()->user()->id,
-                    'total' => 0,
-                    'status' => 'pending',
-                ]);
-            }
-
-            $orderDetail = DetailOrder::where('id_order', $order->id)->where('id_produk', $request->id_produk)->first();
-            if ($orderDetail == null) {
-                DetailOrder::create([
-                    'id_order' => $order->id,
                     'id_produk' => $request->id_produk,
-                    'harga' => $request->harga,
                     'qty' => $request->qty,
                 ]);
-                $order->update([
-                    'total' => $order->total + ($request->jumlah * $request->harga),
-                ]);
             } else {
-                $orderDetail->update([
-                    'qty' => $orderDetail->qty + $request->qty,
-                ]);
-                $order->update([
-                    'total' => $order->total + ($request->qty * $request->harga),
+                $cart->update([
+                    'qty' => $cart->qty + $request->qty,
                 ]);
             }
 
             DB::commit();
             return back()->with('success', 'Produk berhasil ditambahkan ke keranjang.');
         } catch (\Exception $e) {
+            DB::rollBack();
             return back()->with('error', 'Terjadi kesalahan saat menambahkan produk ke keranjang.');
+        }
+    }
+
+    public function checkoutCart(Request $request)
+    {
+        $items = json_decode($request->selected_products, true);
+
+        if (!$items || count($items) === 0) {
+            return back()->with('error', 'No items selected for checkout.');
+        }
+
+        foreach ($items as $item) {
+            $idProduk = $item['id'];
+            $qty = $item['qty'];
+            $totalHarga = $item['harga'];
+
+            // Simpan ke tabel transaksi, buat invoice, atau proses sesuai kebutuhanmu
+            // Misalnya:
+            // OrderDetail::create([
+            //     'order_id' => $order->id,
+            //     'product_id' => $idProduk,
+            //     'qty' => $qty,
+            //     'total_price' => $totalHarga,
+            // ]);
+        }
+
+        return redirect()->route('checkout.success')->with('success', 'Checkout berhasil!');
+    }
+
+    public function removeFromCart(string $id)
+    {
+        try {
+            DB::beginTransaction();
+
+            $cart = Cart::where('id_user', auth()->user()->id)->where('id_produk', $id)->first();
+            if ($cart != null) {
+                $cart->delete();
+            }
+
+            DB::commit();
+            return back()->with('success', 'Produk berhasil dihapus dari keranjang.');
+        } catch (\Exception $e) {
+            return $e->getMessage();
+            DB::rollBack();
+            return back()->with('error', 'Terjadi kesalahan saat menghapus produk dari keranjang.');
         }
     }
 
@@ -183,7 +307,8 @@ class DashboardController extends Controller
     {
         $viewData = [
             'title' => 'Keranjang',
-            'order' => Order::with('detailOrder')->where('id_user', auth()->user()->id)->where('status', 'pending')->latest()->first(),
+            // 'order' => Order::with('detailOrder')->where('id_user', auth()->user()->id)->where('status', 'pending')->latest()->first(),
+            'cart' => Cart::where('id_user', auth()->user()->id)->latest()->get(),
             'categories' => Kategori::all(),
         ];
 
@@ -219,21 +344,39 @@ class DashboardController extends Controller
         }
     }
 
-    public function checkout(Request $request)
+    public function addToOrderAndCheckout(Request $request)
     {
         try {
             DB::beginTransaction();
 
-            $validatedData = $request->validate([
-                'id_order' => 'required',
-                'total_qty_item' => 'required',
-                'total_bayar' => 'required',
-            ]);
-
-            $order = Order::with('detailOrder')->where('id_user', auth()->user()->id)->where('status', 'pending')->latest()->first();
+            $order = Order::where('id_user', auth()->user()->id)->where('status', 'pending')->latest()->first();
 
             if ($order == null) {
-                return back()->with('error', 'Keranjang kosong.');
+                $order = Order::create([
+                    'id_user' => auth()->user()->id,
+                    'total' => 0,
+                    'status' => 'pending',
+                ]);
+            }
+
+            $orderDetail = DetailOrder::where('id_order', $order->id)->where('id_produk', $request->id_produk)->first();
+            if ($orderDetail == null) {
+                DetailOrder::create([
+                    'id_order' => $order->id,
+                    'id_produk' => $request->id_produk,
+                    'harga' => $request->harga,
+                    'qty' => $request->qty,
+                ]);
+                $order->update([
+                    'total' => $order->total + ($request->qty * $request->harga),
+                ]);
+            } else {
+                $orderDetail->update([
+                    'qty' => $orderDetail->qty + $request->qty,
+                ]);
+                $order->update([
+                    'total' => $order->total + ($request->qty * $request->harga),
+                ]);
             }
 
             $invoiceId = 'INV-' . date('Ymd') . '-' . str_pad($order->id, 5, '0', STR_PAD_LEFT);
@@ -241,8 +384,8 @@ class DashboardController extends Controller
             $transaksi = Transaksi::create([
                 'id_order' => $order->id,
                 'invoice_id' => $invoiceId,
-                'total_qty_item' => $validatedData['total_qty_item'],
-                'total_bayar' => $validatedData['total_bayar'],
+                'total_qty_item' => $request->qty,
+                'total_bayar' => $order->total,
                 'bukti_pembayaran' => 'pending',
                 'status_pembayaran' => 'pending',
             ]);
@@ -252,11 +395,97 @@ class DashboardController extends Controller
             ]);
 
             DB::commit();
+            return redirect()->route('cart.upload.payment', $transaksi->id)->with('success', 'Produk berhasil ditambahkan dan checkout berhasil.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Terjadi kesalahan saat menambahkan produk dan melakukan checkout.');
+        }
+    }
+
+    public function checkoutMultiples(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $validatedData = $request->validate([
+                'total_qty_item' => 'required|integer|min:1',
+                'total_bayar' => 'required|integer|min:1',
+                'selected_products' => 'required|string', // JSON string dari JS
+            ]);
+
+            $selectedProducts = json_decode($request->selected_products, true);
+
+            if (empty($selectedProducts)) {
+                return back()->with('error', 'Tidak ada produk yang dipilih untuk checkout.');
+            }
+
+            // Buat order jika belum ada
+            $order = Order::where('id_user', auth()->user()->id)
+                ->where('status', 'pending')
+                ->latest()
+                ->first();
+
+            if ($order == null) {
+                $order = Order::create([
+                    'id_user' => auth()->user()->id,
+                    'total' => 0,
+                    'status' => 'pending',
+                ]);
+            }
+
+            // Tambahkan produk ke order
+            foreach ($selectedProducts as $item) {
+                $orderDetail = DetailOrder::where('id_order', $order->id)
+                    ->where('id_produk', $item['id'])
+                    ->first();
+
+                if ($orderDetail == null) {
+                    DetailOrder::create([
+                        'id_order' => $order->id,
+                        'id_produk' => $item['id'],
+                        'harga' => $item['harga'],
+                        'qty' => $item['qty'],
+                    ]);
+                } else {
+                    $orderDetail->update([
+                        'qty' => $orderDetail->qty + $item['qty'],
+                    ]);
+                }
+
+                $order->update([
+                    'total' => $order->total + ($item['qty'] * $item['harga']),
+                ]);
+            }
+
+            // Hapus produk yang dipilih dari keranjang
+            foreach ($selectedProducts as $item) {
+                Cart::where('id_user', auth()->user()->id)
+                    ->where('id_produk', $item['id'])
+                    ->delete();
+            }
+
+            // Buat ID invoice
+            $invoiceId = 'INV-' . date('Ymd') . '-' . str_pad($order->id, 5, '0', STR_PAD_LEFT);
+
+            // Buat transaksi
+            $transaksi = Transaksi::create([
+                'id_order' => $order->id,
+                'invoice_id' => $invoiceId,
+                'total_qty_item' => $validatedData['total_qty_item'],
+                'total_bayar' => $validatedData['total_bayar'],
+                'bukti_pembayaran' => 'pending',
+                'status_pembayaran' => 'pending',
+            ]);
+
+            // Tandai order sebagai checkout
+            $order->update(['status' => 'checkout']);
+
+            DB::commit();
+
             return redirect()->route('cart.upload.payment', $transaksi->id)->with('success', 'Checkout berhasil.');
         } catch (\Exception $e) {
-            return $e->getMessage();
             DB::rollBack();
-            return back()->with('error', 'Terjadi kesalahan saat melakukan checkout.');
+            return back()->with('error', 'Terjadi kesalahan saat melakukan checkout: ' . $e->getMessage());
         }
     }
 

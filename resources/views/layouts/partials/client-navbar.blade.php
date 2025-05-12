@@ -25,6 +25,8 @@
                             class="{{ request()->routeIs('cart*') ? 'active' : '' }}">Carts</a></li>
                     <li><a href="{{ route('history') }}"
                             class="{{ request()->routeIs('history*') ? 'active' : '' }}">History</a></li>
+                    <li><a href="{{ route('wishlists') }}"
+                            class="{{ request()->routeIs('wishlists*') ? 'active' : '' }}">Wishlist</a></li>
                 @endif
             </ul>
         </div>
@@ -123,6 +125,9 @@
                                 <li><a href="{{ route('history') }}"
                                         class="block text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400">{{ __('History') }}</a>
                                 </li>
+                                <li><a href="{{ route('wishlists') }}"
+                                        class="{{ request()->routeIs('wishlists*') ? 'active' : '' }}">Wishlist</a>
+                                </li>
                             @endif
                         </ul>
                     </nav>
@@ -138,10 +143,8 @@
                         </div>
                     @else
                         <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-4">
-                            <a href="{{ route('login') }}"
-                                class="btn-primary">{{ __('Login') }}</a>
-                            <a href="{{ route('register') }}"
-                                class="btn-alternative">{{ __('Register') }}</a>
+                            <a href="{{ route('login') }}" class="btn-primary">{{ __('Login') }}</a>
+                            <a href="{{ route('register') }}" class="btn-alternative">{{ __('Register') }}</a>
                         </div>
                     @endif
                 </div>

@@ -18,10 +18,10 @@
                                         No
                                     </th>
                                     <th scope="col" class="px-6 py-3">
-                                        Produk
+                                        Product
                                     </th>
                                     <th scope="col" class="px-6 py-3">
-                                        Pengguna 
+                                        User
                                     </th>
                                     <th scope="col" class="px-6 py-3">
                                         Rating
@@ -41,7 +41,7 @@
                                             {{ $loop->iteration }}
                                         </td>
                                         <td class="px-6 py-4">
-                                            {{ $item->produk->nama }}
+                                            {{ $item->product->nama }}
                                         </td>
                                         <td class="px-6 py-4">
                                             {{ $item->user->name }}
@@ -53,7 +53,6 @@
                                             {{ $item->review }}
                                         </td>
                                         <td class="flex justify-start items-center mt-2">
-                                            <a href="{{ route('admin.review.edit', $item->id) }}" class="btn-yellow">Edit</a>
                                             <form action="{{ route('admin.review.destroy') }}" method="POST"
                                                 class="inline-block" onsubmit="return confirmDelete(event)">
                                                 @csrf
@@ -91,27 +90,6 @@
                             </tbody>
                         </table>
                     </div>
-
-                    <script>
-                        function openModal(imageUrl) {
-                            const modal = document.createElement('div');
-                            modal.classList.add('fixed', 'inset-0', 'z-50', 'flex', 'items-center', 'justify-center', 'bg-black', 'bg-opacity-50');
-                            modal.innerHTML = `
-                                <div class="bg-white p-4 rounded-lg shadow-lg">
-                                    <img src="${imageUrl}" alt="Foto Produk" class="max-w-full h-auto">
-                                    <button onclick="closeModal()" class="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg">Close</button>
-                                </div>
-                            `;
-                            document.body.appendChild(modal);
-                        }
-
-                        function closeModal() {
-                            const modal = document.querySelector('.fixed.inset-0.z-50');
-                            if (modal) {
-                                modal.remove();
-                            }
-                        }
-                    </script>
                 </div>
             </div>
         </div>
