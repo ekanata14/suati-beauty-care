@@ -7,7 +7,7 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('home') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
+                        <img src="{{ asset('logo.jpeg') }}" alt="logo" class="w-14">
                     </a>
                 </div>
             </div>
@@ -25,8 +25,6 @@
                             class="{{ request()->routeIs('cart*') ? 'active' : '' }}">Carts</a></li>
                     <li><a href="{{ route('history') }}"
                             class="{{ request()->routeIs('history*') ? 'active' : '' }}">History</a></li>
-                    <li><a href="{{ route('wishlists') }}"
-                            class="{{ request()->routeIs('wishlists*') ? 'active' : '' }}">Wishlist</a></li>
                 @endif
             </ul>
         </div>
@@ -124,9 +122,6 @@
                                 </li>
                                 <li><a href="{{ route('history') }}"
                                         class="block text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400">{{ __('History') }}</a>
-                                </li>
-                                <li><a href="{{ route('wishlists') }}"
-                                        class="{{ request()->routeIs('wishlists*') ? 'active' : '' }}">Wishlist</a>
                                 </li>
                             @endif
                         </ul>
