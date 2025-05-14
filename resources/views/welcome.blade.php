@@ -2,8 +2,8 @@
 
 @section('content')
     <section class="h-[70vh] flex flex-col md:flex-row justify-center items-center">
-        <div class="container mx-auto px-4 py-8">
-            <h1 class="text-3xl font-bold mb-4">LOGOOOOOOOOOOOO</h1>
+        <div class="container mx-auto px-4 py-8 flex justify-center">
+            <img src="{{ asset('logo.jpeg') }}" alt="logo">
         </div>
         <div class="container mx-auto px-4 py-8">
             <h1 class="text-3xl font-bold mb-4">SUATI BEAUTY CARE</h1>
