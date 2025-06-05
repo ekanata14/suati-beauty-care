@@ -5,9 +5,9 @@
         <div class="mx-auto px-4 2xl:px-0 flex flex-row gap-4">
             @if ($cart)
                 <form action="{{ route('checkout.multiple') }}" method="POST" id="checkout-form"
-                    class="flex flex-row gap-4 w-full">
+                    class="flex flex-col md:flex-row gap-4 w-full">
                     @csrf
-                    <div class="bg-white w-3/4 p-6">
+                    <div class="bg-white w-full md:w-3/4 p-6">
                         <h2 class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">Cart</h2>
                         <div class="mt-6 sm:mt-8 relative overflow-x-auto border-b border-gray-200 dark:border-gray-800">
                             <table class="w-full text-left font-medium text-gray-900 dark:text-white md:table-fixed">
@@ -80,7 +80,7 @@
                         </div>
                     </div>
 
-                    <div class="w-1/4 bg-white p-6 space-y-4">
+                    <div class="w-full md:w-1/4 bg-white p-6 space-y-4">
                         <h4 class="text-xl font-semibold text-gray-900 dark:text-white">Summary</h4>
                         <div class="space-y-2">
                             <div class="flex justify-between">

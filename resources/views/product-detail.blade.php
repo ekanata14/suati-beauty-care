@@ -17,7 +17,11 @@
                         <div class="flex flex-col gap-4">
                             <h1 class="text-3xl font-bold">{{ $product->nama }}</h1>
                             <h2 class="text-xl">{{ $product->kategori->nama }}</h2>
-                            <h2 class="text-md">IDR. {{ number_format($product->harga, 0, ',', '.') }}</h2>
+                            <div class="flex gap-2">
+                                <h2 class="text-md">IDR. {{ number_format($product->harga, 0, ',', '.') }}</h2>
+                            |
+                                <h3 class="text-md text-green-700 font-bold">Stock: {{ $product->stok }}</h3>
+                            </div>
                             <p>{{ $product->deskripsi }}</p>
                         </div>
                     </div>

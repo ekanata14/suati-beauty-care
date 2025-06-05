@@ -30,7 +30,7 @@
         </header> --}}
 
         <!-- Page Content -->
-        <main class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <main class="container mx-auto px-4 sm:px-6 lg:px-8 mt-20">
             @yield('content')
         </main>
 

@@ -286,6 +286,11 @@ class DashboardController extends Controller
             DB::beginTransaction();
 
             $cart = Cart::where('id_user', auth()->user()->id)->where('id_produk', $request->id_produk)->first();
+            $product = Produk::find($request->id_produk);
+            if (!$product || $product->stok < $request->qty) {
+                DB::rollBack();
+                return back()->with('error', 'Stok produk tidak mencukupi.');
+            }
             if ($cart == null) {
                 Cart::create([
                     'id_user' => auth()->user()->id,
@@ -345,7 +350,6 @@ class DashboardController extends Controller
             DB::commit();
             return back()->with('success', 'Produk berhasil dihapus dari keranjang.');
         } catch (\Exception $e) {
-            return $e->getMessage();
             DB::rollBack();
             return back()->with('error', 'Terjadi kesalahan saat menghapus produk dari keranjang.');
         }
@@ -574,6 +578,15 @@ class DashboardController extends Controller
                 'bukti_pembayaran' => $validatedData['bukti_pembayaran'],
                 'status_pembayaran' => 'waiting',
             ]);
+            $products = $transaksi->order->detailOrder;
+
+            foreach ($products as $detail) {
+                $produk = Produk::find($detail->id_produk);
+                if ($produk) {
+                    $produk->stok = max(0, $produk->stok - $detail->qty);
+                    $produk->save();
+                }
+            }
 
             DB::commit();
             return redirect()->route('history')->with('success', 'Bukti pembayaran berhasil diupload.');

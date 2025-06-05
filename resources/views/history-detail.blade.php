@@ -3,9 +3,9 @@
 @section('content')
     <section class="py-8 antialiased dark:bg-gray-900 md:py-16 h-screen">
         <form action="{{ route('upload.payment.store') }}" method="POST"
-            class="mx-auto max-w-screen-xl px-4 2xl:px-0 flex gap-4" enctype="multipart/form-data">
+            class="mx-auto max-w-screen-xl px-4 2xl:px-0 flex flex-col md:flex-row gap-4" enctype="multipart/form-data">
             @csrf
-            <div class="bg-white h-full w-3/4 p-6">
+            <div class="bg-white h-full w-full md:w-3/4 p-6">
                 <h2 class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">Order summary</h2>
                 <div class="mt-6 sm:mt-8">
                     <div class="relative overflow-x-auto border-b border-gray-200 dark:border-gray-800">
@@ -56,7 +56,7 @@
                     </div>
                 </div>
             </div>
-            <div class="space-y-6 bg-white p-6">
+            <div class="w-full md:w-1/4space-y-6 bg-white p-6">
                 <h4 class="text-xl font-semibold text-gray-900 dark:text-white">Order summary</h4>
                 <div class="space-y-4">
                     <div class="space-y-2">
