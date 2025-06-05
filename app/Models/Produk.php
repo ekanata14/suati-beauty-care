@@ -24,4 +24,9 @@ class Produk extends Model
     {
         return $this->belongsTo(User::class, 'id_user');
     }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class, 'id_product');
+    }
 }

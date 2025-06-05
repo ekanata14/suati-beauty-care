@@ -20,7 +20,7 @@ class ProductController extends Controller
     {
         $viewData = [
             'title' => 'Produk Management',
-            'datas' => Produk::all(),
+            'datas' => Produk::paginate(10),
         ];
 
         return view('admin.product.index', $viewData);

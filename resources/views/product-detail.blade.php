@@ -22,7 +22,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700 p-6 w-full md:w-1/4">
+                <div
+                    class="bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700 p-6 w-full md:w-1/4">
                     <h2 class="text-xl font-bold text-center mb-3">Jumlah</h2>
                     <!-- Right: Transactional Buttons -->
                     <div class="flex flex-col justify-center items-center">
@@ -187,7 +188,48 @@
             <!-- Review Section -->
             <div
                 class="mt-8 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700 p-6">
-                <h2 class="text-xl font-bold mb-4">Review</h2>
+                <h2 class="text-xl font-bold mb-4">Review
+                    @php
+                        $productReviews = $reviews->where('id_product', $product->id);
+                        $reviewCount = $productReviews->count();
+                        $averageRating = $reviewCount > 0 ? round($productReviews->avg('rating'), 1) : 0;
+                    @endphp
+
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-yellow-400 flex items-center">
+                            @for ($i = 1; $i <= 5; $i++)
+                                @if ($i <= floor($averageRating))
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path
+                                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.921-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.197-1.539-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" />
+                                    </svg>
+                                @elseif ($i - $averageRating < 1 && $i - $averageRating > 0)
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <defs>
+                                            <linearGradient id="half-{{ $i }}">
+                                                <stop offset="{{ ($averageRating - floor($averageRating)) * 100 }}%"
+                                                    stop-color="currentColor" />
+                                                <stop offset="{{ ($averageRating - floor($averageRating)) * 100 }}%"
+                                                    stop-color="transparent" />
+                                            </linearGradient>
+                                        </defs>
+                                        <path fill="url(#half-{{ $i }})"
+                                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.921-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.197-1.539-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" />
+                                    </svg>
+                                @else
+                                    <svg class="w-5 h-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                                        <path
+                                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.921-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.197-1.539-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" />
+                                    </svg>
+                                @endif
+                            @endfor
+                        </span>
+                        <span
+                            class="text-gray-700 dark:text-gray-300 text-base font-semibold">{{ number_format($averageRating, 1) }}</span>
+                        <span class="text-gray-500 text-sm">({{ $reviewCount }}
+                            review{{ $reviewCount == 1 ? '' : 's' }})</span>
+                    </div>
+                </h2>
                 @if (Auth::check())
                     @if ($isReview)
                         <p class="text-gray-500 mb-4">You have already reviewed this product.</p>
@@ -197,7 +239,20 @@
                 @endif
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
-                    @foreach ($reviews as $review)
+                    @php
+                        $userReviews = [];
+                        $otherReviews = [];
+                        foreach ($reviews as $review) {
+                            if (Auth::check() && $review->user->id === Auth::id()) {
+                                $userReviews[] = $review;
+                            } else {
+                                $otherReviews[] = $review;
+                            }
+                        }
+                        $sortedReviews = array_merge($userReviews, $otherReviews);
+                    @endphp
+
+                    @foreach ($sortedReviews as $review)
                         <figure class="max-w-screen-md">
                             <div class="flex items-center mb-4 text-yellow-300">
                                 @for ($i = 0; $i < $review->rating; $i++)
@@ -216,8 +271,10 @@
                                     class="flex items-center divide-x-2 rtl:divide-x-reverse divide-gray-300 dark:divide-gray-700">
                                     <cite
                                         class="pe-3 font-medium text-gray-900 dark:text-white">{{ $review->user->name }}</cite>
-                                    <cite
-                                        class="ps-3 text-sm text-gray-500 dark:text-gray-400">{{ $review->user->role ?? 'User' }}</cite>
+                                    @if (Auth::check() && Auth::id() === $review->user->id)
+                                        <a href="{{ route('review.edit', $review->id) }}"
+                                            class="ml-3 px-2 py-1 text-xs bg-yellow-500 text-white rounded hover:bg-yellow-600">Edit</a>
+                                    @endif
                                 </div>
                             </figcaption>
                         </figure>

@@ -53,6 +53,7 @@
                                             {{ $item->review }}
                                         </td>
                                         <td class="flex justify-start items-center mt-2">
+                                            <a href="{{ route('admin.review.edit', $item->id) }}" class="btn-yellow mr-2">Edit</a>
                                             <form action="{{ route('admin.review.destroy') }}" method="POST"
                                                 class="inline-block" onsubmit="return confirmDelete(event)">
                                                 @csrf
@@ -89,6 +90,9 @@
                                 @endforelse
                             </tbody>
                         </table>
+                        <div class="mt-4">
+                            {{ $datas->links() }}
+                        </div>
                     </div>
                 </div>
             </div>

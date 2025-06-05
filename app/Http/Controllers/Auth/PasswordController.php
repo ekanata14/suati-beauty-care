@@ -32,7 +32,7 @@ class PasswordController extends Controller
             return back()->with('success', 'Your password updated successfully');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'An error occured');
+            return back()->with('error', 'An error occured: ' . $e->getMessage());
         }
     }
 }

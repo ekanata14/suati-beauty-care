@@ -69,13 +69,15 @@
                                             {{ $item->Konsumen->jenis_kelamin }}
                                         </td>
                                         <td class="px-6 py-4">
-                                            <img src="{{ asset('storage/' . $item->Konsumen->foto_profil) }}" alt="Foto Profil" class="w-10 h-10 rounded-full">
+                                            <img src="{{ asset('storage/' . $item->Konsumen->foto_profil) }}"
+                                                alt="Foto Profil" class="w-10 h-10 rounded-full">
                                         </td>
                                         <td class="px-6 py-4">
                                             {{ $item->Konsumen->telepon }}
                                         </td>
                                         <td class="flex justify-center items-center mt-2">
-                                            <a href="{{ route('admin.pelanggan.edit', $item->id) }}" class="btn-yellow">Edit</a>
+                                            <a href="{{ route('admin.pelanggan.edit', $item->id) }}"
+                                                class="btn-yellow">Edit</a>
                                             <form action="{{ route('admin.pelanggan.destroy') }}" method="POST"
                                                 class="inline-block" onsubmit="return confirmDelete(event)">
                                                 @csrf
@@ -113,6 +115,9 @@
                                 @endforelse
                             </tbody>
                         </table>
+                    </div>
+                    <div class="mt-4">
+                        {{ $datas->links() }}
                     </div>
                 </div>
             </div>

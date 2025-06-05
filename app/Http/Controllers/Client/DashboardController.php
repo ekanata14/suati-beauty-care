@@ -16,6 +16,7 @@ use App\Models\DetailOrder;
 use App\Models\Transaksi;
 use App\Models\Cart;
 use App\Models\Wishlist;
+use App\Models\HomeContent;
 
 class DashboardController extends Controller
 {
@@ -23,7 +24,8 @@ class DashboardController extends Controller
     {
         $viewData = [
             'title' => 'Home',
-            'products' => Produk::all()
+            'products' => Produk::all(),
+            'homeContents' => HomeContent::all(),
         ];
 
         return view('welcome', $viewData);
@@ -111,6 +113,51 @@ class DashboardController extends Controller
         }
     }
 
+    public function reviewUpdate(Request $request)
+    {
+        $validatedData = $request->validate([
+            'id' => 'required|exists:reviews,id',
+            'rating' => 'required|integer|min:1|max:5',
+            'review' => 'required|string|max:255',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $review = Review::where('id', $validatedData['id'])
+                ->where('id_user', auth()->user()->id)
+                ->first();
+
+            if (!$review) {
+                return back()->with('error', 'Review tidak ditemukan.');
+            }
+
+            $review->update([
+                'rating' => $validatedData['rating'],
+                'review' => $validatedData['review'],
+            ]);
+
+            DB::commit();
+            return redirect()->route('products.detail', $review->id_product)->with('success', 'Review berhasil diperbarui.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Terjadi kesalahan saat memperbarui review.');
+        }
+    }
+
+
+    public function reviewEdit(string $id)
+    {
+        $viewData = [
+            'title' => 'Review',
+            'product' => Produk::find($id),
+            'categories' => Kategori::all(),
+            'review' => Review::where('id_product', $id)->where('id_user', auth()->user()->id)->first(),
+        ];
+
+        return view('review-edit', $viewData);
+    }
+
     public function wishlists()
     {
         $viewData = [
@@ -165,6 +212,7 @@ class DashboardController extends Controller
     {
         $viewData = [
             'title' => 'About',
+            'homeContents' => HomeContent::all(),
         ];
 
         return view('about', $viewData);

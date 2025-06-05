@@ -18,7 +18,7 @@ class CategoryController extends Controller
     {
         $viewData = [
             'title' => 'Category Management',
-            'datas' => Kategori::all(),
+            'datas' => Kategori::paginate(10),
         ];
 
         return view('admin.category.index', $viewData);

@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\ProductController as AdminProductDashboardController;
 use App\Http\Controllers\Admin\TransactionController as AdminTransactionDashboardController;
 use App\Http\Controllers\Admin\ReviewController as AdminReviewDashboardController;
+use App\Http\Controllers\HomeContentController as HomeContentController;
 
 // Client Controller
 use App\Http\Controllers\Client\DashboardController as ClientDashboardController;
@@ -22,9 +23,9 @@ Route::get('/products/category/{id}', [ClientDashboardController::class, 'produc
 Route::get('/products/{id}', [ClientDashboardController::class, 'productDetail'])->name('products.detail');
 Route::get('/products/search', [ClientDashboardController::class, 'searchProducts'])->name('products.search');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Route::get('/dashboard', function () {
+//     return view('dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('/wishlist', [ClientDashboardController::class, 'wishlists'])->name('wishlists');
@@ -32,6 +33,8 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::delete('/wishlist/remove', [ClientDashboardController::class, 'removeWishlists'])->name('removeFromWishlist');
     Route::get('/review/{id}', [ClientDashboardController::class, 'review'])->name('review');
     Route::post('/review/store', [ClientDashboardController::class, 'storeReview'])->name('review.store');
+    Route::get('/review/edit/{id}', [ClientDashboardController::class, 'reviewEdit'])->name('review.edit');
+    Route::put('/review/update', [ClientDashboardController::class, 'reviewUpdate'])->name('review.update');
     Route::post('/order/addToOrder', [ClientDashboardController::class, 'addToOrderAndCheckout'])->name('addToOrder');
     Route::post('/order/addToCart', [ClientDashboardController::class, 'addToCart'])->name('addToCart');
     Route::get('/cart', [ClientDashboardController::class, 'cart'])->name('cart');
@@ -48,6 +51,11 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
 
 Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+    Route::post('/admin/update-profile', [AdminDashboardController::class, 'updateProfile'])->name('admin.update.profile');
+
+    // Home Content
+    Route::get('/admin/home-content', [HomeContentController::class, 'index'])->name('admin.home-content.index');
+    Route::post('/admin/home-content', [HomeContentController::class, 'update'])->name('admin.home-content.update');
 
     // Admin Admin Routes
     Route::get('/admin/admin', [AdminAdminDashboardController::class, 'index'])->name('admin.admin.index');
@@ -84,8 +92,8 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('/admin/review', [AdminReviewDashboardController::class, 'index'])->name('admin.review.index');
     // Route::get('/admin/review/create', [AdminReviewDashboardController::class, 'create'])->name('admin.review.create');
     // Route::post('/admin/review', [AdminReviewDashboardController::class, 'store'])->name('admin.review.store');
-    // Route::get('/admin/review/edit/{id}', [AdminReviewDashboardController::class, 'edit'])->name('admin.review.edit');
-    // Route::put('/admin/review/update', [AdminReviewDashboardController::class, 'update'])->name('admin.review.update');
+    Route::get('/admin/review/edit/{id}', [AdminReviewDashboardController::class, 'edit'])->name('admin.review.edit');
+    Route::put('/admin/review/update', [AdminReviewDashboardController::class, 'update'])->name('admin.review.update');
     Route::delete('/admin/review/delete', [AdminReviewDashboardController::class, 'destroy'])->name('admin.review.destroy');
 
     // Admin Transaction Routes

@@ -97,6 +97,9 @@
                             }
                         }
                     </script>
+                    <div class="mt-4">
+                        {{ $datas->links() }}
+                    </div>
                 </div>
             </div>
         </div>

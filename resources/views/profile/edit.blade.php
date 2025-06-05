@@ -1,6 +1,10 @@
-@extends('layouts.client')
+@php
+    $userRole = auth()->user()->role;
+    $layout = $userRole === 'admin' ? 'layouts.admin' : 'layouts.client';
+@endphp
+@extends($layout)
 @section('content')
-<x-slot name="header">
+    <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             {{ __('Profile') }}
         </h2>
