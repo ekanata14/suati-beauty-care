@@ -397,6 +397,11 @@ class DashboardController extends Controller
 
     public function addToOrderAndCheckout(Request $request)
     {
+        $request->validate([
+            'id_produk' => 'required|exists:produks,id',
+            'qty' => 'required|numeric|min:1',
+            'harga' => 'required|numeric|min:0',
+        ]);
         try {
             DB::beginTransaction();
 
