@@ -34,12 +34,12 @@
                                                         alt="{{ $item->produk->nama }}">
                                                     <div class="flex flex-col">
                                                         <span class="font-medium">{{ $item->produk->nama }}</span>
-                                                        <small>Price: IDR. {{ $item->produk->harga }}</small>
+                                                        <small>Price: IDR. {{ number_format($item->produk->harga, 0, ',', '.') }}</small>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td class="p-4">{{ $item->qty }}x</td>
-                                            <td class="p-4">IDR. {{ $item->produk->harga * $item->qty }}</td>
+                                            <td class="p-4">IDR. {{ number_format($item->produk->harga * $item->qty, 0, ',', '.') }}</td>
                                             <td class="p-4">
                                                 <a href="{{ route('cart.delete', $item->id) }}"
                                                     class="text-red-600 hover:text-red-800 delete-link">
@@ -138,8 +138,7 @@
                                     });
                                 }
                             });
-
-                            totalHargaElem.textContent = 'IDR. ' + totalHarga;
+                            totalHargaElem.textContent = 'IDR. ' + totalHarga.toLocaleString('id-ID');
                             totalQtyElem.textContent = totalQty;
 
                             inputTotalHarga.value = totalHarga;

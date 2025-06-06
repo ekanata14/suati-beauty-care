@@ -40,7 +40,7 @@
                                     <div class="flex items-start justify-end gap-2 sm:justify-start flex-col">
                                         <p class="text-sm text-gray-500 dark:text-gray-400">
                                             <span class="font-medium text-gray-900 dark:text-white">Price:</span>
-                                            {{ $wishlist->produk->harga }} IDR
+                                            IDR. {{ number_format($wishlist->produk->harga, 0, ',', '.') }}
                                         </p>
                                         <p class="text-sm text-gray-500 dark:text-gray-400">
                                             <span class="font-medium text-gray-900 dark:text-white">Category:</span>
@@ -48,38 +48,39 @@
                                         </p>
                                     </div>
                                 </div>
-
-                                <div class="col-span-2 content-center sm:col-span-1 sm:justify-self-end">
+                                <div class="col-span-2 content-center sm:col-span-1 sm:justify-self-end w-full text-center">
                                     <a href="{{ route('products.detail', $wishlist->produk->id) }}"
-                                        class="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 sm:w-auto">View
+                                        class="block w-full col-span-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 sm:inline-block sm:w-auto">View
                                         details</a>
-                                        <form method="POST" action="{{ route('removeFromWishlist') }}" class="inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <input type="hidden" name="wishlist_id" value="{{ $wishlist->id }}">
-                                            <button type="button" onclick="confirmDelete(this)" 
-                                                class="w-full rounded-lg border border-red-200 bg-red-500 px-3 py-2 text-sm font-medium text-white hover:bg-red-600 focus:z-10 focus:outline-none focus:ring-4 focus:ring-red-300 dark:border-red-600 dark:bg-red-700 dark:hover:bg-red-800 dark:focus:ring-red-900 sm:w-auto">
-                                                Remove
-                                            </button>
-                                        </form>
+                                </div>
+                                <div class="col-span-2 content-center sm:col-span-1 sm:justify-self-end">
+                                    <form method="POST" action="{{ route('removeFromWishlist') }}" class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <input type="hidden" name="wishlist_id" value="{{ $wishlist->id }}">
+                                        <button type="button" onclick="confirmDelete(this)"
+                                            class="w-full rounded-lg border border-red-200 bg-red-500 px-3 py-2 text-sm font-medium text-white hover:bg-red-600 focus:z-10 focus:outline-none focus:ring-4 focus:ring-red-300 dark:border-red-600 dark:bg-red-700 dark:hover:bg-red-800 dark:focus:ring-red-900 sm:w-auto">
+                                            Remove
+                                        </button>
+                                    </form>
 
-                                        <script>
-                                            function confirmDelete(button) {
-                                                Swal.fire({
-                                                    title: 'Are you sure?',
-                                                    text: "You won't be able to revert this!",
-                                                    icon: 'warning',
-                                                    showCancelButton: true,
-                                                    confirmButtonColor: '#d33',
-                                                    cancelButtonColor: '#3085d6',
-                                                    confirmButtonText: 'Yes, delete it!'
-                                                }).then((result) => {
-                                                    if (result.isConfirmed) {
-                                                        button.closest('form').submit();
-                                                    }
-                                                });
-                                            }
-                                        </script>
+                                    <script>
+                                        function confirmDelete(button) {
+                                            Swal.fire({
+                                                title: 'Are you sure?',
+                                                text: "You won't be able to revert this!",
+                                                icon: 'warning',
+                                                showCancelButton: true,
+                                                confirmButtonColor: '#d33',
+                                                cancelButtonColor: '#3085d6',
+                                                confirmButtonText: 'Yes, delete it!'
+                                            }).then((result) => {
+                                                if (result.isConfirmed) {
+                                                    button.closest('form').submit();
+                                                }
+                                            });
+                                        }
+                                    </script>
                                 </div>
                             </div>
                         @empty

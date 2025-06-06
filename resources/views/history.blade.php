@@ -73,7 +73,8 @@
                                                 {{ $item->total_qty_item }}</span> items</p>
                                         <p class="text-sm text-gray-500 dark:text-gray-400">
                                             <span class="font-medium text-gray-900 dark:text-white">
-                                                {{ $item->total_bayar }}</span> IDR
+                                                IDR {{ number_format($item->total_bayar, 0, ',', '.') }}
+                                            </span>
                                         </p>
                                     </div>
                                 </div>

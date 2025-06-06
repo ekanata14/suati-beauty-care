@@ -145,7 +145,6 @@ class DashboardController extends Controller
         }
     }
 
-
     public function reviewEdit(string $id)
     {
         $viewData = [
@@ -402,6 +401,10 @@ class DashboardController extends Controller
             DB::beginTransaction();
 
             $order = Order::where('id_user', auth()->user()->id)->where('status', 'pending')->latest()->first();
+            $product = Produk::find($request->id_produk);
+            if (!$product || $product->stok < $request->qty) {
+                return back()->with('error', 'Stok produk tidak mencukupi.');
+            }
 
             if ($order == null) {
                 $order = Order::create([

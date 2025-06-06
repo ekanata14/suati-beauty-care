@@ -40,13 +40,13 @@
                                             $totalItem += $item->qty;
                                         @endphp
                                         <td class="p-4 text-start text-base font-bold text-gray-900 dark:text-white">
-                                            {{ $item->harga }}
+                                            IDR {{ number_format($item->harga, 0, ',', '.') }}
                                         </td>
                                         <td class="p-4 text-start text-base font-bold text-gray-900 dark:text-white">
                                             @php
                                                 $totalPrice += $item->harga * $item->qty;
                                             @endphp
-                                            {{ $item->harga * $item->qty }}
+                                            IDR {{ number_format($item->harga * $item->qty, 0, ',', '.') }}
                                         </td>
                                     </tr>
                                 @empty
@@ -56,13 +56,13 @@
                     </div>
                 </div>
             </div>
-            <div class="w-full md:w-1/4space-y-6 bg-white p-6">
+            <div class="w-full md:w-1/4 space-y-6 bg-white p-6">
                 <h4 class="text-xl font-semibold text-gray-900 dark:text-white">Order summary</h4>
                 <div class="space-y-4">
                     <div class="space-y-2">
                         <dl class="flex items-center justify-between gap-4">
                             <dt class="text-gray-500 dark:text-gray-400">Total Price</dt>
-                            <dd class="text-base font-medium text-gray-900 dark:text-white">{{ $totalPrice }}</dd>
+                            <dd class="text-base font-medium text-gray-900 dark:text-white">IDR {{ number_format($totalPrice, 0, ',', '.') }}</dd>
                         </dl>
                     </div>
                     <div class="space-y-2">
@@ -74,7 +74,7 @@
 
                     <dl class="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 dark:border-gray-700">
                         <dt class="text-lg font-bold text-gray-900 dark:text-white">Total</dt>
-                        <dd class="text-lg font-bold text-gray-900 dark:text-white">{{ $totalPrice }}</dd>
+                        <dd class="text-lg font-bold text-gray-900 dark:text-white">IDR {{ number_format($totalPrice, 0, ',', '.') }}</dd>
                     </dl>
                 </div>
 

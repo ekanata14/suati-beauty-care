@@ -25,6 +25,8 @@
                             class="{{ request()->routeIs('cart*') ? 'active' : '' }}">Carts</a></li>
                     <li><a href="{{ route('history') }}"
                             class="{{ request()->routeIs('history*') ? 'active' : '' }}">History</a></li>
+                    <li><a href="{{ route('wishlists') }}"
+                            class="{{ request()->routeIs('wishlists*') ? 'active' : '' }}">Wishlist</a></li>
                 @endif
             </ul>
         </div>
