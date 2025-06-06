@@ -402,7 +402,10 @@ class DashboardController extends Controller
 
             $order = Order::where('id_user', auth()->user()->id)->where('status', 'pending')->latest()->first();
             $product = Produk::find($request->id_produk);
+
+            // Cek stok dan validitas produk
             if (!$product || $product->stok < $request->qty) {
+                // Jangan rollback di sini, cukup return
                 return back()->with('error', 'Stok produk tidak mencukupi.');
             }
 
@@ -415,6 +418,7 @@ class DashboardController extends Controller
             }
 
             $orderDetail = DetailOrder::where('id_order', $order->id)->where('id_produk', $request->id_produk)->first();
+
             if ($orderDetail == null) {
                 DetailOrder::create([
                     'id_order' => $order->id,
@@ -422,17 +426,17 @@ class DashboardController extends Controller
                     'harga' => $request->harga,
                     'qty' => $request->qty,
                 ]);
-                $order->update([
-                    'total' => $order->total + ($request->qty * $request->harga),
-                ]);
             } else {
                 $orderDetail->update([
                     'qty' => $orderDetail->qty + $request->qty,
                 ]);
-                $order->update([
-                    'total' => $order->total + ($request->qty * $request->harga),
-                ]);
             }
+
+            // Hitung total
+            $order->update([
+                'total' => $order->total + ($request->qty * $request->harga),
+                'status' => 'checkout',
+            ]);
 
             $invoiceId = 'INV-' . date('Ymd') . '-' . str_pad($order->id, 5, '0', STR_PAD_LEFT);
 
@@ -443,10 +447,6 @@ class DashboardController extends Controller
                 'total_bayar' => $order->total,
                 'bukti_pembayaran' => 'pending',
                 'status_pembayaran' => 'pending',
-            ]);
-
-            $order->update([
-                'status' => 'checkout',
             ]);
 
             DB::commit();
