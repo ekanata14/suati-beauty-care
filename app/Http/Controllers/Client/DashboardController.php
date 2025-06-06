@@ -474,7 +474,15 @@ class DashboardController extends Controller
                 return back()->with('error', 'Tidak ada produk yang dipilih untuk checkout.');
             }
 
-            // Buat order jika belum ada
+            // Cek stok untuk setiap produk
+            foreach ($selectedProducts as $item) {
+                $product = Produk::find($item['id']);
+                if (!$product || $product->stok < $item['qty']) {
+                    return back()->with('error', 'Stok produk "' . ($product ? $product->nama : 'tidak ditemukan') . '" tidak mencukupi.');
+                }
+            }
+
+            //Buat order jika belum ada
             $order = Order::where('id_user', auth()->user()->id)
                 ->where('status', 'pending')
                 ->latest()
