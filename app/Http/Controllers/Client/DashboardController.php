@@ -402,63 +402,64 @@ class DashboardController extends Controller
             'qty' => 'required|numeric|min:1',
             'harga' => 'required|numeric|min:0',
         ]);
+        try {
+            DB::beginTransaction();
 
-        $order = Order::where('id_user', auth()->user()->id)
-            ->where('status', 'pending')
-            ->latest()
-            ->first();
+            $order = Order::where('id_user', auth()->user()->id)->where('status', 'pending')->latest()->first();
+            $product = Produk::find($request->id_produk);
 
-        $product = Produk::find($request->id_produk);
+            // Cek stok dan validitas produk
+            if (!$product || $product->stok < $request->qty) {
+                // Jangan rollback di sini, cukup return
+                return back()->with('error', 'Stok produk tidak mencukupi.');
+            }
 
-        // Cek stok dan validitas produk
-        if (!$product || $product->stok < $request->qty) {
-            return back()->with('error', 'Stok produk tidak mencukupi.');
-        }
+            if ($order == null) {
+                $order = Order::create([
+                    'id_user' => auth()->user()->id,
+                    'total' => 0,
+                    'status' => 'pending',
+                ]);
+            }
 
-        if ($order == null) {
-            $order = Order::create([
-                'id_user' => auth()->user()->id,
-                'total' => 0,
-                'status' => 'pending',
+            $orderDetail = DetailOrder::where('id_order', $order->id)->where('id_produk', $request->id_produk)->first();
+
+            if ($orderDetail == null) {
+                DetailOrder::create([
+                    'id_order' => (int) $order->id,
+                    'id_produk' => (int) $request->id_produk,
+                    'harga' => (int) $request->harga,
+                    'qty' => (int) $request->qty,
+                ]);
+            } else {
+                $orderDetail->update([
+                    'qty' => $orderDetail->qty + $request->qty,
+                ]);
+            }
+
+            // Hitung total
+            $order->update([
+                'total' => $order->total + ($request->qty * $request->harga),
+                'status' => 'checkout',
             ]);
-        }
 
-        $orderDetail = DetailOrder::where('id_order', $order->id)
-            ->where('id_produk', $request->id_produk)
-            ->first();
+            $invoiceId = 'INV-' . date('Ymd') . '-' . str_pad($order->id, 5, '0', STR_PAD_LEFT);
 
-        if ($orderDetail == null) {
-            DetailOrder::create([
+            $transaksi = Transaksi::create([
                 'id_order' => $order->id,
-                'id_produk' => $request->id_produk,
-                'harga' => $request->harga,
-                'qty' => $request->qty,
+                'invoice_id' => $invoiceId,
+                'total_qty_item' => $request->qty,
+                'total_bayar' => $order->total,
+                'bukti_pembayaran' => 'pending',
+                'status_pembayaran' => 'pending',
             ]);
-        } else {
-            $orderDetail->update([
-                'qty' => $orderDetail->qty + $request->qty,
-            ]);
+
+            DB::commit();
+            return redirect()->route('cart.upload.payment', $transaksi->id)->with('success', 'Produk berhasil ditambahkan dan checkout berhasil.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Terjadi kesalahan saat menambahkan produk dan melakukan checkout.');
         }
-
-        // Hitung total
-        $order->update([
-            'total' => $order->total + ($request->qty * $request->harga),
-            'status' => 'checkout',
-        ]);
-
-        $invoiceId = 'INV-' . date('Ymd') . '-' . str_pad($order->id, 5, '0', STR_PAD_LEFT);
-
-        $transaksi = Transaksi::create([
-            'id_order' => $order->id,
-            'invoice_id' => $invoiceId,
-            'total_qty_item' => $request->qty,
-            'total_bayar' => $order->total,
-            'bukti_pembayaran' => 'pending',
-            'status_pembayaran' => 'pending',
-        ]);
-
-        return redirect()->route('cart.upload.payment', $transaksi->id)
-            ->with('success', 'Produk berhasil ditambahkan dan checkout berhasil.');
     }
 
     public function checkoutMultiples(Request $request)
