@@ -2,7 +2,8 @@
 
 @section('content')
     <section class="py-8 antialiased dark:bg-gray-900 md:py-16 h-screen">
-        <form method="POST" action="{{ route('upload.payment.store') }}" class="mx-auto px-4 2xl:px-0 flex gap-4 justify-center" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('upload.payment.store') }}"
+            class="mx-auto px-4 2xl:px-0 flex gap-4 justify-center" enctype="multipart/form-data">
             @csrf
             <div class="space-y-6 bg-white p-6 w-full md:w-3/4">
                 <h4 class="text-xl font-semibold text-gray-900 dark:text-white">Upload Payment</h4>
@@ -10,7 +11,8 @@
                     <div class="space-y-2">
                         <dl class="flex items-center justify-between gap-4">
                             <dt class="text-gray-500 dark:text-gray-400">Total Price</dt>
-                            <dd class="text-base font-medium text-gray-900 dark:text-white">{{ $transaction->total_bayar }}
+                            <dd class="text-base font-medium text-gray-900 dark:text-white">
+                                IDR {{ number_format($transaction->total_bayar, 0, ',', '.') }}
                             </dd>
                         </dl>
                     </div>
@@ -24,7 +26,9 @@
 
                     <dl class="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 dark:border-gray-700">
                         <dt class="text-lg font-bold text-gray-900 dark:text-white">Total</dt>
-                        <dd class="text-lg font-bold text-gray-900 dark:text-white">{{ $transaction->total_bayar }}</dd>
+                        <dd class="text-lg font-bold text-gray-900 dark:text-white">
+                            IDR {{ number_format($transaction->total_bayar, 0, ',', '.') }}
+                        </dd>
                     </dl>
 
                     <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="file_input">Upload
@@ -32,7 +36,8 @@
                     <input
                         class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                         id="file_input" type="file" name="bukti_pembayaran" accept="image/*" required />
-                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">PNG, JPG, JPEG (MAX. 2MB)</p>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">PNG, JPG, JPEG (MAX. 2MB)
+                    </p>
 
                 </div>
 
