@@ -36,7 +36,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('/review/edit/{id}', [ClientDashboardController::class, 'reviewEdit'])->name('review.edit');
     Route::put('/review/update', [ClientDashboardController::class, 'reviewUpdate'])->name('review.update');
     Route::post('/order/addToOrder', [ClientDashboardController::class, 'addToOrderAndCheckout'])->name('addToOrder');
-    Route::post('/order/addToCart', [ClientDashboardController::class, 'addToCart'])->name('addToCart');
+    Route::post('/onsarder/addToCart', [ClientDashboardController::class, 'addToCart'])->name('addToCart');
     Route::get('/cart', [ClientDashboardController::class, 'cart'])->name('cart');
     Route::get('/cart/delete/{id}', [ClientDashboardController::class, 'removeFromCart'])->name('cart.delete');
     Route::post('/order/delete-from-cart', [ClientDashboardController::class, 'deleteFromCart'])->name('delete.item');
@@ -98,6 +98,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
 
     // Admin Transaction Routes
     Route::get('/admin/transaction', [AdminTransactionDashboardController::class, 'index'])->name('admin.transaction.index');
+    Route::get('/admin/transaction/{id}', [AdminTransactionDashboardController::class, 'show'])->name('admin.transaction.detail');
     Route::put('/admin/transaction/update-status', [AdminTransactionDashboardController::class, 'updateStatus'])->name('admin.transaction.update.status');
 });
 

@@ -25,9 +25,6 @@
                                         Email
                                     </th>
                                     <th scope="col" class="px-6 py-3">
-                                        Role
-                                    </th>
-                                    <th scope="col" class="px-6 py-3">
                                         Tanggal Lahir
                                     </th>
                                     <th scope="col" class="px-6 py-3">
@@ -58,9 +55,6 @@
                                         </td>
                                         <td class="px-6 py-4">
                                             {{ $item->email }}
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            {{ $item->role }}
                                         </td>
                                         <td class="px-6 py-4">
                                             {{ $item->Konsumen->tanggal_lahir }}

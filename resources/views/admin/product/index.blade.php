@@ -53,7 +53,7 @@
                                             {{ $item->stok }}
                                         </td>
                                         <td class="px-6 py-4">
-                                            {{ $item->harga }}
+                                            {{ 'Rp ' . number_format($item->harga, 0, ',', '.') }}
                                         </td>
                                         <td class="px-6 py-4">
                                             {{ $item->deskripsi }}

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\Transaksi;
+use App\Models\Kategori;
 
 class TransactionController extends Controller
 {
@@ -67,7 +68,13 @@ class TransactionController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $viewData = [
+            'title' => 'History Detail',
+            'transaction' => Transaksi::with('order.detailOrder.produk')->where('id', $id)->first(),
+            'categories' => Kategori::all(),
+        ];
+
+        return view('admin.transaction.detail', $viewData);
     }
 
     /**

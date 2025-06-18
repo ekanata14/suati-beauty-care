@@ -50,7 +50,7 @@
                                             {{ $item->total_qty_item }}
                                         </td>
                                         <td class="px-6 py-4">
-                                            {{ $item->total_bayar }}
+                                            {{ $item->total_bayar ? 'Rp ' . number_format($item->total_bayar, 0, ',', '.') : '-' }}
                                         </td>
                                         <td class="px-6 py-4">
                                             <a href="{{ $item->bukti_pembayaran }}" target="_blank"
@@ -95,6 +95,8 @@
                                                             Confirm
                                                         </button>
                                                     </form>
+                                                    <a href="{{ route('admin.transaction.detail', $item->id) }}"
+                                                        class="btn-primary">Detail</a>
                                                 </div>
                                                 <script>
                                                     document.querySelectorAll('.confirm-button').forEach(button => {

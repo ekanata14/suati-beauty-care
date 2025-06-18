@@ -96,7 +96,7 @@ class PelangganController extends Controller
     public function edit(string $id)
     {  
         $viewData = [
-            'title' => 'Edit Admin',
+            'title' => 'Edit Pelanggan',
             'data' => User::findOrFail($id),
         ];
 

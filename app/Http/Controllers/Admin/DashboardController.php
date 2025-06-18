@@ -6,11 +6,37 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
+// Models
+use App\Models\User;
+use App\Models\Produk;
+use App\Models\Order;
+use App\Models\Transaksi;
+
 class DashboardController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         $viewData = [
             'title' => 'Admin Dashboard',
+            'dashboardData' => [
+                'totalUsers' => User::count(),
+                'users' => [
+                    'count' => User::count(),
+                    'link' => route('admin.pelanggan.index'),
+                ],
+                'products' => [
+                    'count' => Produk::count(),
+                    'link' => route('admin.product.index'),
+                ],
+                'orders' => [
+                    'count' => Transaksi::count(),
+                    'link' => route('admin.transaction.index'),
+                ],
+                'recentOrders' => [
+                    'data' => Transaksi::orderBy('created_at', 'desc')->take(5)->get(),
+                    'link' => route('admin.transaction.index'),
+                ],
+            ]
         ];
 
         return view('admin.dashboard', $viewData);
