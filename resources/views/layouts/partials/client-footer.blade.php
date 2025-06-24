@@ -22,7 +22,7 @@
         <div>
             <h3 class="text-lg font-semibold text-white mb-3">Kontak Kami</h3>
             <ul class="text-sm space-y-2">
-                <li>📍 Jl. Raya Kecantikan No.88, Bali</li>
+                <li>📍 Dawan Kaler, Klungkung Regency, Bali</li>
                 <li>📞 +62 812-3456-7890</li>
                 <li>✉️ info@suatibeauty.com</li>
             </ul>
