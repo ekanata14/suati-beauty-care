@@ -9,6 +9,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
+// Models
+use App\Models\HomeContent;
+
 class AuthenticatedSessionController extends Controller
 {
     /**
@@ -16,7 +19,12 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View
     {
-        return view('auth.login');
+        $viewData = [
+            'title' => 'Login',
+            'logo' => HomeContent::get('logo')->first(),
+        ];
+
+        return view('auth.login', $viewData);
     }
 
     /**

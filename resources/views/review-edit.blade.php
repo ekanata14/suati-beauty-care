@@ -1,35 +1,36 @@
 @extends('layouts.client')
 
 @section('content')
-    <section class="py-8 antialiased dark:bg-gray-900 md:py-16 h-screen">
+    <section class="py-8 antialiased dark:bg-gray-900 md:py-16 min-h-screen bg-gradient-to-br from-white to-blue-100 dark:from-gray-900 dark:to-gray-800">
         <form method="POST" action="{{ route('review.update') }}" class="mx-auto px-4 2xl:px-0 flex gap-4 justify-center">
             @csrf
             @method('PUT')
             <input type="hidden" name="id" value="{{ $review->id }}">
             <input type="hidden" name="id_product" value="{{ $product->id }}">
-            <div class="space-y-6 bg-white p-6 w-full md:w-3/4 rounded-lg shadow" x-data="{ selectedRating: {{ old('rating', $review->rating) }} }">
-                <h4 class="text-xl font-semibold text-gray-900 dark:text-white">Edit Your Review</h4>
+            <div class="space-y-6 bg-white dark:bg-gray-800 p-8 w-full md:w-3/4 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700" x-data="{ selectedRating: {{ old('rating', $review->rating) }} }">
+                <h4 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">✏️ Edit Your Review</h4>
 
-                <div class="space-y-4">
+                <div class="space-y-6">
                     <!-- Produk Info -->
-                    <div class="space-y-2">
+                    <div class="flex items-start gap-6">
                         <img src="{{ asset("storage/{$product->foto_produk}") }}" alt="foto_produk"
-                            class="w-full md:w-1/4 h-auto rounded-lg">
-                        <h1 class="text-2xl font-bold">{{ $product->nama }}</h1>
-                        <h2 class="text-xl text-gray-600">{{ $product->kategori->nama }}</h2>
+                            class="w-32 h-32 rounded-xl shadow object-cover">
+                        <div>
+                            <h1 class="text-2xl font-extrabold text-blue-700 dark:text-blue-400">{{ $product->nama }}</h1>
+                            <p class="text-lg text-gray-500 dark:text-gray-300">{{ $product->kategori->nama }}</p>
+                        </div>
                     </div>
 
                     <!-- Rating Bintang -->
-                    <div class="space-y-2">
-                        <label for="rating" class="block text-sm font-medium text-gray-900 dark:text-white">Rating</label>
-                        <div class="flex items-center space-x-2">
+                    <div>
+                        <label for="rating" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Rating</label>
+                        <div class="flex items-center space-x-1">
                             @for ($i = 1; $i <= 5; $i++)
                                 <label>
                                     <input type="radio" name="rating" value="{{ $i }}" class="hidden"
                                         x-model="selectedRating" {{ old('rating', $review->rating) == $i ? 'checked' : '' }} required>
-                                    <svg class="w-6 h-6 cursor-pointer transition"
-                                        :class="selectedRating >= {{ $i }} ? 'text-yellow-500 dark:text-yellow-400' :
-                                            'text-gray-400 hover:text-yellow-500 dark:hover:text-yellow-400'"
+                                    <svg class="w-8 h-8 cursor-pointer transition-transform duration-200"
+                                        :class="selectedRating >= {{ $i }} ? 'text-yellow-400' : 'text-gray-300 hover:text-yellow-400'"
                                         fill="currentColor" viewBox="0 0 20 20"
                                         @click="selectedRating = {{ $i }}">
                                         <path
@@ -41,23 +42,23 @@
                     </div>
 
                     <!-- Review Text -->
-                    <div class="space-y-2">
-                        <label for="review" class="block text-sm font-medium text-gray-900 dark:text-white">Review</label>
+                    <div>
+                        <label for="review" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Review</label>
                         <textarea name="review" id="review" rows="4"
-                            class="block w-full text-sm border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                            class="block w-full text-sm border border-gray-300 dark:border-gray-600 rounded-xl p-4 dark:bg-gray-700 dark:text-white focus:ring-blue-500 focus:border-blue-500 resize-none"
                             placeholder="Write your review here..." required>{{ old('review', $review->review) }}</textarea>
                     </div>
                 </div>
 
                 <!-- Tombol Submit -->
-                <div class="flex flex-col gap-2">
+                <div class="grid gap-3 sm:grid-cols-2 mt-6">
                     <button type="submit"
-                        class="mt-4 w-full px-5 py-2.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-800">
-                        Update Review
+                        class="w-full px-5 py-3 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 rounded-xl shadow-md hover:shadow-lg transition">
+                        💾 Update Review
                     </button>
                     <a href="{{ route('products') }}"
-                        class="w-full text-center rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700">
-                        Return to Shopping
+                        class="w-full text-center px-5 py-3 text-sm font-semibold border border-gray-300 bg-white hover:bg-gray-50 text-gray-800 rounded-xl dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
+                        🛍️ Return to Shopping
                     </a>
                 </div>
             </div>

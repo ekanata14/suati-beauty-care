@@ -26,6 +26,7 @@ class DashboardController extends Controller
             'title' => 'Home',
             'products' => Produk::all(),
             'homeContents' => HomeContent::all(),
+            'logo' => HomeContent::get('logo')->first(),
         ];
 
         return view('welcome', $viewData);

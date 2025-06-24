@@ -1,108 +1,93 @@
 @extends('layouts.client')
 
 @section('content')
-    <section class="py-8 antialiased dark:bg-gray-900 md:py-16 h-screen">
-        <form action="{{ route('upload.payment.store') }}" method="POST"
-            class="mx-auto max-w-screen-xl px-4 2xl:px-0 flex flex-col md:flex-row gap-4" enctype="multipart/form-data">
-            @csrf
-            <div class="bg-white h-full w-full md:w-3/4 p-6">
-                <h2 class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">Order summary</h2>
-                <div class="mt-6 sm:mt-8">
-                    <div class="relative overflow-x-auto border-b border-gray-200 dark:border-gray-800">
-                        @php
-                            $totalPrice = 0;
-                            $totalItem = 0;
-                        @endphp
-                        <table class="w-full text-left font-medium text-gray-900 dark:text-white md:table-fixed">
-                            <thead>
-                                <th>Name</th>
-                                <th>Qty</th>
-                                <th>Price</th>
-                                <th>Total Price</th>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200 dark:divide-gray-800">
-                                @forelse ($transaction->order->detailOrder as $item)
-                                    <tr>
-                                        <td class="whitespace-nowrap py-4 md:w-[384px]">
-                                            <div class="flex items-center gap-4">
-                                                <a href="#"
-                                                    class="flex items-center aspect-square w-10 h-10 shrink-0">
-                                                    <img class="h-auto w-full max-h-full dark:hidden"
-                                                        src="{{ asset('storage/' . $item->produk->foto_produk) }}"
-                                                        alt="imac " />
-                                                </a>
-                                                <a href="#" class="hover:underline">{{ $item->produk->nama }}</a>
-                                            </div>
-                                        </td>
-                                        <td class="p-4 text-base font-normal text-gray-900 dark:text-white">
-                                            {{ $item->qty }}x</td>
-                                        @php
-                                            $totalItem += $item->qty;
-                                        @endphp
-                                        <td class="p-4 text-start text-base font-bold text-gray-900 dark:text-white">
-                                            IDR {{ number_format($item->harga, 0, ',', '.') }}
-                                        </td>
-                                        <td class="p-4 text-start text-base font-bold text-gray-900 dark:text-white">
-                                            @php
-                                                $totalPrice += $item->harga * $item->qty;
-                                            @endphp
-                                            IDR {{ number_format($item->harga * $item->qty, 0, ',', '.') }}
-                                        </td>
-                                    </tr>
-                                @empty
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
+<section class="py-12 bg-gradient-to-b from-white to-blue-100 min-h-screen">
+    <form action="{{ route('upload.payment.store') }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="md:col-span-3 bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Order Summary</h2>
+
+                <div class="overflow-x-auto">
+                    @php $totalPrice = 0; $totalItem = 0; @endphp
+                    <table class="w-full text-sm text-left text-gray-900 dark:text-white">
+                        <thead class="text-xs uppercase text-gray-700 dark:text-gray-300 border-b dark:border-gray-700">
+                            <tr>
+                                <th scope="col" class="py-3 px-4">Name</th>
+                                <th scope="col" class="py-3 px-4">Qty</th>
+                                <th scope="col" class="py-3 px-4">Price</th>
+                                <th scope="col" class="py-3 px-4">Total Price</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                            @forelse ($transaction->order->detailOrder as $item)
+                                <tr>
+                                    <td class="py-4 px-4 flex items-center gap-4">
+                                        <img src="{{ asset('storage/' . $item->produk->foto_produk) }}" alt="{{ $item->produk->nama }}" class="w-10 h-10 rounded object-cover">
+                                        <span>{{ $item->produk->nama }}</span>
+                                    </td>
+                                    <td class="py-4 px-4">{{ $item->qty }}x</td>
+                                    @php $totalItem += $item->qty; @endphp
+                                    <td class="py-4 px-4 font-semibold">IDR {{ number_format($item->harga, 0, ',', '.') }}</td>
+                                    <td class="py-4 px-4 font-semibold">
+                                        @php $totalPrice += $item->harga * $item->qty; @endphp
+                                        IDR {{ number_format($item->harga * $item->qty, 0, ',', '.') }}
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr><td colspan="4" class="py-4 px-4 text-center text-gray-500">No items</td></tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
             </div>
-            <div class="w-full md:w-1/4 space-y-6 bg-white p-6">
-                <h4 class="text-xl font-semibold text-gray-900 dark:text-white">Order summary</h4>
-                <div class="space-y-4">
-                    <div class="space-y-2">
-                        <dl class="flex items-center justify-between gap-4">
-                            <dt class="text-gray-500 dark:text-gray-400">Total Price</dt>
-                            <dd class="text-base font-medium text-gray-900 dark:text-white">IDR {{ number_format($totalPrice, 0, ',', '.') }}</dd>
-                        </dl>
-                    </div>
-                    <div class="space-y-2">
-                        <dl class="flex items-center justify-between gap-4">
-                            <dt class="text-gray-500 dark:text-gray-400">Total Item</dt>
-                            <dd class="text-base font-medium text-gray-900 dark:text-white">{{ $totalItem }}</dd>
-                        </dl>
-                    </div>
 
-                    <dl class="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 dark:border-gray-700">
-                        <dt class="text-lg font-bold text-gray-900 dark:text-white">Total</dt>
-                        <dd class="text-lg font-bold text-gray-900 dark:text-white">IDR {{ number_format($totalPrice, 0, ',', '.') }}</dd>
-                    </dl>
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow space-y-6">
+                <h4 class="text-xl font-semibold text-gray-900 dark:text-white">Summary</h4>
+                <div class="space-y-2">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600 dark:text-gray-300">Total Price</span>
+                        <span class="font-medium text-gray-900 dark:text-white">IDR {{ number_format($totalPrice, 0, ',', '.') }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600 dark:text-gray-300">Total Item</span>
+                        <span class="font-medium text-gray-900 dark:text-white">{{ $totalItem }}</span>
+                    </div>
+                </div>
+                <div class="border-t pt-4 dark:border-gray-700">
+                    <div class="flex justify-between">
+                        <span class="text-lg font-bold text-gray-900 dark:text-white">Total</span>
+                        <span class="text-lg font-bold text-gray-900 dark:text-white">IDR {{ number_format($totalPrice, 0, ',', '.') }}</span>
+                    </div>
                 </div>
 
-                <div class="flex flex-col gap-2">
-                    @if ($transaction->status_pembayaran == 'pending')
-                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="file_input">Upload
-                            file</label>
-                        <input
-                            class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-                            id="file_input" type="file" name="bukti_pembayaran" accept="image/*" required />
-                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">PNG, JPG, JPEG (MAX.
-                            2MB)
-                        </p>
+                @if ($transaction->status_pembayaran == 'pending')
+                    <div>
+                        <label for="file_input" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Upload file</label>
+                        <input type="file" name="bukti_pembayaran" accept="image/*" required
+                            class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400">
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-300">PNG, JPG, JPEG (MAX. 2MB)</p>
+
                         <input type="hidden" name="id" value="{{ $transaction->id }}">
                         <input type="hidden" name="total_qty_item" value="{{ $transaction->total_qty_item }}">
                         <input type="hidden" name="total_bayar" value="{{ $transaction->total_bayar }}">
-                        <button type="submit" class="mt-4 btn-primary w-full">Upload Payment</button>
-                    @elseif($transaction->status_pembayaran == 'waiting')
-                        <div class="mt-4 btn-yellow w-full text-center">Waiting for confirmation</div>
-                    @elseif($transaction->status_pembayaran == 'denied')
-                        <div class="mt-4 btn-red w-full text-center">Denied</div>
-                    @elseif($transaction->status_pembayaran == 'paid')
-                        <div class="mt-4 btn-green w-full text-center">Payment confirmed</div>
-                    @endif
-                    <a href="{{ route('history') }}"
-                        class="w-full text-center rounded-lg  border border-gray-200 bg-white px-5  py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700">Back</a>
-                </div>
+
+                        <button type="submit" class="w-full mt-4 btn-primary">Upload Payment</button>
+                    </div>
+                @elseif ($transaction->status_pembayaran == 'waiting')
+                    <div class="mt-4 btn-yellow w-full text-center">Waiting for confirmation</div>
+                @elseif ($transaction->status_pembayaran == 'denied')
+                    <div class="mt-4 btn-red w-full text-center">Denied</div>
+                @elseif ($transaction->status_pembayaran == 'paid')
+                    <div class="mt-4 btn-green w-full text-center">Payment confirmed</div>
+                @endif
+
+                <a href="{{ route('history') }}"
+                    class="block text-center w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                    Back
+                </a>
             </div>
-        </form>
-    </section>
+        </div>
+    </form>
+</section>
 @endsection

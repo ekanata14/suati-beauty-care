@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 // Models
 use App\Models\User;
 use App\Models\Konsumen;
+use App\Models\HomeContent;
 
 class RegisteredUserController extends Controller
 {
@@ -25,7 +26,11 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        return view('auth.register');
+        $viewData = [
+            'title' => 'Register',
+            'logo' => HomeContent::get('logo')->first(),
+        ];
+        return view('auth.register', $viewData);
     }
 
     /**
