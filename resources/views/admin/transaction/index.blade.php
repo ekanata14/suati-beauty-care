@@ -58,13 +58,18 @@
                                                 View Proof
                                             </a>
                                         </td>
-                                        <td class="px-6 py-4">
-                                            <span
-                                                class="px-2 py-1 rounded text-sm 
-                @if ($item->status_pembayaran === 'pending') status-pending 
-                @elseif ($item->status_pembayaran === 'waiting') status-waiting 
-                @elseif ($item->status_pembayaran === 'denied') status-denied 
-                @elseif ($item->status_pembayaran === 'paid') status-paid @endif">
+                                        <td class="px-4 py-2">
+                                            @php
+                                                $status = strtolower($item->status_pembayaran);
+                                                $badgeClasses = [
+                                                    'pending' => 'bg-yellow-100 text-yellow-800',
+                                                    'waiting' => 'bg-blue-100 text-blue-800',
+                                                    'paid' => 'bg-green-100 text-green-800',
+                                                    'denied' => 'bg-red-100 text-red-800',
+                                                ];
+                                                $class = $badgeClasses[$status] ?? 'bg-gray-100 text-gray-800';
+                                            @endphp
+                                            <span class="px-2 py-1 rounded text-xs font-semibold {{ $class }}">
                                                 {{ ucfirst($item->status_pembayaran) }}
                                             </span>
                                         </td>
@@ -127,8 +132,12 @@
                                                         Payment Denied
                                                     </div>
                                                 @elseif($item->status_pembayaran == 'paid')
-                                                    <div class="px-4 py-2 bg-green-500 text-white rounded w-fit">
-                                                        Payment Confirmed
+                                                    <div class="flex gap-2">
+                                                        <div class="px-4 py-2 bg-green-500 text-white rounded w-fit flex items-center">
+                                                            Payment Confirmed
+                                                        </div>
+                                                        <a href="{{ route('admin.transaction.detail', $item->id) }}"
+                                                            class="btn-primary">Detail</a>
                                                     </div>
                                                 @endif
                                             @endif

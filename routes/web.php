@@ -27,7 +27,7 @@ Route::get('/products/search', [ClientDashboardController::class, 'searchProduct
 //     return view('dashboard');
 // })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::group(['middleware' => ['auth', 'verified']], function () {
+Route::middleware(['auth', 'verified', 'role:pelanggan'])->group(function () {
     Route::get('/wishlist', [ClientDashboardController::class, 'wishlists'])->name('wishlists');
     Route::post('/wishlist/add', [ClientDashboardController::class, 'addWishlists'])->name('addToWishlist');
     Route::delete('/wishlist/remove', [ClientDashboardController::class, 'removeWishlists'])->name('removeFromWishlist');
@@ -49,7 +49,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::post('/user-update-profile', [ClientDashboardController::class, 'updateProfile'])->name('user.update.profile');
 });
 
-Route::group(['middleware' => ['auth', 'verified']], function () {
+Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
     Route::post('/admin/update-profile', [AdminDashboardController::class, 'updateProfile'])->name('admin.update.profile');
 

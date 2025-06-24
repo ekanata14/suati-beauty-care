@@ -75,7 +75,21 @@
                                                     {{ $data->total_bayar ? 'Rp ' . number_format($data->total_bayar, 0, ',', '.') : '-' }}
                                                 </td>
                                                 <td class="px-4 py-2">{{ $data->created_at->format('d M Y') }}</td>
-                                                <td class="px-4 py-2">{{ ucfirst($data->status) }}</td>
+                                                <td class="px-4 py-2">
+                                                    @php
+                                                        $status = strtolower($data->status_pembayaran);
+                                                        $badgeClasses = [
+                                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                                            'waiting' => 'bg-blue-100 text-blue-800',
+                                                            'paid' => 'bg-green-100 text-green-800',
+                                                            'denied' => 'bg-red-100 text-red-800',
+                                                        ];
+                                                        $class = $badgeClasses[$status] ?? 'bg-gray-100 text-gray-800';
+                                                    @endphp
+                                                    <span class="px-2 py-1 rounded text-xs font-semibold {{ $class }}">
+                                                        {{ ucfirst($data->status_pembayaran) }}
+                                                    </span>
+                                                </td>
                                                 <td class="px-4 py-2">
                                                     <a href="{{ route('admin.transaction.detail', $data->id) }}"
                                                         class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition text-xs">
