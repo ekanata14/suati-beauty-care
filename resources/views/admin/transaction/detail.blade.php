@@ -60,9 +60,9 @@
                 <div class="space-y-4">
                     <div class="space-y-2">
                         <dl class="flex items-center justify-between gap-4">
-                            <dt class="text-gray-500 dark:text-gray-400">Total Price</dt>
+                            <dt class="text-gray-500 dark:text-gray-400">Price</dt>
                             <dd class="text-base font-medium text-gray-900 dark:text-white">IDR
-                                {{ number_format($totalPrice, 0, ',', '.') }}</dd>
+                                {{ number_format($item->harga, 0, ',', '.') }}</dd>
                         </dl>
                     </div>
                     <div class="space-y-2">
