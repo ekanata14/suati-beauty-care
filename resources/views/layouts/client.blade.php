@@ -30,8 +30,8 @@
         </header> --}}
 
         <!-- Page Content -->
-        <main class="mx-auto px-0 mt-10">
-            @include('layouts.partials.client-navbar-landing-page')
+        <main class="mx-auto px-0 mt-20">
+            @include('layouts.partials.client-navbar')
             @yield('content')
         </main>
 

@@ -26,7 +26,30 @@
                         <span>Total</span>
                         <span>IDR {{ number_format($transaction->total_bayar, 0, ',', '.') }}</span>
                     </div>
-
+                    <div class="mt-4">
+                        <span>
+                            Account Number:
+                            <span id="account-number" class="font-mono select-all">1234567890</span>
+                            <button type="button" onclick="copyAccountNumber()"
+                                class="ml-2 px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none">
+                                Copy
+                            </button>
+                        </span>
+                        <script>
+                            function copyAccountNumber() {
+                                const accNum = document.getElementById('account-number').textContent;
+                                navigator.clipboard.writeText(accNum).then(function() {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Copied!',
+                                        text: 'Account number copied to clipboard.',
+                                        timer: 1200,
+                                        showConfirmButton: false
+                                    });
+                                });
+                            }
+                        </script>
+                    </div>
                     <div>
                         <label for="file_input" class="block text-sm font-medium text-gray-900 dark:text-white mb-2">Upload
                             File</label>
