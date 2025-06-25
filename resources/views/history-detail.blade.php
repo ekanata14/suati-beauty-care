@@ -81,9 +81,9 @@
                     </div>
                     <div class="space-y-2">
                         <div class="flex justify-between">
-                            <span class="text-gray-600 dark:text-gray-300">Total Price</span>
+                            <span class="text-gray-600 dark:text-gray-300">Price</span>
                             <span class="font-medium text-gray-900 dark:text-white">IDR
-                                {{ number_format($totalPrice, 0, ',', '.') }}</span>
+                                {{ number_format($item->harga, 0, ',', '.') }}</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-gray-600 dark:text-gray-300">Total Item</span>
@@ -99,7 +99,7 @@
                     </div>
                     <div class="mt-6 p-4 bg-blue-50 dark:bg-blue-900 rounded-lg flex items-center justify-between">
                         <div>
-                            <span class="block text-gray-700 dark:text-gray-200 text-sm mb-1">Account Number</span>
+                            <span class="block text-gray-700 dark:text-gray-200 text-sm mb-1">Nomor Rekening</span>
                             <span id="account-number" class="text-lg font-mono font-semibold text-blue-700 dark:text-blue-200 select-all">1234567890</span>
                         </div>
                         <button type="button" onclick="copyAccountNumber()"
@@ -117,7 +117,7 @@
                                 Swal.fire({
                                     icon: 'success',
                                     title: 'Copied!',
-                                    text: 'Account number copied to clipboard.',
+                                    text: 'Nomor rekening berhasil disalin.',
                                     timer: 1200,
                                     showConfirmButton: false
                                 });

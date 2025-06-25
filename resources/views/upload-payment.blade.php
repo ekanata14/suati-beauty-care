@@ -28,7 +28,7 @@
                     </div>
                     <div class="mt-4">
                         <span>
-                            Account Number:
+                            Nomor Rekening:
                             <span id="account-number" class="font-mono select-all">1234567890</span>
                             <button type="button" onclick="copyAccountNumber()"
                                 class="ml-2 px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none">
@@ -41,8 +41,8 @@
                                 navigator.clipboard.writeText(accNum).then(function() {
                                     Swal.fire({
                                         icon: 'success',
-                                        title: 'Copied!',
-                                        text: 'Account number copied to clipboard.',
+                                        title: 'Disalin!',
+                                        text: 'Nomor rekening berhasil disalin.',
                                         timer: 1200,
                                         showConfirmButton: false
                                     });

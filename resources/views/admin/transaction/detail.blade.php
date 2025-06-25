@@ -1,7 +1,7 @@
-@extends('layouts.client')
+@extends('layouts.admin')
 
 @section('content')
-    <section class="py-12 bg-gradient-to-b from-white to-blue-100 min-h-screen">
+    <section class="py-12 min-h-screen">
         <form action="{{ route('upload.payment.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -97,20 +97,6 @@
                                 {{ number_format($totalPrice, 0, ',', '.') }}</span>
                         </div>
                     </div>
-                    <script>
-                        function copyAccountNumber() {
-                            const accNum = document.getElementById('account-number').textContent;
-                            navigator.clipboard.writeText(accNum).then(function() {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Copied!',
-                                    text: 'Account number copied to clipboard.',
-                                    timer: 1200,
-                                    showConfirmButton: false
-                                });
-                            });
-                        }
-                    </script>
                     @if ($transaction->status_pembayaran == 'pending')
                         <div>
                             <label for="file_input"
