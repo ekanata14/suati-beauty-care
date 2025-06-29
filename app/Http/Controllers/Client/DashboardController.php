@@ -341,7 +341,7 @@ class DashboardController extends Controller
         try {
             DB::beginTransaction();
 
-            $cart = Cart::where('id_user', auth()->user()->id)->where('id_produk', $id)->first();
+            $cart = Cart::where('id', $id)->first();
             if ($cart != null) {
                 $cart->delete();
             }
