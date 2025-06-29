@@ -81,11 +81,6 @@
                     </div>
                     <div class="space-y-2">
                         <div class="flex justify-between">
-                            <span class="text-gray-600 dark:text-gray-300">Total Price</span>
-                            <span class="font-medium text-gray-900 dark:text-white">IDR
-                                {{ number_format($totalPrice, 0, ',', '.') }}</span>
-                        </div>
-                        <div class="flex justify-between">
                             <span class="text-gray-600 dark:text-gray-300">Total Item</span>
                             <span class="font-medium text-gray-900 dark:text-white">{{ $totalItem }}</span>
                         </div>
@@ -116,7 +111,7 @@
                     @elseif ($transaction->status_pembayaran == 'paid')
                         <div class="mt-4 btn-green w-full text-center">Payment confirmed</div>
                     @endif
-                    <a href="{{ route('history') }}"
+                    <a href="{{ route('admin.transaction.index') }}"
                         class="block text-center w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                         Back
                     </a>

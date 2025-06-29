@@ -9,13 +9,16 @@
                     <div class="mb-6">
                         <h2 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                             Order Summary
-                            <span class="ml-2 px-3 py-1 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200 text-sm font-mono tracking-wide">
+                            <span
+                                class="ml-2 px-3 py-1 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200 text-sm font-mono tracking-wide">
                                 #{{ $transaction->invoice_id }}
                             </span>
                         </h2>
                         <div class="flex items-center gap-2 mt-2 text-gray-600 dark:text-gray-300 text-sm">
-                            <svg class="w-4 h-4 text-blue-500 dark:text-blue-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            <svg class="w-4 h-4 text-blue-500 dark:text-blue-300" fill="none" stroke="currentColor"
+                                stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
                             <span>Date: {{ $transaction->created_at->format('d M Y, H:i') }}</span>
                         </div>
@@ -75,16 +78,12 @@
                                 'paid' => 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
                             ];
                         @endphp
-                        <span class="px-3 py-1 rounded-full text-sm font-semibold {{ $statusClasses[$status] ?? 'bg-gray-200 text-gray-800' }}">
+                        <span
+                            class="px-3 py-1 rounded-full text-sm font-semibold {{ $statusClasses[$status] ?? 'bg-gray-200 text-gray-800' }}">
                             {{ ucfirst($status) }}
                         </span>
                     </div>
                     <div class="space-y-2">
-                        <div class="flex justify-between">
-                            <span class="text-gray-600 dark:text-gray-300">Price</span>
-                            <span class="font-medium text-gray-900 dark:text-white">IDR
-                                {{ number_format($item->harga, 0, ',', '.') }}</span>
-                        </div>
                         <div class="flex justify-between">
                             <span class="text-gray-600 dark:text-gray-300">Total Item</span>
                             <span class="font-medium text-gray-900 dark:text-white">{{ $totalItem }}</span>
@@ -97,19 +96,24 @@
                                 {{ number_format($totalPrice, 0, ',', '.') }}</span>
                         </div>
                     </div>
-                    <div class="mt-6 p-4 bg-blue-50 dark:bg-blue-900 rounded-lg flex items-center justify-between">
-                        <div>
-                            <span class="block text-gray-700 dark:text-gray-200 text-sm mb-1">Nomor Rekening</span>
-                            <span id="account-number" class="text-lg font-mono font-semibold text-blue-700 dark:text-blue-200 select-all">1234567890</span>
+                    @if ($transaction->status_pembayaran == 'pending')
+                        <div class="mt-6 p-4 bg-blue-50 dark:bg-blue-900 rounded-lg flex items-center justify-between">
+                            <div>
+                                <span class="block text-gray-700 dark:text-gray-200 text-sm mb-1">Nomor Rekening</span>
+                                <span id="account-number"
+                                    class="text-lg font-mono font-semibold text-blue-700 dark:text-blue-200 select-all">1234567890</span>
+                            </div>
+                            <button type="button" onclick="copyAccountNumber()"
+                                class="ml-4 px-4 py-2 text-sm bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="inline w-4 h-4 mr-1" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M8 16h8M8 12h8m-7 8h6a2 2 0 002-2V6a2 2 0 00-2-2H7a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                Copy
+                            </button>
                         </div>
-                        <button type="button" onclick="copyAccountNumber()"
-                            class="ml-4 px-4 py-2 text-sm bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="inline w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16h8M8 12h8m-7 8h6a2 2 0 002-2V6a2 2 0 00-2-2H7a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                            Copy
-                        </button>
-                    </div>
+                    @endif
                     <script>
                         function copyAccountNumber() {
                             const accNum = document.getElementById('account-number').textContent;

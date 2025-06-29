@@ -26,7 +26,6 @@ class DashboardController extends Controller
             'title' => 'Home',
             'products' => Produk::all(),
             'homeContents' => HomeContent::all(),
-            'logo' => HomeContent::get('logo')->first(),
         ];
 
         return view('welcome', $viewData);
@@ -473,6 +472,7 @@ class DashboardController extends Controller
                 'total_bayar' => 'required|integer|min:1',
                 'selected_products' => 'required|string', // JSON string dari JS
             ]);
+
 
             $selectedProducts = json_decode($request->selected_products, true);
 
