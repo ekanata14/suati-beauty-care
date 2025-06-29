@@ -512,7 +512,7 @@ class DashboardController extends Controller
                     DetailOrder::create([
                         'id_order' => $order->id,
                         'id_produk' => $item['id'],
-                        'harga' => $item['harga'],
+                        'harga' => $product->harga,
                         'qty' => $item['qty'],
                     ]);
                 } else {

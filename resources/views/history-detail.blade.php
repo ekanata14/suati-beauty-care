@@ -85,6 +85,13 @@
                     </div>
                     <div class="space-y-2">
                         <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-300">Total Price</span>
+                            <span class="font-medium text-gray-900 dark:text-white"> IDR
+                                {{ number_format($totalPrice, 0, ',', '.') }}</span>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
                             <span class="text-gray-600 dark:text-gray-300">Total Item</span>
                             <span class="font-medium text-gray-900 dark:text-white">{{ $totalItem }}</span>
                         </div>
