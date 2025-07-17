@@ -28,6 +28,7 @@
             <button type="submit" class="btn-primary w-full">
                 Login
             </button>
+            <a href="{{ route('home') }}" class="btn-green w-full flex items-center justify-center">Kembali</a>
             <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
                 href="{{ route('register') }}">
                 {{ __('Doesn\'t have an account? Register') }}

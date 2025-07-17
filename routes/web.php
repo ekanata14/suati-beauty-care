@@ -20,8 +20,8 @@ Route::get('/', [ClientDashboardController::class, 'index'])->name('home');
 Route::get('/about', [ClientDashboardController::class, 'about'])->name('about');
 Route::get('/products', [ClientDashboardController::class, 'products'])->name('products');
 Route::get('/products/category/{id}', [ClientDashboardController::class, 'productsCategory'])->name('products.category');
-Route::get('/products/{id}', [ClientDashboardController::class, 'productDetail'])->name('products.detail');
 Route::get('/products/search', [ClientDashboardController::class, 'searchProducts'])->name('products.search');
+Route::get('/products/{id}', [ClientDashboardController::class, 'productDetail'])->name('products.detail');
 
 // Route::get('/dashboard', function () {
 //     return view('dashboard');

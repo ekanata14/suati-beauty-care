@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 
 // Models
 use App\Models\Produk;
+use App\Models\ProdukSize;
 use App\Models\Kategori;
 
 class ProductController extends Controller
@@ -45,12 +46,15 @@ class ProductController extends Controller
     {
         $validatedData = $request->validate([
             'nama' => 'required|string|max:255',
-            'harga' => 'required|numeric',
-            'stok' => 'required|integer',
+            'harga' => 'required|integer',
             'id_kategori' => 'required',
             'deskripsi' => 'required|string',
             'foto_produk' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'sizes' => 'required|array',
+            'sizes.*.size' => 'required|string|max:50',
+            'sizes.*.stock' => 'required|integer|min:0',
         ]);
+
 
         DB::beginTransaction();
         try {
@@ -60,7 +64,25 @@ class ProductController extends Controller
                 $validatedData['foto_produk'] = $path;
             }
 
-            Produk::create($validatedData);
+            // Remove sizes from validatedData before creating Produk
+            $sizes = $validatedData['sizes'];
+            unset($validatedData['sizes']);
+
+            // Sum stock from all sizes
+            $totalStock = array_sum(array_column($sizes, 'stock'));
+            $validatedData['stok'] = $totalStock;
+
+            // Create Produk
+            $produk = Produk::create($validatedData);
+
+            // Insert sizes into produkSize table
+            foreach ($sizes as $sizeData) {
+                ProdukSize::create([
+                    'id_produk' => $produk->id,
+                    'size' => $sizeData['size'],
+                    'stock' => $sizeData['stock'],
+                ]);
+            }
 
             DB::commit();
 
@@ -112,15 +134,15 @@ class ProductController extends Controller
             $produk = Produk::findOrFail($request->id);
 
             if ($request->hasFile('foto_produk')) {
-            // Delete the old photo if it exists
-            if ($produk->foto_produk && Storage::disk('public')->exists($produk->foto_produk)) {
-                Storage::disk('public')->delete($produk->foto_produk);
-            }
+                // Delete the old photo if it exists
+                if ($produk->foto_produk && Storage::disk('public')->exists($produk->foto_produk)) {
+                    Storage::disk('public')->delete($produk->foto_produk);
+                }
 
-            // Store the new photo
-            $file = $request->file('foto_produk');
-            $path = $file->store('produk_images', 'public');
-            $validatedData['foto_produk'] = $path;
+                // Store the new photo
+                $file = $request->file('foto_produk');
+                $path = $file->store('produk_images', 'public');
+                $validatedData['foto_produk'] = $path;
             }
 
             $produk->update($validatedData);
