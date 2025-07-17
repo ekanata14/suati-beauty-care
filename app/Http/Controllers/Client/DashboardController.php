@@ -249,9 +249,10 @@ class DashboardController extends Controller
         if (!$request->nama) {
             return redirect()->route('products');
         } else {
-            $products = Produk::where(function ($query) use ($request) {
-                $query->where('nama', 'like', '%' . $request->nama . '%');
-            })->orderBy('created_at', 'desc')->paginate(10);
+            $searchTerm = strtolower($request->nama);
+            $products = Produk::whereRaw('LOWER(nama) LIKE ?', ['%' . $searchTerm . '%'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
         }
         $viewData = [
             'title' => 'Products',
