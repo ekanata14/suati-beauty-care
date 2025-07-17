@@ -7,7 +7,7 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('home') }}">
-                        <img src="{{ asset('logo.jpeg') }}" alt="logo" class="w-14">
+                        <img src="{{ asset($logo->logo) }}" alt="logo" class="h-12">
                     </a>
                 </div>
             </div>
@@ -20,7 +20,7 @@
                 </li>
                 <li><a href="{{ route('products') }}"
                         class="{{ request()->routeIs('products*') ? 'active' : '' }}">Products</a></li>
-                @if (Auth::user())
+                @if (Auth::user() && Auth::user()->role != 'admin')
                     <li><a href="{{ route('cart') }}"
                             class="{{ request()->routeIs('cart*') ? 'active' : '' }}">Carts</a></li>
                     <li><a href="{{ route('history') }}"
@@ -148,31 +148,41 @@
             </div>
         </div>
         <!-- Bottom Navbar (Mobile Only) -->
-        <div class="fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 sm:hidden">
+        <div
+            class="fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 sm:hidden">
             <ul class="flex justify-around items-center h-16">
                 <li>
                     <a href="{{ route('home') }}"
-                       class="flex flex-col items-center {{ request()->routeIs('home') ? 'text-blue-600 dark:text-blue-400 font-semibold' : 'text-gray-500 dark:text-gray-400' }}">
-                        <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M3 12l2-2m0 0l7-7 7 7m-9 2v6m0 0h4m-4 0a2 2 0 01-2-2v-4a2 2 0 012-2h4a2 2 0 012 2v4a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round"/>
+                        class="flex flex-col items-center {{ request()->routeIs('home') ? 'text-blue-600 dark:text-blue-400 font-semibold' : 'text-gray-500 dark:text-gray-400' }}">
+                        <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path
+                                d="M3 12l2-2m0 0l7-7 7 7m-9 2v6m0 0h4m-4 0a2 2 0 01-2-2v-4a2 2 0 012-2h4a2 2 0 012 2v4a2 2 0 01-2 2z"
+                                stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                         <span class="text-xs">Home</span>
                     </a>
                 </li>
                 <li>
                     <a href="{{ route('about') }}"
-                       class="flex flex-col items-center {{ request()->routeIs('about') ? 'text-blue-600 dark:text-blue-400 font-semibold' : 'text-gray-500 dark:text-gray-400' }}">
-                        <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M13 16h-1v-4h-1m1-4h.01M12 20c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8z" stroke-linecap="round" stroke-linejoin="round"/>
+                        class="flex flex-col items-center {{ request()->routeIs('about') ? 'text-blue-600 dark:text-blue-400 font-semibold' : 'text-gray-500 dark:text-gray-400' }}">
+                        <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path
+                                d="M13 16h-1v-4h-1m1-4h.01M12 20c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8z"
+                                stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                         <span class="text-xs">About</span>
                     </a>
                 </li>
                 <li>
                     <a href="{{ route('products') }}"
-                       class="flex flex-col items-center {{ request()->routeIs('products*') ? 'text-blue-600 dark:text-blue-400 font-semibold' : 'text-gray-500 dark:text-gray-400' }}">
-                        <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M3 3h18v2H3V3zm0 4h18v13a2 2 0 01-2 2H5a2 2 0 01-2-2V7zm5 6h2v5H8v-5zm4 0h2v5h-2v-5z" stroke-linecap="round" stroke-linejoin="round"/>
+                        class="flex flex-col items-center {{ request()->routeIs('products*') ? 'text-blue-600 dark:text-blue-400 font-semibold' : 'text-gray-500 dark:text-gray-400' }}">
+                        <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path
+                                d="M3 3h18v2H3V3zm0 4h18v13a2 2 0 01-2 2H5a2 2 0 01-2-2V7zm5 6h2v5H8v-5zm4 0h2v5h-2v-5z"
+                                stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                         <span class="text-xs">Products</span>
                     </a>
@@ -180,9 +190,12 @@
                 @if (Auth::user())
                     <li>
                         <button id="quickAccessBtn"
-                            class="flex flex-col items-center focus:outline-none {{ (request()->routeIs('cart*') || request()->routeIs('history*')) ? 'text-blue-600 dark:text-blue-400 font-semibold' : 'text-gray-500 dark:text-gray-400' }}">
-                            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.35 2.7A1 1 0 007 17h10a1 1 0 00.95-.68L19 13M7 13V6a1 1 0 011-1h5a1 1 0 011 1v7" stroke-linecap="round" stroke-linejoin="round"/>
+                            class="flex flex-col items-center focus:outline-none {{ request()->routeIs('cart*') || request()->routeIs('history*') ? 'text-blue-600 dark:text-blue-400 font-semibold' : 'text-gray-500 dark:text-gray-400' }}">
+                            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <path
+                                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.35 2.7A1 1 0 007 17h10a1 1 0 00.95-.68L19 13M7 13V6a1 1 0 011-1h5a1 1 0 011 1v7"
+                                    stroke-linecap="round" stroke-linejoin="round" />
                             </svg>
                             <span class="text-xs">Carts & History</span>
                         </button>
@@ -190,18 +203,25 @@
                         <div id="quickAccessModal" style="display: none;"
                             class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
                             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-80 p-6 relative">
-                                <button id="closeQuickAccessModal" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
-                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                                <button id="closeQuickAccessModal"
+                                    class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
+                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M6 18L18 6M6 6l12 12" />
                                     </svg>
                                 </button>
-                                <h3 class="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200">Quick Access</h3>
+                                <h3 class="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200">Quick Access
+                                </h3>
                                 <ul class="space-y-4">
                                     <li>
                                         <a href="{{ route('cart') }}"
                                             class="flex items-center gap-2 {{ request()->routeIs('cart*') ? 'text-blue-600 dark:text-blue-400 font-semibold' : 'text-gray-700 dark:text-gray-300' }}">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                                <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.35 2.7A1 1 0 007 17h10a1 1 0 00.95-.68L19 13M7 13V6a1 1 0 011-1h5a1 1 0 011 1v7" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                stroke-width="2" viewBox="0 0 24 24">
+                                                <path
+                                                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.35 2.7A1 1 0 007 17h10a1 1 0 00.95-.68L19 13M7 13V6a1 1 0 011-1h5a1 1 0 011 1v7"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
                                             </svg>
                                             <span>Carts</span>
                                         </a>
@@ -209,8 +229,10 @@
                                     <li>
                                         <a href="{{ route('history') }}"
                                             class="flex items-center gap-2 {{ request()->routeIs('history*') ? 'text-blue-600 dark:text-blue-400 font-semibold' : 'text-gray-700 dark:text-gray-300' }}">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                                <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                stroke-width="2" viewBox="0 0 24 24">
+                                                <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
                                             </svg>
                                             <span>History</span>
                                         </a>
@@ -219,21 +241,21 @@
                             </div>
                         </div>
                         <script>
-                            document.addEventListener('DOMContentLoaded', function () {
+                            document.addEventListener('DOMContentLoaded', function() {
                                 const btn = document.getElementById('quickAccessBtn');
                                 const modal = document.getElementById('quickAccessModal');
                                 const closeBtn = document.getElementById('closeQuickAccessModal');
 
-                                btn.addEventListener('click', function (e) {
+                                btn.addEventListener('click', function(e) {
                                     e.stopPropagation();
                                     modal.style.display = 'flex';
                                 });
 
-                                closeBtn.addEventListener('click', function () {
+                                closeBtn.addEventListener('click', function() {
                                     modal.style.display = 'none';
                                 });
 
-                                window.addEventListener('click', function (e) {
+                                window.addEventListener('click', function(e) {
                                     if (e.target === modal) {
                                         modal.style.display = 'none';
                                     }
@@ -243,10 +265,13 @@
                     </li>
                     <li>
                         <a href="{{ route('profile.edit') }}"
-                           class="flex flex-col items-center {{ request()->routeIs('profile.edit') ? 'text-blue-600 dark:text-blue-400 font-semibold' : 'text-gray-500 dark:text-gray-400' }}">
-                            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path d="M5.121 17.804A9 9 0 1112 21a8.963 8.963 0 01-6.879-3.196z" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round"/>
+                            class="flex flex-col items-center {{ request()->routeIs('profile.edit') ? 'text-blue-600 dark:text-blue-400 font-semibold' : 'text-gray-500 dark:text-gray-400' }}">
+                            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <path d="M5.121 17.804A9 9 0 1112 21a8.963 8.963 0 01-6.879-3.196z"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round"
+                                    stroke-linejoin="round" />
                             </svg>
                             <span class="text-xs">Profile</span>
                         </a>

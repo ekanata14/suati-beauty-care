@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreign('id_order')->references('id')->on('orders')->onDelete('cascade');
             $table->integer('qty');
             $table->integer('harga');
+            $table->string('size')->nullable();
             $table->timestamps();
         });
     }

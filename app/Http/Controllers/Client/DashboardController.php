@@ -26,7 +26,6 @@ class DashboardController extends Controller
             'title' => 'Home',
             'products' => Produk::all(),
             'homeContents' => HomeContent::all(),
-            'logo' => HomeContent::get('logo')->first(),
         ];
 
         return view('welcome', $viewData);
@@ -342,7 +341,7 @@ class DashboardController extends Controller
         try {
             DB::beginTransaction();
 
-            $cart = Cart::where('id_user', auth()->user()->id)->where('id_produk', $id)->first();
+            $cart = Cart::where('id', $id)->first();
             if ($cart != null) {
                 $cart->delete();
             }
@@ -474,6 +473,7 @@ class DashboardController extends Controller
                 'selected_products' => 'required|string', // JSON string dari JS
             ]);
 
+
             $selectedProducts = json_decode($request->selected_products, true);
 
             if (empty($selectedProducts)) {
@@ -512,7 +512,7 @@ class DashboardController extends Controller
                     DetailOrder::create([
                         'id_order' => $order->id,
                         'id_produk' => $item['id'],
-                        'harga' => $item['harga'],
+                        'harga' => (int)$product->harga,
                         'qty' => $item['qty'],
                     ]);
                 } else {

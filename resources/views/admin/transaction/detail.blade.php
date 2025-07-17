@@ -10,13 +10,16 @@
                     <div class="mb-6">
                         <h2 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                             Order Summary
-                            <span class="ml-2 px-3 py-1 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200 text-sm font-mono tracking-wide">
+                            <span
+                                class="ml-2 px-3 py-1 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200 text-sm font-mono tracking-wide">
                                 #{{ $transaction->invoice_id }}
                             </span>
                         </h2>
                         <div class="flex items-center gap-2 mt-2 text-gray-600 dark:text-gray-300 text-sm">
-                            <svg class="w-4 h-4 text-blue-500 dark:text-blue-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            <svg class="w-4 h-4 text-blue-500 dark:text-blue-300" fill="none" stroke="currentColor"
+                                stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
                             <span>Date: {{ $transaction->created_at->format('d M Y, H:i') }}</span>
                         </div>
@@ -75,16 +78,19 @@
                                 'paid' => 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
                             ];
                         @endphp
-                        <span class="px-3 py-1 rounded-full text-sm font-semibold {{ $statusClasses[$status] ?? 'bg-gray-200 text-gray-800' }}">
+                        <span
+                            class="px-3 py-1 rounded-full text-sm font-semibold {{ $statusClasses[$status] ?? 'bg-gray-200 text-gray-800' }}">
                             {{ ucfirst($status) }}
                         </span>
                     </div>
                     <div class="space-y-2">
                         <div class="flex justify-between">
                             <span class="text-gray-600 dark:text-gray-300">Total Price</span>
-                            <span class="font-medium text-gray-900 dark:text-white">IDR
+                            <span class="font-medium text-gray-900 dark:text-white"> IDR
                                 {{ number_format($totalPrice, 0, ',', '.') }}</span>
                         </div>
+                    </div>
+                    <div class="space-y-2">
                         <div class="flex justify-between">
                             <span class="text-gray-600 dark:text-gray-300">Total Item</span>
                             <span class="font-medium text-gray-900 dark:text-white">{{ $totalItem }}</span>
@@ -100,7 +106,8 @@
                     @if ($transaction->status_pembayaran == 'pending')
                         <div>
                             <label for="file_input"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Upload Payment Proof</label>
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Upload Payment
+                                Proof</label>
                             <input type="file" name="bukti_pembayaran" accept="image/*" required
                                 class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400">
                             <p class="mt-1 text-sm text-gray-500 dark:text-gray-300">PNG, JPG, JPEG (MAX. 2MB)</p>
@@ -116,7 +123,7 @@
                     @elseif ($transaction->status_pembayaran == 'paid')
                         <div class="mt-4 btn-green w-full text-center">Payment confirmed</div>
                     @endif
-                    <a href="{{ route('history') }}"
+                    <a href="{{ route('admin.transaction.index') }}"
                         class="block text-center w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                         Back
                     </a>

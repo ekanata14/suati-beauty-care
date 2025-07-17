@@ -62,10 +62,10 @@ class HomeContentController extends Controller
             DB::beginTransaction();
 
             $validatedData = $request->validate([
-            'id' => 'required|exists:home_contents,id',
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+                'id' => 'required|exists:home_contents,id',
+                'title' => 'required|string|max:255',
+                'description' => 'required|string',
+                'logo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             ]);
 
             $homeContent = HomeContent::findOrFail($validatedData['id']);
@@ -73,9 +73,9 @@ class HomeContentController extends Controller
             $homeContent->description = $validatedData['description'];
 
             if ($request->hasFile('logo')) {
-            $file = $request->file('logo');
-            $path = $file->store('home_content_images', 'public');
-            $homeContent->gambar = $path;
+                $file = $request->file('logo');
+                $path = 'storage/' . $file->store('home_content_images', 'public');
+                $homeContent->logo = $path;
             }
 
             $homeContent->save();

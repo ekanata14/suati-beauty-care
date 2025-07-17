@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreign('id_order')->references('id')->on('orders')->onDelete('cascade');
             $table->string('invoice_id');
             $table->integer('total_qty_item');
-            $table->decimal('total_bayar');
+            $table->integer('total_bayar');
             $table->string('bukti_pembayaran');
             $table->string('status_pembayaran');
             $table->timestamps();

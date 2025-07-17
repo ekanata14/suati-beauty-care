@@ -94,7 +94,7 @@ class PelangganController extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit(string $id)
-    {  
+    {
         $viewData = [
             'title' => 'Edit Pelanggan',
             'data' => User::findOrFail($id),
@@ -109,7 +109,7 @@ class PelangganController extends Controller
     public function update(Request $request)
     {
         $id = $request->id;
-        
+
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'username' => 'required|string|max:255',
@@ -130,9 +130,9 @@ class PelangganController extends Controller
             $user = User::findOrFail($request->id);
 
             if ($request->filled('password')) {
-            $validatedData['password'] = bcrypt($validatedData['password']);
+                $validatedData['password'] = bcrypt($validatedData['password']);
             } else {
-            unset($validatedData['password']);
+                unset($validatedData['password']);
             }
 
             $user->update($validatedData);
@@ -140,11 +140,11 @@ class PelangganController extends Controller
             $konsumen = Konsumen::where('id_user', $user->id)->firstOrFail();
 
             if ($request->hasFile('foto_profil')) {
-            if ($konsumen->foto_profil) {
-                // Delete the old profile picture
-                Storage::disk('public')->delete($konsumen->foto_profil);
-            }
-            $konsumenData['foto_profil'] = $request->file('foto_profil')->store('foto_profil', 'public');
+                if ($konsumen->foto_profil) {
+                    // Delete the old profile picture
+                    Storage::disk('public')->delete($konsumen->foto_profil);
+                }
+                $konsumenData['foto_profil'] = $request->file('foto_profil')->store('foto_profil', 'public');
             }
 
             $konsumen->update($konsumenData);
