@@ -36,7 +36,7 @@ Route::middleware(['auth', 'verified', 'role:pelanggan'])->group(function () {
     Route::get('/review/edit/{id}', [ClientDashboardController::class, 'reviewEdit'])->name('review.edit');
     Route::put('/review/update', [ClientDashboardController::class, 'reviewUpdate'])->name('review.update');
     Route::post('/order/addToOrder', [ClientDashboardController::class, 'addToOrderAndCheckout'])->name('addToOrder');
-    Route::post('/onsarder/addToCart', [ClientDashboardController::class, 'addToCart'])->name('addToCart');
+    Route::post('/order/addToCart', [ClientDashboardController::class, 'addToCart'])->name('addToCart');
     Route::get('/cart', [ClientDashboardController::class, 'cart'])->name('cart');
     Route::get('/cart/delete/{id}', [ClientDashboardController::class, 'removeFromCart'])->name('cart.delete');
     Route::post('/order/delete-from-cart', [ClientDashboardController::class, 'deleteFromCart'])->name('delete.item');

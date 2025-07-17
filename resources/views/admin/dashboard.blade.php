@@ -58,7 +58,8 @@
                                 <table class="min-w-full text-left text-sm">
                                     <thead>
                                         <tr>
-                                            <th class="px-4 py-2">ID</th>
+                                            <th class="px-4 py-2">No</th>
+                                            <th class="px-4 py-2">Invoice ID</th>
                                             <th class="px-4 py-2">Pelanggan</th>
                                             <th class="px-4 py-2">Total Payment</th>
                                             <th class="px-4 py-2">Tanggal</th>
@@ -69,7 +70,8 @@
                                     <tbody>
                                         @forelse ($item['data'] as $data)
                                             <tr class="border-t">
-                                                <td class="px-4 py-2">{{ $data->id }}</td>
+                                                <td class="px-4 py-2">{{ $loop->iteration }}</td>
+                                                <td class="px-4 py-2">{{ $data->invoice_id ?? '-' }}</td>
                                                 <td class="px-4 py-2">{{ $data->order->user->name ?? '-' }}</td>
                                                 <td class="px-4 py-2">
                                                     {{ $data->total_bayar ? 'Rp ' . number_format($data->total_bayar, 0, ',', '.') : '-' }}

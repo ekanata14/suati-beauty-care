@@ -9,6 +9,7 @@ class ProdukSize extends Model
     protected $fillable = [
         'id_produk',
         'size',
+        'stock',
     ];
 
     public function produk()

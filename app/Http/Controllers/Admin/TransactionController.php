@@ -18,7 +18,7 @@ class TransactionController extends Controller
     {
         $viewData = [
             'title' => 'Transaction Management',
-            'datas' => Transaksi::latest()->paginate(10),
+            'datas' => Transaksi::latest()->get(),
         ];
 
         return view('admin.transaction.index', $viewData);

@@ -17,6 +17,8 @@ use App\Models\Transaksi;
 use App\Models\Cart;
 use App\Models\Wishlist;
 use App\Models\HomeContent;
+use App\Models\CartDetailSize;
+use App\Models\DetailOrderSize;
 
 class DashboardController extends Controller
 {
@@ -281,26 +283,105 @@ class DashboardController extends Controller
 
     public function addToCart(Request $request)
     {
+        $validatedData = $request->validate([
+            'id_produk' => 'required|exists:produks,id',
+            'qty' => 'required|integer|min:1',
+            'sizes' => 'required',
+        ]);
+
+        // Pastikan sizes adalah array
+        $sizes = $request->sizes;
+        if (is_string($sizes)) {
+            $sizes = json_decode($sizes, true);
+        }
+
+        if (!is_array($sizes)) {
+            return back()->with('error', 'Format ukuran tidak valid.');
+        }
+
+        // Validasi setiap item size
+        foreach ($sizes as $sizeData) {
+            if (
+                !isset($sizeData['size']) ||
+                !is_string($sizeData['size']) ||
+                strlen($sizeData['size']) > 50 ||
+                !isset($sizeData['qty']) ||
+                !is_numeric($sizeData['qty']) ||
+                $sizeData['qty'] < 0
+            ) {
+                return back()->with('error', 'Data ukuran tidak valid.');
+            }
+        }
+
         try {
             DB::beginTransaction();
 
-            $cart = Cart::where('id_user', auth()->user()->id)->where('id_produk', $request->id_produk)->first();
-            $product = Produk::find($request->id_produk);
-            if (!$product || $product->stok < $request->qty) {
+            $product = Produk::find($validatedData['id_produk']);
+            if (!$product || $product->stok < 1) {
+                DB::rollBack();
+                return back()->with('error', 'Produk tidak ditemukan atau stok habis.');
+            }
+
+            // Hitung total qty dari sizes
+            $totalQty = array_sum(array_column($sizes, 'qty'));
+            if ($product->stok < $totalQty) {
                 DB::rollBack();
                 return back()->with('error', 'Stok produk tidak mencukupi.');
             }
+
+            // Cek stok untuk setiap size
+            foreach ($sizes as $sizeData) {
+                if ($sizeData['qty'] > 0) {
+                    $produkSize = \App\Models\ProdukSize::where('id_produk', $validatedData['id_produk'])
+                        ->where('size', $sizeData['size'])
+                        ->first();
+                    if (!$produkSize || $produkSize->stock < $sizeData['qty'] || $produkSize->stock < 1) {
+                        DB::rollBack();
+                        return back()->with('error', 'Stok untuk ukuran "' . $sizeData['size'] . '" tidak mencukupi.');
+                    }
+                }
+            }
+
+            // Cari cart, jika belum ada buat baru
+            $cart = Cart::where('id_user', auth()->user()->id)
+                ->where('id_produk', $validatedData['id_produk'])
+                ->first();
+
             if ($cart == null) {
-                Cart::create([
+                $cart = Cart::create([
                     'id_user' => auth()->user()->id,
-                    'id_produk' => $request->id_produk,
-                    'qty' => $request->qty,
+                    'id_produk' => $validatedData['id_produk'],
+                    'qty' => $totalQty,
                 ]);
             } else {
+                // Update qty dengan total dari sizes
                 $cart->update([
-                    'qty' => $cart->qty + $request->qty,
+                    'qty' => $cart->qty + $totalQty,
                 ]);
             }
+
+            // Simpan detail size ke CartDetailSize dan update stok ProdukSize
+            foreach ($sizes as $sizeData) {
+                if ($sizeData['qty'] > 0) {
+                    CartDetailSize::create([
+                        'id_cart' => $cart->id,
+                        'size' => $sizeData['size'],
+                        'qty' => $sizeData['qty'],
+                    ]);
+                    // Update stok pada ProdukSize
+                    $produkSize = \App\Models\ProdukSize::where('id_produk', $validatedData['id_produk'])
+                        ->where('size', $sizeData['size'])
+                        ->first();
+                    if ($produkSize) {
+                        $produkSize->stock = max(0, $produkSize->stock - $sizeData['qty']);
+                        $produkSize->save();
+                    }
+                }
+            }
+
+            // Update stok produk utama
+            $product->stok = max(0, $product->stok - $totalQty);
+            $product->save();
 
             DB::commit();
             return back()->with('success', 'Produk berhasil ditambahkan ke keranjang.');
@@ -309,6 +390,7 @@ class DashboardController extends Controller
             return back()->with('error', 'Terjadi kesalahan saat menambahkan produk ke keranjang.');
         }
     }
+
 
     public function checkoutCart(Request $request)
     {
@@ -397,21 +479,58 @@ class DashboardController extends Controller
 
     public function addToOrderAndCheckout(Request $request)
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'id_produk' => 'required|exists:produks,id',
             'qty' => 'required|numeric|min:1',
             'harga' => 'required|numeric|min:0',
+            'sizes' => 'required',
         ]);
+
+        // Pastikan sizes adalah array
+        $sizes = $request->sizes;
+        if (is_string($sizes)) {
+            $sizes = json_decode($sizes, true);
+        }
+
+        if (!is_array($sizes)) {
+            return back()->with('error', 'Format ukuran tidak valid.');
+        }
+
+        // Validasi setiap item size
+        foreach ($sizes as $sizeData) {
+            if (
+                !isset($sizeData['size']) ||
+                !is_string($sizeData['size']) ||
+                strlen($sizeData['size']) > 50 ||
+                !isset($sizeData['qty']) ||
+                !is_numeric($sizeData['qty']) ||
+                $sizeData['qty'] < 1
+            ) {
+                return back()->with('error', 'Data ukuran tidak valid.');
+            }
+        }
+
         try {
             DB::beginTransaction();
 
             $order = Order::where('id_user', auth()->user()->id)->where('status', 'pending')->latest()->first();
-            $product = Produk::find($request->id_produk);
+            $product = Produk::find($validatedData['id_produk']);
 
-            // Cek stok dan validitas produk
-            if (!$product || $product->stok < $request->qty) {
-                // Jangan rollback di sini, cukup return
+            // Cek stok produk utama
+            if (!$product || $product->stok < $validatedData['qty']) {
                 return back()->with('error', 'Stok produk tidak mencukupi.');
+            }
+
+            // Cek stok setiap size (jika ada model ProdukSize)
+            foreach ($sizes as $sizeData) {
+                $produkSize = \App\Models\ProdukSize::where('id_produk', $validatedData['id_produk'])
+                    ->where('size', $sizeData['size'])
+                    ->first();
+
+                if (!$produkSize || $produkSize->stock < $sizeData['qty']) {
+                    DB::rollBack();
+                    return back()->with('error', 'Stok untuk ukuran "' . $sizeData['size'] . '" tidak mencukupi.');
+                }
             }
 
             if ($order == null) {
@@ -422,24 +541,47 @@ class DashboardController extends Controller
                 ]);
             }
 
-            $orderDetail = DetailOrder::where('id_order', $order->id)->where('id_produk', $request->id_produk)->first();
+            $orderDetail = DetailOrder::where('id_order', $order->id)->where('id_produk', $validatedData['id_produk'])->first();
 
             if ($orderDetail == null) {
-                DetailOrder::create([
+                $orderDetail = DetailOrder::create([
                     'id_order' => (int) $order->id,
-                    'id_produk' => (int) $request->id_produk,
-                    'harga' => (int) $request->harga,
-                    'qty' => (int) $request->qty,
+                    'id_produk' => (int) $validatedData['id_produk'],
+                    'harga' => (int) $validatedData['harga'],
+                    'qty' => (int) $validatedData['qty'],
                 ]);
             } else {
                 $orderDetail->update([
-                    'qty' => $orderDetail->qty + $request->qty,
+                    'qty' => $orderDetail->qty + $validatedData['qty'],
                 ]);
             }
 
+            // Simpan detail size ke DetailOrderSize dan update stok size
+            foreach ($sizes as $sizeData) {
+                if ($sizeData['qty'] > 0) {
+                    DetailOrderSize::create([
+                        'id_detail_order' => $orderDetail->id,
+                        'size' => $sizeData['size'],
+                        'qty' => $sizeData['qty'],
+                    ]);
+                    // Update stok pada ProdukSize
+                    $produkSize = \App\Models\ProdukSize::where('id_produk', $validatedData['id_produk'])
+                        ->where('size', $sizeData['size'])
+                        ->first();
+                    if ($produkSize) {
+                        $produkSize->stock = max(0, $produkSize->stock - $sizeData['qty']);
+                        $produkSize->save();
+                    }
+                }
+            }
+
+            // Update stok produk utama
+            $product->stok = max(0, $product->stok - $validatedData['qty']);
+            $product->save();
+
             // Hitung total
             $order->update([
-                'total' => $order->total + ($request->qty * $request->harga),
+                'total' => $order->total + ($validatedData['qty'] * $validatedData['harga']),
                 'status' => 'checkout',
             ]);
 
@@ -448,7 +590,7 @@ class DashboardController extends Controller
             $transaksi = Transaksi::create([
                 'id_order' => $order->id,
                 'invoice_id' => $invoiceId,
-                'total_qty_item' => $request->qty,
+                'total_qty_item' => $validatedData['qty'],
                 'total_bayar' => $order->total,
                 'bukti_pembayaran' => 'pending',
                 'status_pembayaran' => 'pending',
@@ -473,18 +615,28 @@ class DashboardController extends Controller
                 'selected_products' => 'required|string', // JSON string dari JS
             ]);
 
-
             $selectedProducts = json_decode($request->selected_products, true);
 
             if (empty($selectedProducts)) {
                 return back()->with('error', 'Tidak ada produk yang dipilih untuk checkout.');
             }
 
-            // Cek stok untuk setiap produk
+            // Cek stok untuk setiap produk dan size
             foreach ($selectedProducts as $item) {
-                $product = Produk::find($item['id']);
-                if (!$product || $product->stok < $item['qty']) {
+                $product = Produk::find($item['produk_id']);
+                if (!$product || $product->stok < $item['qty'] || $product->stok < 1) {
                     return back()->with('error', 'Stok produk "' . ($product ? $product->nama : 'tidak ditemukan') . '" tidak mencukupi.');
+                }
+
+                // Cek stok size jika ada
+                $cartDetailSizes = CartDetailSize::where('id_cart', $item['cart_id'])->get();
+                foreach ($cartDetailSizes as $cartDetailSize) {
+                    $produkSize = \App\Models\ProdukSize::where('id_produk', $item['produk_id'])
+                        ->where('size', $cartDetailSize->size)
+                        ->first();
+                    if (!$produkSize || $produkSize->stock < $cartDetailSize->qty || $produkSize->stock < 1) {
+                        return back()->with('error', 'Stok untuk ukuran "' . $cartDetailSize->size . '" pada produk "' . $product->nama . '" tidak mencukupi.');
+                    }
                 }
             }
 
@@ -504,15 +656,16 @@ class DashboardController extends Controller
 
             // Tambahkan produk ke order
             foreach ($selectedProducts as $item) {
+                $product = Produk::find($item['produk_id']);
                 $orderDetail = DetailOrder::where('id_order', $order->id)
-                    ->where('id_produk', $item['id'])
+                    ->where('id_produk', $item['produk_id'])
                     ->first();
 
                 if ($orderDetail == null) {
-                    DetailOrder::create([
+                    $orderDetail = DetailOrder::create([
                         'id_order' => $order->id,
-                        'id_produk' => $item['id'],
-                        'harga' => (int)$product->harga,
+                        'id_produk' => $item['produk_id'],
+                        'harga' => (int)$item['harga'],
                         'qty' => $item['qty'],
                     ]);
                 } else {
@@ -524,13 +677,36 @@ class DashboardController extends Controller
                 $order->update([
                     'total' => $order->total + ($item['qty'] * $item['harga']),
                 ]);
+
+                // Ambil detail size dari CartDetailSize dan masukkan ke DetailOrderSize
+                $cartDetailSizes = CartDetailSize::where('id_cart', $item['cart_id'])->get();
+                foreach ($cartDetailSizes as $cartDetailSize) {
+                    DetailOrderSize::create([
+                        'id_detail_order' => $orderDetail->id,
+                        'size' => $cartDetailSize->size,
+                        'qty' => $cartDetailSize->qty,
+                    ]);
+                    // Update stok pada ProdukSize
+                    $produkSize = \App\Models\ProdukSize::where('id_produk', $item['produk_id'])
+                        ->where('size', $cartDetailSize->size)
+                        ->first();
+                    if ($produkSize) {
+                        $produkSize->stock = max(0, $produkSize->stock - $cartDetailSize->qty);
+                        $produkSize->save();
+                    }
+                }
+
+                // Update stok produk utama
+                $product->stok = max(0, $product->stok - $item['qty']);
+                $product->save();
             }
 
-            // Hapus produk yang dipilih dari keranjang
+            // Hapus produk yang dipilih dari keranjang dan CartDetailSize
             foreach ($selectedProducts as $item) {
                 Cart::where('id_user', auth()->user()->id)
-                    ->where('id_produk', $item['id'])
+                    ->where('id', $item['cart_id'])
                     ->delete();
+                CartDetailSize::where('id_cart', $item['cart_id'])->delete();
             }
 
             // Buat ID invoice

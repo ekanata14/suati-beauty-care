@@ -10,36 +10,42 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
+                    <!-- Filter Section -->
+                    <div class="mb-4 flex flex-wrap gap-4 items-center">
+                        <div>
+                            <label for="filter-date-from" class="block text-sm font-medium mb-1">From Date</label>
+                            <input type="date" id="filter-date-from" class="border rounded px-2 py-1" />
+                        </div>
+                        <div>
+                            <label for="filter-date-to" class="block text-sm font-medium mb-1">To Date</label>
+                            <input type="date" id="filter-date-to" class="border rounded px-2 py-1" />
+                        </div>
+                        <button id="filter-btn" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                            Filter
+                        </button>
+                        <button id="export-excel" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                            Export to Excel
+                        </button>
+                    </div>
                     <div class="relative overflow-x-auto">
-                        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                        <table id="transaction-table"
+                            class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                 <tr>
-                                    <th scope="col" class="px-6 py-3">
-                                        No
-                                    </th>
-                                    <th scope="col" class="px-6 py-3">
-                                        Invoice ID
-                                    </th>
-                                    <th scope="col" class="px-6 py-3">
-                                        Total Quantity
-                                    </th>
-                                    <th scope="col" class="px-6 py-3">
-                                        Total Payment
-                                    </th>
-                                    <th scope="col" class="px-6 py-3">
-                                        Payment Proof
-                                    </th>
-                                    <th scope="col" class="px-6 py-3">
-                                        Payment Status
-                                    </th>
-                                    <th scope="col" class="px-6 py-3">
-                                        Actions
-                                    </th>
+                                    <th scope="col" class="px-6 py-3">No</th>
+                                    <th scope="col" class="px-6 py-3">Invoice ID</th>
+                                    <th scope="col" class="px-6 py-3">Total Quantity</th>
+                                    <th scope="col" class="px-6 py-3">Total Payment</th>
+                                    <th scope="col" class="px-6 py-3">Payment Proof</th>
+                                    <th scope="col" class="px-6 py-3">Payment Status</th>
+                                    <th scope="col" class="px-6 py-3">Created At</th>
+                                    <th scope="col" class="px-6 py-3">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="transaction-table-body">
                                 @forelse ($datas as $item)
-                                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200"
+                                        data-date="{{ $item->created_at->format('Y-m-d') }}">
                                         <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                             {{ $loop->iteration }}
                                         </td>
@@ -72,6 +78,9 @@
                                             <span class="px-2 py-1 rounded text-xs font-semibold {{ $class }}">
                                                 {{ ucfirst($item->status_pembayaran) }}
                                             </span>
+                                        </td>
+                                        <td class="px-4 py-2">
+                                            {{ $item->created_at->format('d M Y H:i') }}
                                         </td>
                                         <td>
                                             @if ($item->status_pembayaran == 'pending' || $item->status_pembayaran == 'waiting')
@@ -133,7 +142,8 @@
                                                     </div>
                                                 @elseif($item->status_pembayaran == 'paid')
                                                     <div class="flex gap-2">
-                                                        <div class="px-4 py-2 bg-green-500 text-white rounded w-fit flex items-center">
+                                                        <div
+                                                            class="px-4 py-2 bg-green-500 text-white rounded w-fit flex items-center">
                                                             Payment Confirmed
                                                         </div>
                                                         <a href="{{ route('admin.transaction.detail', $item->id) }}"
@@ -145,19 +155,70 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                                        <td colspan="8" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
                                             No data available.
                                         </td>
                                     </tr>
                                 @endforelse
                             </tbody>
                         </table>
-                        <div class="mt-4">
-                            {{ $datas->links() }}
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <!-- SheetJS for Excel Export -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script>
+        // Filtering logic with date range
+        function filterTable() {
+            const from = document.getElementById('filter-date-from').value;
+            const to = document.getElementById('filter-date-to').value;
+            const rows = document.querySelectorAll('#transaction-table-body tr');
+            let visibleCount = 0;
+            rows.forEach((row, idx) => {
+                const rowDateStr = row.getAttribute('data-date');
+                let show = true;
+                if (rowDateStr) {
+                    const rowDate = new Date(rowDateStr);
+                    if (from) {
+                        const fromDate = new Date(from);
+                        if (rowDate < fromDate) show = false;
+                    }
+                    if (to) {
+                        const toDate = new Date(to);
+                        if (rowDate > toDate) show = false;
+                    }
+                }
+                row.style.display = show ? '' : 'none';
+                if (show) {
+                    // update No column
+                    row.querySelector('td').textContent = ++visibleCount;
+                }
+            });
+        }
+        document.getElementById('filter-date-from').addEventListener('change', filterTable);
+        document.getElementById('filter-date-to').addEventListener('change', filterTable);
+        document.getElementById('filter-btn').addEventListener('click', filterTable);
+
+        // Excel Export logic
+        document.getElementById('export-excel').addEventListener('click', function() {
+            const table = document.getElementById('transaction-table');
+            // Clone table and remove hidden rows
+            const clone = table.cloneNode(true);
+            const rows = clone.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                if (row.style.display === 'none') row.remove();
+                // Remove Actions column for export
+                row.querySelectorAll('td:last-child, th:last-child').forEach(cell => cell.remove());
+            });
+            // Remove Actions header
+            clone.querySelector('thead tr th:last-child').remove();
+            // Export
+            const wb = XLSX.utils.table_to_book(clone, {
+                sheet: "Transactions"
+            });
+            XLSX.writeFile(wb, 'transactions.xlsx');
+        });
+    </script>
 @endsection

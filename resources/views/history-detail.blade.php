@@ -34,6 +34,7 @@
                                 <tr>
                                     <th scope="col" class="py-3 px-4">Name</th>
                                     <th scope="col" class="py-3 px-4">Qty</th>
+                                    <th scope="col" class="py-3 px-4">Ukuran</th>
                                     <th scope="col" class="py-3 px-4">Price</th>
                                     <th scope="col" class="py-3 px-4">Total Price</th>
                                 </tr>
@@ -45,6 +46,16 @@
                                             <img src="{{ asset('storage/' . $item->produk->foto_produk) }}"
                                                 alt="{{ $item->produk->nama }}" class="w-10 h-10 rounded object-cover">
                                             <span>{{ $item->produk->nama }}</span>
+                                        </td>
+                                        <td class="p-3 align-middle">
+                                            <ul>
+                                                @foreach ($item->sizes as $size)
+                                                    <li class="mb-1">
+                                                        <span class="font-medium">Ukuran:</span> {{ $size->size }},
+                                                        <span class="font-medium">Qty:</span> {{ $size->qty }}
+                                                    </li>
+                                                @endforeach
+                                            </ul>
                                         </td>
                                         <td class="py-4 px-4">{{ $item->qty }}x</td>
                                         @php $totalItem += $item->qty; @endphp

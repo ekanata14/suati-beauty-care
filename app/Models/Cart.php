@@ -21,4 +21,9 @@ class Cart extends Model
     {
         return $this->belongsTo(User::class, 'id_user');
     }
+
+    public function sizes()
+    {
+        return $this->hasMany(CartDetailSize::class, 'id_cart');
+    }
 }
