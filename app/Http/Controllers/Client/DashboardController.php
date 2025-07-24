@@ -251,8 +251,8 @@ class DashboardController extends Controller
         } else {
             $searchTerm = strtolower($request->nama);
             $products = Produk::whereRaw('LOWER(nama) LIKE ?', ['%' . $searchTerm . '%'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+                ->orderBy('created_at', 'desc')
+                ->paginate(10);
         }
         $viewData = [
             'title' => 'Products',
@@ -788,6 +788,17 @@ class DashboardController extends Controller
             DB::rollBack();
             return back()->with('error', 'Terjadi kesalahan saat mengupload bukti pembayaran.');
         }
+    }
+
+    public function getTransactionProof(string $filename)
+    {
+        $path = storage_path('app/images/bukti-pembayaran/' . $filename);
+
+        if (!file_exists($path)) {
+            abort(404, 'File not found.');
+        }
+
+        return response()->file($path);
     }
 
     public function history()

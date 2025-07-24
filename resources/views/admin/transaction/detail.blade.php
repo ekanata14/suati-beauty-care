@@ -134,6 +134,53 @@
                     @elseif ($transaction->status_pembayaran == 'paid')
                         <div class="mt-4 btn-green w-full text-center">Payment confirmed</div>
                     @endif
+                    @if ($transaction->bukti_pembayaran)
+                        <button type="button" class="btn-primary w-full view-proof-btn"
+                            data-url="{{ route('admin.transaction.proof', $transaction->id) }}">
+                            View Proof
+                        </button>
+                    @else
+                        <span class="text-gray-400">No Proof</span>
+                    @endif
+
+                    <!-- Modal for Payment Proof -->
+                    <div id="proof-modal-{{ $transaction->id }}"
+                        class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-50">
+                        <div class="bg-white rounded shadow-lg max-w-md mx-auto p-4 relative flex flex-col"
+                            style="max-height: 90vh;">
+                            <button type="button"
+                                class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 close-proof-modal">&times;</button>
+                            <h3 class="text-lg font-semibold mb-2">Payment Proof</h3>
+                            <div class="flex-1 flex items-center justify-center">
+                                <img src="" alt="Payment Proof" class="max-w-full max-h-[70vh] rounded proof-img"
+                                    style="object-fit: contain;">
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            document.querySelectorAll('.view-proof-btn').forEach(function(btn) {
+                                btn.addEventListener('click', function() {
+                                    const url = btn.getAttribute('data-url');
+                                    const modalId = 'proof-modal-' + url.split('/').pop();
+                                    const modal = document.getElementById(modalId) || document.querySelector('[id^="proof-modal-"]');
+                                    if (modal) {
+                                        const img = modal.querySelector('.proof-img');
+                                        img.src = url;
+                                        modal.classList.remove('hidden');
+                                        modal.classList.add('flex');
+                                    }
+                                });
+                            });
+                            document.querySelectorAll('.close-proof-modal').forEach(function(btn) {
+                                btn.addEventListener('click', function() {
+                                    const modal = btn.closest('[id^="proof-modal-"]');
+                                    modal.classList.add('hidden');
+                                    modal.classList.remove('flex');
+                                });
+                            });
+                        });
+                    </script>
                     <a href="{{ route('admin.transaction.index') }}"
                         class="block text-center w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                         Back

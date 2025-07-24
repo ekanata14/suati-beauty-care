@@ -47,6 +47,7 @@ Route::middleware(['auth', 'verified', 'role:pelanggan'])->group(function () {
     Route::get('/history', [ClientDashboardController::class, 'history'])->name('history');
     Route::get('/history/detail/{id}', [ClientDashboardController::class, 'historyDetail'])->name('history.detail');
     Route::post('/user-update-profile', [ClientDashboardController::class, 'updateProfile'])->name('user.update.profile');
+    Route::get('/user/transaction/proof/{id}', [AdminTransactionDashboardController::class, 'getTransactionProof'])->name('user.transaction.proof');
 });
 
 Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
@@ -100,6 +101,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::get('/admin/transaction', [AdminTransactionDashboardController::class, 'index'])->name('admin.transaction.index');
     Route::get('/admin/transaction/{id}', [AdminTransactionDashboardController::class, 'show'])->name('admin.transaction.detail');
     Route::put('/admin/transaction/update-status', [AdminTransactionDashboardController::class, 'updateStatus'])->name('admin.transaction.update.status');
+    Route::get('/admin/transaction/proof/{id}', [AdminTransactionDashboardController::class, 'getTransactionProof'])->name('admin.transaction.proof');
 });
 
 

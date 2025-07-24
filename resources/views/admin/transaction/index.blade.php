@@ -26,6 +26,9 @@
                         <button id="export-excel" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
                             Export to Excel
                         </button>
+                        <button id="export-pdf" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+                            Export to PDF
+                        </button>
                     </div>
                     <div class="relative overflow-x-auto">
                         <table id="transaction-table"
@@ -59,10 +62,13 @@
                                             {{ $item->total_bayar ? 'Rp ' . number_format($item->total_bayar, 0, ',', '.') : '-' }}
                                         </td>
                                         <td class="px-6 py-4">
-                                            <a href="{{ $item->bukti_pembayaran }}" target="_blank"
-                                                class="text-blue-500 hover:underline">
-                                                View Proof
-                                            </a>
+                                            @if ($item->bukti_pembayaran)
+                                                <a href="{{ route('admin.transaction.proof', $item->id) }}" target="_blank" class="text-blue-500 hover:underline">
+                                                    View Proof
+                                                </a>
+                                            @else
+                                                <span class="text-gray-400">No Proof</span>
+                                            @endif
                                         </td>
                                         <td class="px-4 py-2">
                                             @php
@@ -169,6 +175,9 @@
     </div>
     <!-- SheetJS for Excel Export -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- jsPDF for PDF Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.7.0/jspdf.plugin.autotable.min.js"></script>
     <script>
         // Filtering logic with date range
         function filterTable() {
@@ -219,6 +228,49 @@
                 sheet: "Transactions"
             });
             XLSX.writeFile(wb, 'transactions.xlsx');
+        });
+
+        // PDF Export logic
+        document.getElementById('export-pdf').addEventListener('click', function() {
+            const table = document.getElementById('transaction-table');
+            // Prepare headers
+            const headers = [];
+            table.querySelectorAll('thead tr th').forEach((th, idx) => {
+                if (idx !== table.querySelectorAll('thead tr th').length - 1) { // skip Actions
+                    headers.push(th.textContent.trim());
+                }
+            });
+            // Prepare rows
+            const data = [];
+            table.querySelectorAll('tbody tr').forEach(row => {
+                if (row.style.display !== 'none') {
+                    const rowData = [];
+                    row.querySelectorAll('td').forEach((td, idx) => {
+                        if (idx !== row.querySelectorAll('td').length - 1) { // skip Actions
+                            rowData.push(td.textContent.trim());
+                        }
+                    });
+                    data.push(rowData);
+                }
+            });
+            // Generate PDF
+            const {
+                jsPDF
+            } = window.jspdf;
+            const doc = new jsPDF();
+            doc.text("Transaction List", 14, 14);
+            doc.autoTable({
+                head: [headers],
+                body: data,
+                startY: 20,
+                styles: {
+                    fontSize: 8
+                },
+                headStyles: {
+                    fillColor: [41, 128, 185]
+                }
+            });
+            doc.save('transactions.pdf');
         });
     </script>
 @endsection

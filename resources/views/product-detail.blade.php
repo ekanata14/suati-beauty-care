@@ -393,7 +393,7 @@
                 </div>
             </div>
 
-            <!-- Ulasan -->
+            {{-- <!-- Ulasan -->
             <div class="mt-12 bg-white rounded-2xl shadow-md p-8" data-aos="fade-up" data-aos-duration="500"
                 data-aos-delay="500">
                 @php
@@ -444,7 +444,7 @@
                         </div>
                     @endforeach
                 </div>
-            </div>
+            </div> --}}
         </div>
     </section>
 @endsection

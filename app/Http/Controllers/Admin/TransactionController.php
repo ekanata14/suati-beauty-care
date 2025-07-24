@@ -100,4 +100,16 @@ class TransactionController extends Controller
     {
         //
     }
+
+    public function getTransactionProof(string $id)
+    {
+        $transaction = Transaksi::findOrFail($id);
+        $path = storage_path('app/private/' . $transaction->bukti_pembayaran);
+
+        if (!file_exists($path)) {
+            abort(404, 'File not found.');
+        }
+
+        return response()->file($path);
+    }
 }
