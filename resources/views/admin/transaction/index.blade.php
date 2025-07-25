@@ -20,8 +20,16 @@
                             <label for="filter-date-to" class="block text-sm font-medium mb-1">To Date</label>
                             <input type="date" id="filter-date-to" class="border rounded px-2 py-1" />
                         </div>
-                        <button id="filter-btn" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                            Filter
+                        <button id="clear-filter-btn" class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
+                            Clear Filter
+                        </button>
+                        <script>
+                            document.getElementById('clear-filter-btn').addEventListener('click', function() {
+                                document.getElementById('filter-date-from').value = '';
+                                document.getElementById('filter-date-to').value = '';
+                                filterTable();
+                            });
+                        </script>
                         </button>
                         <button id="export-excel" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
                             Export to Excel
