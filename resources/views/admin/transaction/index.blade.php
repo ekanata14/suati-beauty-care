@@ -20,7 +20,7 @@
                             <label for="filter-date-to" class="block text-sm font-medium mb-1">To Date</label>
                             <input type="date" id="filter-date-to" class="border rounded px-2 py-1" />
                         </div>
-                        <button id="clear-filter-btn" class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
+                        <button id="clear-filter-btn" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
                             Clear Filter
                         </button>
                         <script>
