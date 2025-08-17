@@ -30,7 +30,6 @@
                                 filterTable();
                             });
                         </script>
-                        </button>
                         <button id="export-excel" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
                             Export to Excel
                         </button>
@@ -60,9 +59,7 @@
                                         <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                             {{ $loop->iteration }}
                                         </td>
-                                        <td class="px-6 py-4">
-                                            {{ $item->invoice_id }}
-                                        </td>
+                                        <td class="px-6 py-4"> {{ $item->invoice_id }} </td>
                                         <td class="px-6 py-4">
                                             {{ $item->total_qty_item }}
                                         </td>
@@ -216,35 +213,14 @@
         }
         document.getElementById('filter-date-from').addEventListener('change', filterTable);
         document.getElementById('filter-date-to').addEventListener('change', filterTable);
-        document.getElementById('filter-btn').addEventListener('click', filterTable);
 
         // Excel Export logic
         document.getElementById('export-excel').addEventListener('click', function() {
             const table = document.getElementById('transaction-table');
-            // Clone table and remove hidden rows
-            const clone = table.cloneNode(true);
-            const rows = clone.querySelectorAll('tbody tr');
-            rows.forEach(row => {
-                if (row.style.display === 'none') row.remove();
-                // Remove Actions column for export
-                row.querySelectorAll('td:last-child, th:last-child').forEach(cell => cell.remove());
-            });
-            // Remove Actions header
-            clone.querySelector('thead tr th:last-child').remove();
-            // Export
-            const wb = XLSX.utils.table_to_book(clone, {
-                sheet: "Transactions"
-            });
-            XLSX.writeFile(wb, 'transactions.xlsx');
-        });
-
-        // PDF Export logic
-        document.getElementById('export-pdf').addEventListener('click', function() {
-            const table = document.getElementById('transaction-table');
             // Prepare headers
             const headers = [];
-            table.querySelectorAll('thead tr th').forEach((th, idx) => {
-                if (idx !== table.querySelectorAll('thead tr th').length - 1) { // skip Actions
+            table.querySelectorAll('thead tr th').forEach((th, idx, arr) => {
+                if (idx !== arr.length - 1) { // skip Actions
                     headers.push(th.textContent.trim());
                 }
             });
@@ -253,8 +229,38 @@
             table.querySelectorAll('tbody tr').forEach(row => {
                 if (row.style.display !== 'none') {
                     const rowData = [];
-                    row.querySelectorAll('td').forEach((td, idx) => {
-                        if (idx !== row.querySelectorAll('td').length - 1) { // skip Actions
+                    row.querySelectorAll('td').forEach((td, idx, arr) => {
+                        if (idx !== arr.length - 1) { // skip Actions
+                            rowData.push(td.textContent.trim());
+                        }
+                    });
+                    data.push(rowData);
+                }
+            });
+            // Create worksheet and workbook
+            const ws = XLSX.utils.aoa_to_sheet([headers, ...data]);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Transactions");
+            XLSX.writeFile(wb, "transactions.xlsx");
+        });
+
+        // PDF Export logic
+        document.getElementById('export-pdf').addEventListener('click', function() {
+            const table = document.getElementById('transaction-table');
+            // Prepare headers
+            const headers = [];
+            table.querySelectorAll('thead tr th').forEach((th, idx, arr) => {
+                if (idx !== arr.length - 1) { // skip Actions
+                    headers.push(th.textContent.trim());
+                }
+            });
+            // Prepare rows
+            const data = [];
+            table.querySelectorAll('tbody tr').forEach(row => {
+                if (row.style.display !== 'none') {
+                    const rowData = [];
+                    row.querySelectorAll('td').forEach((td, idx, arr) => {
+                        if (idx !== arr.length - 1) { // skip Actions
                             rowData.push(td.textContent.trim());
                         }
                     });
@@ -262,9 +268,7 @@
                 }
             });
             // Generate PDF
-            const {
-                jsPDF
-            } = window.jspdf;
+            const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             doc.text("Transaction List", 14, 14);
             doc.autoTable({
