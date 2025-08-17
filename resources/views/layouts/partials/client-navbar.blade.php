@@ -21,12 +21,12 @@
                 <li><a href="{{ route('products') }}"
                         class="{{ request()->routeIs('products*') ? 'active' : '' }}">Products</a></li>
                 @if (Auth::user() && Auth::user()->role != 'admin')
-                    <li><a href="{{ route('cart') }}"
-                            class="{{ request()->routeIs('cart*') ? 'active' : '' }}">Carts</a></li>
+                    {{-- <li><a href="{{ route('cart') }}"
+                            class="{{ request()->routeIs('cart*') ? 'active' : '' }}">Carts</a></li> --}}
                     <li><a href="{{ route('history') }}"
                             class="{{ request()->routeIs('history*') ? 'active' : '' }}">History</a></li>
-                    <li><a href="{{ route('wishlists') }}"
-                            class="{{ request()->routeIs('wishlists*') ? 'active' : '' }}">Wishlist</a></li>
+                    {{-- <li><a href="{{ route('wishlists') }}"
+                            class="{{ request()->routeIs('wishlists*') ? 'active' : '' }}">Wishlist</a></li> --}}
                 @endif
             </ul>
         </div>

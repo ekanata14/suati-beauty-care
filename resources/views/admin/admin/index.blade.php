@@ -52,7 +52,7 @@
                                         </td>
                                         <td>
                                             <a href="{{ route('admin.admin.edit', $item->id) }}" class="btn-yellow">Edit</a>
-                                            <form action="{{ route('admin.admin.destroy') }}" method="POST"
+                                            {{-- <form action="{{ route('admin.admin.destroy') }}" method="POST"
                                                 class="inline-block" onsubmit="return confirmDelete(event)">
                                                 @csrf
                                                 @method('DELETE')
@@ -76,8 +76,7 @@
                                                         }
                                                     });
                                                 }
-                                            </script>
-
+                                            </script> --}}
                                         </td>
                                     </tr>
                                 @empty

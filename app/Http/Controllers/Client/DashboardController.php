@@ -790,17 +790,6 @@ class DashboardController extends Controller
         }
     }
 
-    public function getTransactionProof(string $filename)
-    {
-        $path = storage_path('app/images/bukti-pembayaran/' . $filename);
-
-        if (!file_exists($path)) {
-            abort(404, 'File not found.');
-        }
-
-        return response()->file($path);
-    }
-
     public function history()
     {
         $viewData = [

@@ -39,7 +39,7 @@
                                         </td>
                                         <td class="flex justify-start items-center mt-2">
                                             <a href="{{ route('admin.category.edit', $item->id) }}" class="btn-yellow">Edit</a>
-                                            <form action="{{ route('admin.category.destroy') }}" method="POST"
+                                            {{-- <form action="{{ route('admin.category.destroy') }}" method="POST"
                                                 class="inline-block" onsubmit="return confirmDelete(event)">
                                                 @csrf
                                                 @method('DELETE')
@@ -63,7 +63,7 @@
                                                         }
                                                     });
                                                 }
-                                            </script>
+                                            </script> --}}
                                         </td>
                                     </tr>
                                 @empty

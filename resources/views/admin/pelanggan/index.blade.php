@@ -72,7 +72,7 @@
                                         <td class="flex justify-center items-center mt-2">
                                             <a href="{{ route('admin.pelanggan.edit', $item->id) }}"
                                                 class="btn-yellow">Edit</a>
-                                            <form action="{{ route('admin.pelanggan.destroy') }}" method="POST"
+                                            {{-- <form action="{{ route('admin.pelanggan.destroy') }}" method="POST"
                                                 class="inline-block" onsubmit="return confirmDelete(event)">
                                                 @csrf
                                                 @method('DELETE')
@@ -96,8 +96,7 @@
                                                         }
                                                     });
                                                 }
-                                            </script>
-
+                                            </script> --}}
                                         </td>
                                     </tr>
                                 @empty

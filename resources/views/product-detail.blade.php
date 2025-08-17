@@ -74,8 +74,8 @@
 
                         <div class="w-full space-y-2">
                             <!-- Add to Cart Button triggers modal -->
-                            <button type="button" onclick="openSizeModal()"
-                                class="w-full py-2 bg-green-600 text-white rounded hover:bg-green-700">Tambah ke Keranjang</button>
+                            {{-- <button type="button" onclick="openSizeModal()"
+                                class="w-full py-2 bg-green-600 text-white rounded hover:bg-green-700">Tambah ke Keranjang</button> --}}
 
                             <!-- Size Selection Modal -->
                             <div id="size-modal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
@@ -352,8 +352,8 @@
                             <form id="add-to-wishlist-form" action="{{ route('addToWishlist') }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="id_produk" value="{{ $product->id }}">
-                                <button type="button" onclick="confirmAddToWishlist()"
-                                    class="w-full py-2 bg-red-600 text-white rounded hover:bg-red-700">Wishlist</button>
+                                {{-- <button type="button" onclick="confirmAddToWishlist()"
+                                    class="w-full py-2 bg-red-600 text-white rounded hover:bg-red-700">Wishlist</button> --}}
                             </form>
                         </div>
 
