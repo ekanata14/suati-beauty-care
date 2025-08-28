@@ -40,20 +40,18 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+            'password' => ['required', 'confirmed', 'min:8'],
+            'tanggal_lahir' => ['required', 'date'],
+            'jenis_kelamin' => ['required', 'string'],
+            'foto_profil' => ['nullable', 'file', 'image', 'max:2048'],
+            'telepon' => ['required', 'string', 'max:15'],
+        ]);
+        DB::beginTransaction();
         try {
-            DB::beginTransaction();
-
-            $request->validate([
-                'name' => ['required', 'string', 'max:255'],
-                'username' => ['required', 'string', 'max:255'],
-                'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
-                'password' => ['required', 'confirmed', 'min:8'],
-                'tanggal_lahir' => ['required', 'date'],
-                'jenis_kelamin' => ['required', 'string'],
-                'foto_profil' => ['nullable', 'file', 'image', 'max:2048'],
-                'telepon' => ['required', 'string', 'max:15'],
-            ]);
-
             $fotoProfilPath = null;
             if ($request->hasFile('foto_profil')) {
                 $fotoProfilPath = $request->file('foto_profil')->store('foto_profil', 'public');

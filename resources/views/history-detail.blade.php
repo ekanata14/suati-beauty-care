@@ -115,16 +115,26 @@
                         </div>
                     </div>
                     @if ($transaction->status_pembayaran == 'pending')
-                        <div class="mt-6 p-4 bg-blue-50 dark:bg-blue-900 rounded-lg flex items-center justify-between">
-                            <div>
-                                <span class="block text-gray-700 dark:text-gray-200 text-sm mb-1">Nomor Rekening</span>
-                                <span id="account-number"
-                                    class="text-lg font-mono font-semibold text-blue-700 dark:text-blue-200 select-all">1234567890</span>
+                        <div class="mt-6 p-4 bg-blue-50 dark:bg-blue-900 rounded-lg flex flex-col gap-4">
+                            <div class="flex items-center gap-4">
+                                <div class="flex flex-col">
+                                    <span class="block text-gray-700 dark:text-gray-200 text-xs mb-1">Bank</span>
+                                    <span class="text-base font-semibold text-blue-700 dark:text-blue-200">{{ config('bank.name', 'BCA') }}</span>
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="block text-gray-700 dark:text-gray-200 text-xs mb-1">Nama</span>
+                                    <span class="text-base font-semibold text-blue-700 dark:text-blue-200">{{ config('bank.holder', 'John Doe') }}</span>
+                                </div>
                             </div>
-                            <button type="button" onclick="copyAccountNumber()"
-                                class="ml-4 px-4 py-2 text-sm bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="inline w-4 h-4 mr-1" fill="none"
-                                    viewBox="0 0 24 24" stroke="currentColor">
+                            <div class="flex items-center gap-4">
+                                <div class="flex flex-col flex-1">
+                                    <span class="block text-gray-700 dark:text-gray-200 text-xs mb-1">Nomor Rekening</span>
+                                    <span id="account-number" class="text-lg font-mono font-semibold text-blue-700 dark:text-blue-200 select-all">
+                                        {{ config('bank.number', '1234567890') }}
+                                    </span>
+                                </div>
+                                <button type="button" onclick="copyAccountNumber()"
+                                    class="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition flex items-center gap
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M8 16h8M8 12h8m-7 8h6a2 2 0 002-2V6a2 2 0 00-2-2H7a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
@@ -169,10 +179,10 @@
                     @endif
 
                     @if ($transaction->bukti_pembayaran)
-                        <button type="button" class="btn-primary w-full view-proof-btn"
+                        {{-- <button type="button" class="btn-primary w-full view-proof-btn"
                             data-url="{{ route('user.transaction.proof', $transaction->id) }}">
                             View Proof
-                        </button>
+                        </button> --}}
                     @else
                         <span class="text-gray-400">No Proof</span>
                     @endif

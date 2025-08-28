@@ -38,32 +38,35 @@
                                             {{ $item->nama }}
                                         </td>
                                         <td class="flex justify-start items-center mt-2">
-                                            <a href="{{ route('admin.category.edit', $item->id) }}" class="btn-yellow">Edit</a>
-                                            {{-- <form action="{{ route('admin.category.destroy') }}" method="POST"
-                                                class="inline-block" onsubmit="return confirmDelete(event)">
-                                                @csrf
-                                                @method('DELETE')
-                                                <input type="hidden" name="id" value="{{ $item->id }}">
-                                                <button type="submit" class="btn-red">Delete</button>
-                                            </form>
-                                            <script>
-                                                function confirmDelete(event) {
-                                                    event.preventDefault();
-                                                    Swal.fire({
-                                                        title: 'Are you sure?',
-                                                        text: "You won't be able to revert this!",
-                                                        icon: 'warning',
-                                                        showCancelButton: true,
-                                                        confirmButtonColor: '#d33',
-                                                        cancelButtonColor: '#3085d6',
-                                                        confirmButtonText: 'Yes, delete it!'
-                                                    }).then((result) => {
-                                                        if (result.isConfirmed) {
-                                                            event.target.submit();
-                                                        }
-                                                    });
-                                                }
-                                            </script> --}}
+                                            <a href="{{ route('admin.category.edit', $item->id) }}"
+                                                class="btn-yellow">Edit</a>
+                                            @if ($item->produk->isEmpty())
+                                                <form action="{{ route('admin.category.destroy') }}" method="POST"
+                                                    class="inline-block" onsubmit="return confirmDelete(event)">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <input type="hidden" name="id" value="{{ $item->id }}">
+                                                    <button type="submit" class="btn-red">Delete</button>
+                                                </form>
+                                                <script>
+                                                    function confirmDelete(event) {
+                                                        event.preventDefault();
+                                                        Swal.fire({
+                                                            title: 'Are you sure?',
+                                                            text: "You won't be able to revert this!",
+                                                            icon: 'warning',
+                                                            showCancelButton: true,
+                                                            confirmButtonColor: '#d33',
+                                                            cancelButtonColor: '#3085d6',
+                                                            confirmButtonText: 'Yes, delete it!'
+                                                        }).then((result) => {
+                                                            if (result.isConfirmed) {
+                                                                event.target.submit();
+                                                            }
+                                                        });
+                                                    }
+                                                </script>
+                                            @endif
                                         </td>
                                     </tr>
                                 @empty
@@ -80,7 +83,8 @@
                     <script>
                         function openModal(imageUrl) {
                             const modal = document.createElement('div');
-                            modal.classList.add('fixed', 'inset-0', 'z-50', 'flex', 'items-center', 'justify-center', 'bg-black', 'bg-opacity-50');
+                            modal.classList.add('fixed', 'inset-0', 'z-50', 'flex', 'items-center', 'justify-center', 'bg-black',
+                                'bg-opacity-50');
                             modal.innerHTML = `
                                 <div class="bg-white p-4 rounded-lg shadow-lg">
                                     <img src="${imageUrl}" alt="Foto Produk" class="max-w-full h-auto">

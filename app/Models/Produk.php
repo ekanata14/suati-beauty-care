@@ -34,4 +34,8 @@ class Produk extends Model
     {
         return $this->hasMany(ProdukSize::class, 'id_produk');
     }
+
+    public function DetailOrder(){
+        return $this->hasMany(DetailOrder::class, 'id_produk');
+    }
 }

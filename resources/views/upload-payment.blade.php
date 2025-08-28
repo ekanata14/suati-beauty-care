@@ -27,14 +27,26 @@
                         <span>IDR {{ number_format($transaction->total_bayar, 0, ',', '.') }}</span>
                     </div>
                     <div class="mt-4">
-                        <span>
-                            Nomor Rekening:
-                            <span id="account-number" class="font-mono select-all">1234567890</span>
-                            <button type="button" onclick="copyAccountNumber()"
-                                class="ml-2 px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none">
-                                Copy
-                            </button>
-                        </span>
+                        <div class="bg-blue-50 dark:bg-gray-900 rounded-xl p-6 shadow flex flex-col gap-4">
+                            <div class="flex items-center gap-3">
+                                <div class="flex flex-col">
+                                    <span class="text-gray-700 dark:text-gray-200 text-sm mb-1">Bank</span>
+                                    <span class="text-lg font-bold text-blue-700 dark:text-blue-200">BCA</span>
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="text-gray-700 dark:text-gray-200 text-sm mb-1">Nama</span>
+                                    <span class="text-lg font-bold text-blue-700 dark:text-blue-200">John Doe</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-gray-700 dark:text-gray-200 text-sm">Nomor Rekening:</span>
+                                <span id="account-number" class="text-lg font-mono font-semibold text-blue-700 dark:text-blue-200 select-all">1234567890</span>
+                                <button type="button" onclick="copyAccountNumber()"
+                                    class="ml-2 px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-800 transition">
+                                    Copy
+                                </button>
+                            </div>
+                        </div>
                         <script>
                             function copyAccountNumber() {
                                 const accNum = document.getElementById('account-number').textContent;

@@ -52,4 +52,8 @@ class User extends Authenticatable
     {
         return $this->hasOne(Konsumen::class, 'id_user', 'id');
     }
+
+    public function order(){
+        return $this->hasMany(Order::class, 'id_user', 'id');
+    }
 }

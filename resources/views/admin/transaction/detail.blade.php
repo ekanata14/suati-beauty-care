@@ -115,7 +115,7 @@
                         </div>
                     </div>
                     @if ($transaction->status_pembayaran == 'pending')
-                        <div>
+                        {{-- <div>
                             <label for="file_input"
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Upload Payment
                                 Proof</label>
@@ -126,7 +126,7 @@
                             <input type="hidden" name="total_qty_item" value="{{ $transaction->total_qty_item }}">
                             <input type="hidden" name="total_bayar" value="{{ $transaction->total_bayar }}">
                             <button type="submit" class="w-full mt-4 btn-primary">Upload Payment</button>
-                        </div>
+                        </div> --}}
                     @elseif ($transaction->status_pembayaran == 'waiting')
                         <div class="mt-4 btn-yellow w-full text-center">Waiting for confirmation</div>
                     @elseif ($transaction->status_pembayaran == 'denied')

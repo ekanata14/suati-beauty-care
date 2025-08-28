@@ -72,31 +72,33 @@
                                         <td class="flex justify-center items-center mt-2">
                                             <a href="{{ route('admin.pelanggan.edit', $item->id) }}"
                                                 class="btn-yellow">Edit</a>
-                                            {{-- <form action="{{ route('admin.pelanggan.destroy') }}" method="POST"
-                                                class="inline-block" onsubmit="return confirmDelete(event)">
-                                                @csrf
-                                                @method('DELETE')
-                                                <input type="hidden" name="id" value="{{ $item->id }}">
-                                                <button type="submit" class="btn-red">Delete</button>
-                                            </form>
-                                            <script>
-                                                function confirmDelete(event) {
-                                                    event.preventDefault();
-                                                    Swal.fire({
-                                                        title: 'Are you sure?',
-                                                        text: "You won't be able to revert this!",
-                                                        icon: 'warning',
-                                                        showCancelButton: true,
-                                                        confirmButtonColor: '#d33',
-                                                        cancelButtonColor: '#3085d6',
-                                                        confirmButtonText: 'Yes, delete it!'
-                                                    }).then((result) => {
-                                                        if (result.isConfirmed) {
-                                                            event.target.submit();
-                                                        }
-                                                    });
-                                                }
-                                            </script> --}}
+                                            @if ($item->Order->isEmpty())
+                                                <form action="{{ route('admin.pelanggan.destroy') }}" method="POST"
+                                                    class="inline-block" onsubmit="return confirmDelete(event)">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <input type="hidden" name="id" value="{{ $item->id }}">
+                                                    <button type="submit" class="btn-red">Delete</button>
+                                                </form>
+                                                <script>
+                                                    function confirmDelete(event) {
+                                                        event.preventDefault();
+                                                        Swal.fire({
+                                                            title: 'Are you sure?',
+                                                            text: "You won't be able to revert this!",
+                                                            icon: 'warning',
+                                                            showCancelButton: true,
+                                                            confirmButtonColor: '#d33',
+                                                            cancelButtonColor: '#3085d6',
+                                                            confirmButtonText: 'Yes, delete it!'
+                                                        }).then((result) => {
+                                                            if (result.isConfirmed) {
+                                                                event.target.submit();
+                                                            }
+                                                        });
+                                                    }
+                                                </script>
+                                            @endif
                                         </td>
                                     </tr>
                                 @empty
