@@ -19,6 +19,13 @@ class DashboardController extends Controller
         $viewData = [
             'title' => 'Admin Dashboard',
             'dashboardData' => [
+                'transactionSummary' => [
+                    'paid' => Transaksi::where('status_pembayaran', 'paid')->count(),
+                    'pending' => Transaksi::where('status_pembayaran', 'pending')->count(),
+                    'waiting' => Transaksi::where('status_pembayaran', 'waiting')->count(),
+                    'total' => Transaksi::whereIn('status_pembayaran', ['paid', 'pending', 'waiting'])->count(),
+                    'link' => route('admin.transaction.index'),
+                ],
                 'totalUsers' => User::count(),
                 'users' => [
                     'count' => User::count(),

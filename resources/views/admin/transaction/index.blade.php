@@ -68,7 +68,8 @@
                                         </td>
                                         <td class="px-6 py-4">
                                             @if ($item->bukti_pembayaran)
-                                                <a href="{{ route('admin.transaction.proof', $item->id) }}" target="_blank" class="text-blue-500 hover:underline">
+                                                <a href="{{ route('admin.transaction.proof', $item->id) }}" target="_blank"
+                                                    class="text-blue-500 hover:underline">
                                                     View Proof
                                                 </a>
                                             @else
@@ -94,7 +95,7 @@
                                             {{ $item->created_at->format('d M Y H:i') }}
                                         </td>
                                         <td>
-                                            @if ($item->status_pembayaran == 'pending' || $item->status_pembayaran == 'waiting')
+                                            @if ($item->status_pembayaran == 'waiting')
                                                 <div class="flex space-x-2">
                                                     <form action="{{ route('admin.transaction.update.status') }}"
                                                         method="POST" class="confirm-form">
@@ -146,6 +147,9 @@
                                                         });
                                                     });
                                                 </script>
+                                            @elseif ($item->status_pembayaran == 'pending')
+                                                <a href="{{ route('admin.transaction.detail', $item->id) }}"
+                                                    class="btn-primary">Detail</a>
                                             @else
                                                 @if ($item->status_pembayaran == 'denied')
                                                     <div class="px-4 py-2 bg-red-500 text-white rounded w-fit">
@@ -268,7 +272,9 @@
                 }
             });
             // Generate PDF
-            const { jsPDF } = window.jspdf;
+            const {
+                jsPDF
+            } = window.jspdf;
             const doc = new jsPDF();
             doc.text("Transaction List", 14, 14);
             doc.autoTable({

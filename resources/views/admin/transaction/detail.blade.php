@@ -9,7 +9,7 @@
                 <div class="md:col-span-3 bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
                     <div class="mb-6">
                         <h2 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                            Order Summary
+                            Detail Order
                             <span
                                 class="ml-2 px-3 py-1 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200 text-sm font-mono tracking-wide">
                                 #{{ $transaction->invoice_id }}
@@ -21,7 +21,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
-                            <span>Date: {{ $transaction->created_at->format('d M Y, H:i') }}</span>
+                            <span>Tanggal: {{ $transaction->created_at->format('d M Y, H:i') }}</span>
                         </div>
                     </div>
                     <div class="overflow-x-auto">
@@ -32,11 +32,11 @@
                         <table class="w-full text-sm text-left text-gray-900 dark:text-white">
                             <thead class="text-xs uppercase text-gray-700 dark:text-gray-300 border-b dark:border-gray-700">
                                 <tr>
-                                    <th scope="col" class="py-3 px-4">Name</th>
+                                    <th scope="col" class="py-3 px-4">Nama</th>
                                     <th scope="col" class="py-3 px-4">Qty</th>
                                     <th scope="col" class="py-3 px-4">Ukuran</th>
-                                    <th scope="col" class="py-3 px-4">Price</th>
-                                    <th scope="col" class="py-3 px-4">Total Price</th>
+                                    <th scope="col" class="py-3 px-4">Harga</th>
+                                    <th scope="col" class="py-3 px-4">Total Harga</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -77,7 +77,7 @@
                 </div>
                 <!-- Summary & Actions -->
                 <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow space-y-6">
-                    <h4 class="text-xl font-semibold text-gray-900 dark:text-white">Summary</h4>
+                    <h4 class="text-xl font-semibold text-gray-900 dark:text-white">Detail</h4>
                     <div class="flex items-center gap-2 mt-2">
                         <span class="text-gray-600 dark:text-gray-300">Status:</span>
                         @php
@@ -129,6 +129,76 @@
                         </div> --}}
                     @elseif ($transaction->status_pembayaran == 'waiting')
                         <div class="mt-4 btn-yellow w-full text-center">Waiting for confirmation</div>
+                        <!-- Use a button (not a nested form) to avoid submitting the outer form; send PUT via fetch -->
+                        <button type="button"
+                            class="px-4 py-2 bg-green-500 text-white rounded-xl hover:bg-green-600 confirm-button w-full"
+                            data-url="{{ route('admin.transaction.update.status') }}"
+                            data-id="{{ $transaction->id }}"
+                            data-status="paid"
+                            data-message="Are you sure you want to confirm this payment?">
+                            Confirm
+                        </button>
+                        <script>
+                            document.querySelectorAll('.confirm-button').forEach(button => {
+                                button.addEventListener('click', function(e) {
+                                    e.preventDefault();
+                                    const url = this.getAttribute('data-url');
+                                    const id = this.getAttribute('data-id');
+                                    const status = this.getAttribute('data-status');
+                                    const message = this.getAttribute('data-message');
+                                    const tokenMeta = document.querySelector('meta[name="csrf-token"]');
+                                    const csrfToken = tokenMeta ? tokenMeta.getAttribute('content') : null;
+
+                                    Swal.fire({
+                                        title: 'Confirmation',
+                                        text: message,
+                                        icon: 'warning',
+                                        showCancelButton: true,
+                                        confirmButtonColor: '#3085d6',
+                                        cancelButtonColor: '#d33',
+                                        confirmButtonText: 'Yes',
+                                        cancelButtonText: 'No'
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            const formData = new FormData();
+                                            if (csrfToken) formData.append('_token', csrfToken);
+                                            formData.append('_method', 'PUT');
+                                            formData.append('id', id);
+                                            formData.append('status_pembayaran', status);
+
+                                            fetch(url, {
+                                                method: 'POST',
+                                                body: formData,
+                                                credentials: 'same-origin',
+                                                headers: {
+                                                    'X-Requested-With': 'XMLHttpRequest'
+                                                }
+                                            }).then(response => {
+                                                if (!response.ok) throw response;
+                                                return response.json().catch(() => ({}));
+                                            }).then(data => {
+                                                // success: reload or show feedback
+                                                Swal.fire({
+                                                    title: 'Success',
+                                                    text: 'Payment status updated.',
+                                                    icon: 'success',
+                                                    confirmButtonText: 'OK'
+                                                }).then(() => {
+                                                    window.location.reload();
+                                                });
+                                            }).catch(err => {
+                                                Swal.fire({
+                                                    title: 'Error',
+                                                    text: 'Failed to update status.',
+                                                    icon: 'error',
+                                                    confirmButtonText: 'OK'
+                                                });
+                                            });
+                                        }
+                                    });
+                                });
+                            });
+                        </script>
                     @elseif ($transaction->status_pembayaran == 'denied')
                         <div class="mt-4 btn-red w-full text-center">Denied</div>
                     @elseif ($transaction->status_pembayaran == 'paid')
@@ -137,7 +207,7 @@
                     @if ($transaction->bukti_pembayaran)
                         <button type="button" class="btn-primary w-full view-proof-btn"
                             data-url="{{ route('admin.transaction.proof', $transaction->id) }}">
-                            View Proof
+                            Bukti Pembayaran
                         </button>
                     @else
                         <span class="text-gray-400">No Proof</span>
@@ -150,7 +220,7 @@
                             style="max-height: 90vh;">
                             <button type="button"
                                 class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 close-proof-modal">&times;</button>
-                            <h3 class="text-lg font-semibold mb-2">Payment Proof</h3>
+                            <h3 class="text-lg font-semibold mb-2">Bukti Pembayaran</h3>
                             <div class="flex-1 flex items-center justify-center">
                                 <img src="" alt="Payment Proof" class="max-w-full max-h-[70vh] rounded proof-img"
                                     style="object-fit: contain;">
@@ -163,7 +233,8 @@
                                 btn.addEventListener('click', function() {
                                     const url = btn.getAttribute('data-url');
                                     const modalId = 'proof-modal-' + url.split('/').pop();
-                                    const modal = document.getElementById(modalId) || document.querySelector('[id^="proof-modal-"]');
+                                    const modal = document.getElementById(modalId) || document.querySelector(
+                                        '[id^="proof-modal-"]');
                                     if (modal) {
                                         const img = modal.querySelector('.proof-img');
                                         img.src = url;
