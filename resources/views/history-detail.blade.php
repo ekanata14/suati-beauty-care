@@ -33,8 +33,8 @@
                             <thead class="text-xs uppercase text-gray-700 dark:text-gray-300 border-b dark:border-gray-700">
                                 <tr>
                                     <th scope="col" class="py-3 px-4">Name</th>
-                                    <th scope="col" class="py-3 px-4">Qty</th>
                                     <th scope="col" class="py-3 px-4">Ukuran</th>
+                                    <th scope="col" class="py-3 px-4">Qty</th>
                                     <th scope="col" class="py-3 px-4">Price</th>
                                     <th scope="col" class="py-3 px-4">Total Price</th>
                                 </tr>
