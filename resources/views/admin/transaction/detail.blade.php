@@ -33,8 +33,8 @@
                             <thead class="text-xs uppercase text-gray-700 dark:text-gray-300 border-b dark:border-gray-700">
                                 <tr>
                                     <th scope="col" class="py-3 px-4">Nama</th>
-                                    <th scope="col" class="py-3 px-4">Qty</th>
                                     <th scope="col" class="py-3 px-4">Ukuran</th>
+                                    <th scope="col" class="py-3 px-4">Qty</th>
                                     <th scope="col" class="py-3 px-4">Harga</th>
                                     <th scope="col" class="py-3 px-4">Total Harga</th>
                                 </tr>
@@ -47,7 +47,6 @@
                                                 alt="{{ $item->produk->nama }}" class="w-10 h-10 rounded object-cover">
                                             <span>{{ $item->produk->nama }}</span>
                                         </td>
-                                        <td class="py-4 px-4">{{ $item->qty }}x</td>
                                         <td class="py-4 px-4">
                                             <ul>
                                                 @foreach ($item->sizes as $size)
@@ -58,6 +57,7 @@
                                                 @endforeach
                                             </ul>
                                         </td>
+                                        <td class="py-4 px-4">{{ $item->qty }}x</td>
                                         @php $totalItem += $item->qty; @endphp
                                         <td class="py-4 px-4 font-semibold">IDR
                                             {{ number_format($item->harga, 0, ',', '.') }}</td>

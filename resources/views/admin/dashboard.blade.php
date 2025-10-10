@@ -14,44 +14,40 @@
                     {{ __("You're logged in!") }}
                 </div>
             </div>
-            <div class="grid grid-cols-3 mt-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
                 @foreach ($dashboardData as $key => $item)
                     @if ($key === 'transactionSummary')
-                        <div
-                            class="col-span-3 w-full p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700 m-2">
-                            <div class="flex justify-between items-center mb-4">
-                                <h5 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                        {{-- <div
+                            class="col-span-1 sm:col-span-2 md:col-span-3 w-full p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
+                                <h5 class="text-xl sm:text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                                     Ringkasan Transaksi
                                 </h5>
                                 <a href="{{ $item['link'] ?? '#' }}" class="text-blue-600 hover:underline">Lihat Semua</a>
                             </div>
-                            <div class="grid grid-cols-4 gap-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                                 <div class="p-4 bg-green-50 dark:bg-green-900/10 rounded">
                                     <p class="text-sm text-gray-500 dark:text-gray-300">Paid</p>
-                                    <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ $item['paid'] ?? 0 }}
-                                    </p>
+                                    <p class="text-2xl sm:text-3xl font-semibold text-gray-900 dark:text-white">{{ $item['paid'] ?? 0 }}</p>
                                 </div>
                                 <div class="p-4 bg-yellow-50 dark:bg-yellow-900/10 rounded">
                                     <p class="text-sm text-gray-500 dark:text-gray-300">Pending</p>
-                                    <p class="text-2xl font-semibold text-gray-900 dark:text-white">
-                                        {{ $item['pending'] ?? 0 }}</p>
+                                    <p class="text-2xl sm:text-3xl font-semibold text-gray-900 dark:text-white">{{ $item['pending'] ?? 0 }}</p>
                                 </div>
                                 <div class="p-4 bg-blue-50 dark:bg-blue-900/10 rounded">
                                     <p class="text-sm text-gray-500 dark:text-gray-300">Waiting</p>
-                                    <p class="text-2xl font-semibold text-gray-900 dark:text-white">
-                                        {{ $item['waiting'] ?? 0 }}</p>
+                                    <p class="text-2xl sm:text-3xl font-semibold text-gray-900 dark:text-white">{{ $item['waiting'] ?? 0 }}</p>
                                 </div>
                                 <div class="p-4 bg-gray-50 dark:bg-gray-900/10 rounded">
                                     <p class="text-sm text-gray-500 dark:text-gray-300">Total</p>
-                                    <p class="text-2xl font-semibold text-gray-900 dark:text-white">
-                                        {{ $item['total'] ?? 0 }}</p>
+                                    <p class="text-2xl sm:text-3xl font-semibold text-gray-900 dark:text-white">{{ $item['total'] ?? 0 }}</p>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                     @elseif (in_array($key, ['users', 'products', 'orders']))
                         <div
-                            class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700 m-2 block hover:shadow-lg transition">
-                            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                            class="col-span-1 w-full p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700 hover:shadow-lg transition">
+                            <h5 class="mb-2 text-lg sm:text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                                 @switch($key)
                                     @case('users')
                                         Total Pelanggan
@@ -69,39 +65,39 @@
                                         {{ ucfirst($key) }}
                                 @endswitch
                             </h5>
-                            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 text-3xl">
+                            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 text-2xl sm:text-3xl">
                                 {{ $item['count'] }}
                             </p>
                             <a href="{{ $item['link'] }}"
-                                class="inline-block mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+                                class="inline-block mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition text-sm">
                                 Detail
                             </a>
                         </div>
                     @elseif ($key === 'totalUsers')
                         <div
-                            class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700 m-2 block hover:shadow-lg transition">
-                            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                            class="col-span-1 w-full p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700 hover:shadow-lg transition">
+                            <h5 class="mb-2 text-lg sm:text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                                 Total Pengguna
                             </h5>
-                            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 text-3xl">
+                            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 text-2xl sm:text-3xl">
                                 {{ $item }}
                             </p>
                             <a href="{{ route('admin.pelanggan.index') }}"
-                                class="inline-block mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+                                class="inline-block mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition text-sm">
                                 Kelola Pengguna
                             </a>
                         </div>
                     @elseif ($key === 'recentOrders')
                         <div
-                            class="col-span-3 max-w-full p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700 m-2">
-                            <div class="flex justify-between items-center mb-4">
-                                <h5 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                            class="col-span-1 sm:col-span-2 md:col-span-3 w-full p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
+                                <h5 class="text-xl sm:text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                                     Pesanan Terbaru
                                 </h5>
                                 <a href="{{ $item['link'] }}" class="text-blue-600 hover:underline">Lihat Semua</a>
                             </div>
                             <div class="overflow-x-auto">
-                                <table class="min-w-full text-left text-sm">
+                                <table class="min-w-full text-left text-sm whitespace-nowrap">
                                     <thead>
                                         <tr>
                                             <th class="px-4 py-2">No</th>
@@ -134,8 +130,7 @@
                                                         ];
                                                         $class = $badgeClasses[$status] ?? 'bg-gray-100 text-gray-800';
                                                     @endphp
-                                                    <span
-                                                        class="px-2 py-1 rounded text-xs font-semibold {{ $class }}">
+                                                    <span class="px-2 py-1 rounded text-xs font-semibold {{ $class }}">
                                                         {{ ucfirst($data->status_pembayaran) }}
                                                     </span>
                                                 </td>
@@ -148,8 +143,7 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="7" class="px-4 py-2 text-center">Tidak ada pesanan
-                                                    terbaru.</td>
+                                                <td colspan="7" class="px-4 py-2 text-center">Tidak ada pesanan terbaru.</td>
                                             </tr>
                                         @endforelse
                                     </tbody>
