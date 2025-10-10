@@ -35,10 +35,10 @@ class DashboardController extends Controller
                     'count' => Produk::count(),
                     'link' => route('admin.product.index'),
                 ],
-                'orders' => [
-                    'count' => Transaksi::count(),
-                    'link' => route('admin.transaction.index'),
-                ],
+                // 'orders' => [
+                //     'count' => Transaksi::count(),
+                //     'link' => route('admin.transaction.index'),
+                // ],
                 'recentOrders' => [
                     'data' => Transaksi::orderBy('created_at', 'desc')->take(5)->get(),
                     'link' => route('admin.transaction.index'),
