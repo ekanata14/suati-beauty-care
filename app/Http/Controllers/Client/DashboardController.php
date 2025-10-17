@@ -55,21 +55,29 @@ class DashboardController extends Controller
                 'username' => $validatedData['username'],
                 'email' => $validatedData['email'],
             ]);
+            // Use updateOrCreate to simplify konsumen update/creation.
+            $existingKonsumen = Konsumen::where('id_user', $user->id)->first();
 
-            $konsumen = Konsumen::where('id_user', $user->id)->first();
+            $konsumenData = [
+                'tanggal_lahir' => $validatedData['tanggal_lahir'],
+                'jenis_kelamin'  => $validatedData['jenis_kelamin'],
+                'telepon'        => $validatedData['telepon'],
+            ];
+
             if ($request->hasFile('foto_profil')) {
-                if ($konsumen->foto_profil) {
-                    Storage::disk('public')->delete($konsumen->foto_profil);
+                // Remove old file if exists
+                if ($existingKonsumen && $existingKonsumen->foto_profil) {
+                    Storage::disk('public')->delete($existingKonsumen->foto_profil);
                 }
-                $validatedData['foto_profil'] = $request->file('foto_profil')->store('foto_profil', 'public');
+                // Store new file on public disk
+                $konsumenData['foto_profil'] = $request->file('foto_profil')->store('foto_profil', 'public');
             }
 
-            $konsumen->update([
-                'tanggal_lahir' => $validatedData['tanggal_lahir'],
-                'jenis_kelamin' => $validatedData['jenis_kelamin'],
-                'foto_profil' => $validatedData['foto_profil'] ?? $konsumen->foto_profil,
-                'telepon' => $validatedData['telepon'],
-            ]);
+            // Update existing or create new konsumen record
+            $konsumen = Konsumen::updateOrCreate(
+                ['id_user' => $user->id],
+                $konsumenData
+            );
 
             DB::commit();
             return back()->with('success', 'Profil berhasil diperbarui.');
