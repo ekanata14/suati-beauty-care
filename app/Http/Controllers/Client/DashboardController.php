@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 
 // Models
 use App\Models\Produk;
+use App\Models\Konsumen;
 use App\Models\Kategori;
 use App\Models\Review;
 use App\Models\Order;
@@ -55,7 +56,7 @@ class DashboardController extends Controller
                 'email' => $validatedData['email'],
             ]);
 
-            $konsumen = $user->konsumen;
+            $konsumen = Konsumen::where('id_user', $user->id)->first();
             if ($request->hasFile('foto_profil')) {
                 if ($konsumen->foto_profil) {
                     Storage::disk('public')->delete($konsumen->foto_profil);
