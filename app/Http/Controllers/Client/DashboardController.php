@@ -35,18 +35,18 @@ class DashboardController extends Controller
 
     public function updateProfile(Request $request)
     {
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:users,username,' . auth()->user()->id,
+            'email' => 'required|email|max:255|unique:users,email,' . auth()->user()->id,
+            'tanggal_lahir' => 'required|date',
+            'jenis_kelamin' => 'required',
+            'foto_profil' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'telepon' => 'required|string|max:15',
+        ]);
         try {
             DB::beginTransaction();
 
-            $validatedData = $request->validate([
-                'name' => 'required|string|max:255',
-                'username' => 'required|string|max:255|unique:users,username,' . auth()->user()->id,
-                'email' => 'required|email|max:255|unique:users,email,' . auth()->user()->id,
-                'tanggal_lahir' => 'required|date',
-                'jenis_kelamin' => 'required',
-                'foto_profil' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-                'telepon' => 'required|string|max:15',
-            ]);
 
             $user = auth()->user();
             $user->update([
