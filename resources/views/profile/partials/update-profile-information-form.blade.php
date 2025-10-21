@@ -137,9 +137,9 @@
                 <div>
                     <x-input-label for="jenis_kelamin" :value="__('Gender')" />
                     <select id="jenis_kelamin" name="jenis_kelamin" class="mt-1 block w-full">
-                        <option value="Laki-Laki"
-                            {{ old('jenis_kelamin', $user->Konsumen->jenis_kelamin) === 'Laki-Laki' ? 'selected' : '' }}>
-                            {{ __('Laki-Laki') }}</option>
+                        <option value="Laki-laki"
+                            {{ old('jenis_kelamin', $user->Konsumen->jenis_kelamin) === 'Laki-laki' ? 'selected' : '' }}>
+                            {{ __('Laki-laki') }}</option>
                         <option value="Perempuan"
                             {{ old('jenis_kelamin', $user->Konsumen->jenis_kelamin) === 'Perempuan' ? 'selected' : '' }}>
                             {{ __('Perempuan') }}</option>
