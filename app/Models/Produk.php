@@ -12,8 +12,12 @@ class Produk extends Model
         'stok',
         'harga',
         'deskripsi',
-        'foto_produk',
     ];
+
+    public function produkPhotos()
+    {
+        return $this->hasMany(ProdukPhoto::class, 'id_produk');
+    }
 
     public function kategori()
     {

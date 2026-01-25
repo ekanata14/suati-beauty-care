@@ -45,7 +45,7 @@
                     <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-300"
                         data-aos="zoom-in" data-aos-delay="{{ 100 + $index * 100 }}">
                         <a href="{{ route('products.detail', $product->id) }}">
-                            <img src="{{ asset('storage/' . $product->foto_produk) }}" alt="{{ $product->nama }}"
+                            <img src="{{ asset('storage/' . $product->produkPhotos->first()?->url) }}" alt="{{ $product->nama }}"
                                 class="w-full h-52 object-cover hover:scale-105 transition duration-300">
                         </a>
                         <div class="p-6">

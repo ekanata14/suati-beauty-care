@@ -1,4 +1,4 @@
-@extends('layouts.guest') 
+@extends('layouts.guest')
 @section('content')
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
@@ -29,16 +29,18 @@
                 Login
             </button>
             <a href="{{ route('home') }}" class="btn-green w-full flex items-center justify-center">Kembali</a>
-            <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
-                href="{{ route('register') }}">
-                {{ __('Doesn\'t have an account? Register') }}
-            </a>
-            {{-- @if (Route::has('password.request'))
+            <div class="flex justify-between items-center w-full gap-4">
                 <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
-                    href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
+                    href="{{ route('register') }}">
+                    {{ __('Doesn\'t have an account? Register') }}
                 </a>
-            @endif --}}
+                @if (Route::has('password.request'))
+                    <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
+                        href="{{ route('password.request') }}">
+                        {{ __('Forgot your password?') }}
+                    </a>
+                @endif
+            </div>
         </div>
     </form>
 @endsection

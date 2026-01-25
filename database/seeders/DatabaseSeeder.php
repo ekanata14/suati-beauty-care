@@ -50,7 +50,6 @@ class DatabaseSeeder extends Seeder
             'stok' => 100,
             'harga' => 85000,
             'deskripsi' => 'Comfortable cotton T-Shirt available in various sizes.',
-            'foto_produk' => 'tshirt.jpg',
         ]);
 
         $produk4 = Produk::create([
@@ -59,7 +58,6 @@ class DatabaseSeeder extends Seeder
             'stok' => 60,
             'harga' => 150000,
             'deskripsi' => 'Elegant summer dress for all occasions.',
-            'foto_produk' => 'dress.jpg',
         ]);
 
         // Create dummy ProdukSize data related to clothes

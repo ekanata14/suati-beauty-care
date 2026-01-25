@@ -10,7 +10,8 @@
                     <input type="hidden" name="id" value="{{ $data->id }}">
 
                     <div class="mb-6">
-                        <label for="id_kategori" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Category</label>
+                        <label for="id_kategori"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Category</label>
                         <select id="id_kategori" name="id_kategori"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             required>
@@ -30,7 +31,8 @@
                     </div>
 
                     <div class="mb-6">
-                        <label for="nama" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Product Name</label>
+                        <label for="nama" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Product
+                            Name</label>
                         <input type="text" id="nama" name="nama" value="{{ old('nama', $data->nama) }}"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder="Product Name" required />
@@ -40,7 +42,8 @@
                     </div>
 
                     <div class="mb-6">
-                        <label for="harga" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Price</label>
+                        <label for="harga"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Price</label>
                         <input type="number" id="harga" name="harga" value="{{ old('harga', $data->harga) }}"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder="Price" required />
@@ -50,7 +53,8 @@
                     </div>
 
                     <div class="mb-6">
-                        <label for="deskripsi" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label>
+                        <label for="deskripsi"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label>
                         <textarea id="deskripsi" name="deskripsi"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder="Product Description" required>{{ old('deskripsi', $data->deskripsi) }}</textarea>
@@ -60,17 +64,80 @@
                     </div>
 
                     <div class="mb-6">
-                        <label for="foto_produk" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Product Image</label>
-                        @if ($data->foto_produk)
-                            <div class="mb-4">
-                                <img src="{{ asset('storage/' . $data->foto_produk) }}" alt="Product Image"
-                                    class="w-32 h-32 object-cover">
-                            </div>
-                        @endif
-                        <input type="file" id="foto_produk" name="foto_produk"
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Product Images</label>
+                        <div id="images-container" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                            @if ($data->produkPhotos && count($data->produkPhotos) > 0)
+                                @foreach ($data->produkPhotos as $image)
+                                    <div class="relative group image-item rounded-lg overflow-hidden shadow-md">
+                                        <img src="{{ asset('storage/' . $image->url) }}" alt="Product Image"
+                                            class="w-full h-32 object-cover">
+                                        <button type="button"
+                                            class="delete-image absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-2"
+                                            data-image-id="{{ $image->id }}" title="Delete image">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M6 18L18 6M6 6l12 12"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                @endforeach
+                            @endif
+                        </div>
+                    </div>
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            document.querySelectorAll('.delete-image').forEach(btn => {
+                                btn.addEventListener('click', function(e) {
+                                    e.preventDefault();
+                                    const imageId = this.dataset.imageId;
+                                    Swal.fire({
+                                        title: 'Are you sure?',
+                                        text: "You won't be able to revert this!",
+                                        icon: 'warning',
+                                        showCancelButton: true,
+                                        confirmButtonColor: '#3085d6',
+                                        cancelButtonColor: '#d33',
+                                        confirmButtonText: 'Yes, delete it!'
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            fetch('{{ route('admin.product.delete.image') }}', {
+                                                    method: 'DELETE',
+                                                    headers: {
+                                                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                                        'Content-Type': 'application/json'
+                                                    },
+                                                    body: JSON.stringify({
+                                                        id: imageId
+                                                    })
+                                                }).then(response => response.json())
+                                                .then(data => {
+                                                    if (data.success) {
+                                                        this.closest('.image-item').remove();
+                                                        Swal.fire(
+                                                            'Deleted!',
+                                                            'Your image has been deleted.',
+                                                            'success'
+                                                        );
+                                                    }
+                                                });
+                                        }
+                                    });
+                                });
+                            });
+                        });
+                    </script>
+
+                    <div class="mb-6">
+                        <label for="foto_produk"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Product Images</label>
+                        <input type="file" id="foto_produk" name="foto_produk[]"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            accept="image/*" />
+                            accept="image/*" multiple />
                         @error('foto_produk')
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
+                        @enderror
+                        @error('foto_produk.*')
                             <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                         @enderror
                     </div>
@@ -81,14 +148,20 @@
                             @php
                                 $sizes = old('sizes', $data->sizes ?? []);
                             @endphp
-                            @if($sizes)
-                                @foreach($sizes as $i => $size)
+                            @if ($sizes)
+                                @foreach ($sizes as $i => $size)
                                     <div class="flex mb-2 items-center size-row">
-                                        <input type="text" name="sizes[{{ $i }}][size]" value="{{ $size['size'] ?? '' }}" placeholder="Size" class="mr-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5" required>
+                                        <input type="text" name="sizes[{{ $i }}][size]"
+                                            value="{{ $size['size'] ?? '' }}" placeholder="Size"
+                                            class="mr-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5"
+                                            required>
                                         @error("sizes.$i.size")
                                             <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                                         @enderror
-                                        <input type="number" name="sizes[{{ $i }}][stock]" value="{{ $size['stock'] ?? '' }}" placeholder="Stock" class="mr-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5" required min="0">
+                                        <input type="number" name="sizes[{{ $i }}][stock]"
+                                            value="{{ $size['stock'] ?? '' }}" placeholder="Stock"
+                                            class="mr-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5"
+                                            required min="0">
                                         @error("sizes.$i.stock")
                                             <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                                         @enderror
@@ -101,7 +174,7 @@
                         @error('sizes')
                             <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                         @enderror
-                        @if($errors->has('sizes.*.size') || $errors->has('sizes.*.stock'))
+                        @if ($errors->has('sizes.*.size') || $errors->has('sizes.*.stock'))
                             <p class="mt-2 text-sm text-red-600 dark:text-red-500">Please check size and stock fields.</p>
                         @endif
                     </div>
@@ -112,7 +185,7 @@
                 </form>
 
                 <script>
-                    document.addEventListener('DOMContentLoaded', function () {
+                    document.addEventListener('DOMContentLoaded', function() {
                         let sizesContainer = document.getElementById('sizes-container');
                         let addSizeBtn = document.getElementById('add-size-row');
 
@@ -120,7 +193,7 @@
                             return sizesContainer.querySelectorAll('.size-row').length;
                         }
 
-                        addSizeBtn.addEventListener('click', function () {
+                        addSizeBtn.addEventListener('click', function() {
                             let index = getSizeRowsCount();
                             let div = document.createElement('div');
                             div.className = 'flex mb-2 items-center size-row';
@@ -132,13 +205,15 @@
                             sizesContainer.appendChild(div);
                         });
 
-                        sizesContainer.addEventListener('click', function (e) {
+                        sizesContainer.addEventListener('click', function(e) {
                             if (e.target.classList.contains('remove-size-row')) {
                                 e.target.parentElement.remove();
                                 // Re-index the name attributes
-                                Array.from(sizesContainer.querySelectorAll('.size-row')).forEach(function(row, i){
-                                    row.querySelector('input[type="text"]').setAttribute('name', `sizes[${i}][size]`);
-                                    row.querySelector('input[type="number"]').setAttribute('name', `sizes[${i}][stock]`);
+                                Array.from(sizesContainer.querySelectorAll('.size-row')).forEach(function(row, i) {
+                                    row.querySelector('input[type="text"]').setAttribute('name',
+                                        `sizes[${i}][size]`);
+                                    row.querySelector('input[type="number"]').setAttribute('name',
+                                        `sizes[${i}][stock]`);
                                 });
                             }
                         });
@@ -148,4 +223,3 @@
         </div>
     </div>
 @endsection
-

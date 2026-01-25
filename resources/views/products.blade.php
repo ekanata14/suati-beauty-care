@@ -43,7 +43,7 @@
                 @forelse ($products as $product)
                     <div class="bg-white rounded-2xl shadow hover:shadow-xl transition overflow-hidden" data-aos="fade-up" data-aos-duration="500">
                         <a href="{{ route('products.detail', $product->id) }}">
-                            <img src="{{ asset('storage/' . $product->foto_produk) }}" alt="{{ $product->nama }}" class="w-full h-48 object-cover hover:scale-105 transition-transform duration-300">
+                            <img src="{{ asset('storage/' . $product->produkPhotos->first()?->url) }}" alt="{{ $product->nama }}" class="w-full h-48 object-cover hover:scale-105 transition-transform duration-300">
                         </a>
                         <div class="p-6">
                             <h3 class="text-lg font-bold text-gray-800 mb-1">{{ $product->nama }}</h3>

@@ -8,9 +8,25 @@
                 <div class="bg-white rounded-2xl shadow-md p-8 w-full md:w-3/4" data-aos="fade-right" data-aos-duration="500"
                     data-aos-delay="300">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <img class="rounded-xl w-full h-80 object-cover"
-                                src="{{ asset('storage/' . $product->foto_produk) }}" alt="{{ $product->nama }}" />
+                        <div class="flex flex-col gap-4">
+                            <!-- Main Image -->
+                            <div class="rounded-xl overflow-hidden bg-gray-100">
+                                <img id="main-image" class="w-full h-80 object-cover cursor-pointer"
+                                    src="{{ asset('storage/' . $product->produkPhotos->first()?->url ?? $product->foto_produk) }}"
+                                    alt="{{ $product->nama }}" />
+                            </div>
+
+                            <!-- Thumbnail Gallery -->
+                            @if ($product->produkPhotos->count() > 1)
+                                <div class="flex gap-2 overflow-x-auto">
+                                    @foreach ($product->produkPhotos as $photo)
+                                        <img class="w-20 h-20 object-cover rounded-lg cursor-pointer border-2 border-gray-200 hover:border-blue-500 transition"
+                                            src="{{ asset('storage/' . $photo->url) }}"
+                                            alt="{{ $product->nama }}"
+                                            onclick="document.getElementById('main-image').src = this.src" />
+                                    @endforeach
+                                </div>
+                            @endif
                         </div>
                         <div class="flex flex-col gap-4">
                             <h1 class="text-3xl font-bold text-gray-800">{{ $product->nama }}</h1>

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Produk;
 use App\Models\ProdukSize;
 use App\Models\Kategori;
+use App\Models\ProdukPhoto;
 
 class ProductController extends Controller
 {
@@ -49,23 +50,21 @@ class ProductController extends Controller
             'harga' => 'required',
             'id_kategori' => 'required',
             'deskripsi' => 'required|string',
-            'foto_produk' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'foto_produk' => 'nullable|array',
+            'foto_produk.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'sizes' => 'required|array',
             'sizes.*.size' => 'required|string|max:50',
             'sizes.*.stock' => 'required|integer|min:0',
         ]);
 
+
         DB::beginTransaction();
         try {
-            if ($request->hasFile('foto_produk')) {
-                $file = $request->file('foto_produk');
-                $path = $file->store('produk_images', 'public');
-                $validatedData['foto_produk'] = $path;
-            }
-
             // Remove sizes from validatedData before creating Produk
             $sizes = $validatedData['sizes'];
+            $fotoFiles = $request->file('foto_produk') ?? [];
             unset($validatedData['sizes']);
+            unset($validatedData['foto_produk']);
 
             // Sum stock from all sizes
             $totalStock = array_sum(array_column($sizes, 'stock'));
@@ -74,9 +73,18 @@ class ProductController extends Controller
             // Create Produk
             $produk = Produk::create($validatedData);
 
+            // Store multiple photos
+            foreach ($fotoFiles as $file) {
+                $path = $file->store('produk_images', 'public');
+                ProdukPhoto::create([
+                    'id_produk' => $produk->id,
+                    'url' => $path,
+                ]);
+            }
+
             // Insert sizes into produkSize table
             foreach ($sizes as $sizeData) {
-                $produkSize = ProdukSize::create([
+                ProdukSize::create([
                     'id_produk' => $produk->id,
                     'size' => $sizeData['size'],
                     'stock' => $sizeData['stock'],
@@ -125,7 +133,8 @@ class ProductController extends Controller
             'harga' => 'required',
             'id_kategori' => 'required',
             'deskripsi' => 'required|string',
-            'foto_produk' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'foto_produk' => 'nullable|array',
+            'foto_produk.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'sizes' => 'required|array',
             'sizes.*.size' => 'required|string|max:50',
             'sizes.*.stock' => 'required|integer|min:0',
@@ -135,16 +144,16 @@ class ProductController extends Controller
         try {
             $produk = Produk::findOrFail($validatedData['id']);
 
+            // Store new photos without deleting old ones
             if ($request->hasFile('foto_produk')) {
-                // Delete the old photo if it exists
-                if ($produk->foto_produk && Storage::disk('public')->exists($produk->foto_produk)) {
-                    Storage::disk('public')->delete($produk->foto_produk);
+                $fotoFiles = $request->file('foto_produk');
+                foreach ($fotoFiles as $file) {
+                    $path = $file->store('produk_images', 'public');
+                    ProdukPhoto::create([
+                        'id_produk' => $produk->id,
+                        'url' => $path,
+                    ]);
                 }
-
-                // Store the new photo
-                $file = $request->file('foto_produk');
-                $path = $file->store('produk_images', 'public');
-                $validatedData['foto_produk'] = $path;
             }
 
             // Remove sizes from validatedData before updating Produk
@@ -190,9 +199,13 @@ class ProductController extends Controller
         try {
             $produk = Produk::findOrFail($request->id);
 
-            // Delete the photo if it exists
-            if ($produk->foto_produk && Storage::disk('public')->exists($produk->foto_produk)) {
-                Storage::disk('public')->delete($produk->foto_produk);
+            // Delete related photos from ProdukPhoto
+            $photos = ProdukPhoto::where('id_produk', $produk->id)->get();
+            foreach ($photos as $photo) {
+                if ($photo->url && Storage::disk('public')->exists($photo->url)) {
+                    Storage::disk('public')->delete($photo->url);
+                }
+                $photo->delete();
             }
 
             // Delete related sizes
@@ -206,6 +219,39 @@ class ProductController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
+        }
+    }
+
+    public function deleteImage(Request $request)
+    {
+        $validatedData = $request->validate([
+            'id' => 'required|integer',
+        ]);
+
+
+        DB::beginTransaction();
+        try {
+            $photo = ProdukPhoto::findOrFail($validatedData['id']);
+
+            // Delete the photo file if it exists
+            if ($photo->url && Storage::disk('public')->exists($photo->url)) {
+                Storage::disk('public')->delete($photo->url);
+            }
+
+            $photo->delete();
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Foto produk berhasil dihapus.'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
         }
     }
 }

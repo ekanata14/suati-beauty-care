@@ -89,6 +89,8 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::get('/admin/product/edit/{id}', [AdminProductDashboardController::class, 'edit'])->name('admin.product.edit');
     Route::put('/admin/product/update', [AdminProductDashboardController::class, 'update'])->name('admin.product.update');
     Route::delete('/admin/product/delete', [AdminProductDashboardController::class, 'destroy'])->name('admin.product.destroy');
+    Route::delete('/admin/product/delete-image', [AdminProductDashboardController::class, 'deleteImage'])->name('admin.product.delete.image');
+
     // Admin Review Routes
     Route::get('/admin/review', [AdminReviewDashboardController::class, 'index'])->name('admin.review.index');
     // Route::get('/admin/review/create', [AdminReviewDashboardController::class, 'create'])->name('admin.review.create');

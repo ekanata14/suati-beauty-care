@@ -33,9 +33,6 @@
                                         Deskripsi
                                     </th>
                                     <th scope="col" class="px-6 py-3">
-                                        Foto Produk
-                                    </th>
-                                    <th scope="col" class="px-6 py-3">
                                         Actions
                                     </th>
                                 </tr>
@@ -57,13 +54,6 @@
                                         </td>
                                         <td class="px-6 py-4">
                                             {{ $item->deskripsi }}
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            <a href="{{ Storage::url($item->foto_produk) }}" target="_blank"
-                                                class="text-blue-500 underline"
-                                                onclick="event.preventDefault(); openModal('{{ Storage::url($item->foto_produk) }}')">
-                                                View Photo
-                                            </a>
                                         </td>
                                         <td class="flex justify-start items-center mt-2">
                                             <a href="{{ route('admin.product.edit', $item->id) }}"
