@@ -23,8 +23,6 @@ class PelangganController extends Controller
             'datas' => User::where('role', 'pelanggan')->paginate(10),
         ];
 
-        // return $viewData;
-
         return view('admin.pelanggan.index', $viewData);
     }
 

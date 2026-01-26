@@ -3,15 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\RecordActivity; // <--- Panggil Trait
 
 class Produk extends Model
 {
+    use RecordActivity;
     protected $fillable = [
         'id_kategori',
         'nama',
         'stok',
         'harga',
         'deskripsi',
+        'created_by',
+        'updated_by',
     ];
 
     public function produkPhotos()

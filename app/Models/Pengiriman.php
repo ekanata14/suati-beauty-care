@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\RecordActivity;
 
 class Pengiriman extends Model
 {
-    use HasFactory;
+    use HasFactory, RecordActivity;
 
     /**
      * Nama tabel di database.
@@ -31,6 +32,8 @@ class Pengiriman extends Model
         'foto_bukti',
         'tgl_dikirim',
         'tgl_diterima',
+        'created_by'
+        'updated_by'
     ];
 
     /**

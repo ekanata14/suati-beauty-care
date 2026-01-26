@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up()
     {
         // Daftar semua tabel yang ingin Anda track
-        $tables = ['users', 'transaksis', 'pengiriman', 'produks']; // Tambahkan tabel lain di sini
+        $tables = ['users', 'pengiriman', 'produks', 'kategoris']; // Tambahkan tabel lain di sini
 
         foreach ($tables as $tableName) {
             Schema::table($tableName, function (Blueprint $table) {

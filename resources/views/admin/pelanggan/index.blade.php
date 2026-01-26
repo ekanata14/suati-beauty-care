@@ -37,6 +37,12 @@
                                         Telepon
                                     </th>
                                     <th scope="col" class="px-6 py-3">
+                                        Dibuat Oleh
+                                    </th>
+                                    <th scope="col" class="px-6 py-3">
+                                        Diperbarui Oleh
+                                    </th>
+                                    <th scope="col" class="px-6 py-3">
                                         Actions
                                     </th>
                                 </tr>
@@ -68,6 +74,33 @@
                                         </td>
                                         <td class="px-6 py-4">
                                             {{ $item->Konsumen->telepon }}
+                                        </td>
+                                        <td>
+                                            @if ($item->created_by === $item->id)
+                                                <span class="badge bg-primary">{{ $item->creator->name }}</span>
+                                            @elseif($item->creator)
+                                                <span class="badge bg-warning text-dark">{{ $item->creator->name }}
+                                                </span>
+                                            @else
+                                                <span class="badge bg-secondary">System</span>
+                                            @endif
+
+                                            <br>
+                                            <small class="text-muted">{{ $item->created_at->format('d M Y H:i') }}</small>
+                                        </td>
+                                        <td>
+                                            @if ($item->edited_by === $item->id)
+                                                <span class="badge bg-primary">{{ $item->editor->name }}</span>
+                                            @elseif($item->editor)
+                                                <span class="badge bg-warning text-dark">
+                                                    {{ $item->editor->name }}
+                                                </span>
+                                            @else
+                                                <span class="badge bg-secondary">System</span>
+                                            @endif
+
+                                            <br>
+                                            <small class="text-muted">{{ $item->updated_at->format('d M Y H:i') }}</small>
                                         </td>
                                         <td class="flex justify-center items-center mt-2">
                                             <a href="{{ route('admin.pelanggan.edit', $item->id) }}"
