@@ -49,6 +49,7 @@ Route::middleware(['auth', 'verified', 'role:pelanggan'])->group(function () {
     Route::get('/history/detail/{id}', [ClientDashboardController::class, 'historyDetail'])->name('history.detail');
     Route::post('/user-update-profile', [ClientDashboardController::class, 'updateProfile'])->name('user.update.profile');
     Route::get('/user/transaction/proof/{id}', [AdminTransactionDashboardController::class, 'getTransactionProof'])->name('user.transaction.proof');
+    Route::get('/confirm-received/{id}', [PengirimanController::class, 'confirmReceived'])->name('confirm.received');
 });
 
 Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {

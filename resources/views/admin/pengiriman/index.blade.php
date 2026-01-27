@@ -52,13 +52,7 @@
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 flex space-x-3">
-                                        <a href="{{ route('admin.pengiriman.edit', $item->id) }}" class="text-blue-600 hover:underline">Edit</a>
-
-                                        <form action="{{ route('admin.pengiriman.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Yakin hapus?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:underline">Hapus</button>
-                                        </form>
+                                        <a href="{{ route('admin.transaction.detail', $item->id_transaksi) }}" class="text-blue-600 hover:underline">Detail</a>
                                     </td>
                                 </tr>
                             @empty

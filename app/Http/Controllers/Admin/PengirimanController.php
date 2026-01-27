@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Pengiriman;
 use App\Models\Transaksi; // Diperlukan untuk create manual
+use Illuminate\Support\Facades\Storage; // Jangan lupa import ini
 use Illuminate\Http\Request;
+
 
 class PengirimanController extends Controller
 {
@@ -38,33 +40,85 @@ class PengirimanController extends Controller
         return view('admin.pengiriman.create', compact('transaksis'));
     }
 
-    // --- 3. STORE (Simpan Data Baru) ---
+
     public function store(Request $request)
     {
+        // 1. Validasi Input (Sesuaikan dengan field di Modal)
+        // 'alamat_tujuan' dan 'biaya_ongkir' dihapus dari validasi karena tidak dikirim via form (disabled/text only)
         $validated = $request->validate([
             'id_transaksi' => 'required|exists:transaksis,id',
             'kurir' => 'required|string',
             'layanan_kurir' => 'nullable|string',
-            'biaya_ongkir' => 'required|numeric|min:0',
-            'alamat_tujuan' => 'required|string',
             'catatan' => 'nullable|string',
+            // Validasi baru untuk upload foto
+            'foto_bukti' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'no_resi' => 'required|string',
         ]);
 
-        // Ambil data user dari transaksi
-        $transaksi = Transaksi::findOrFail($request->id_transaksi);
+        // 2. Ambil Data Transaksi
+        $transaksi = Transaksi::with('order.user')->findOrFail($request->id_transaksi);
 
-        Pengiriman::create([
-            'id_transaksi' => $transaksi->id,
-            'id_user' => $transaksi->id_user, // Asumsi ada kolom id_user di transaksi
+        // 3. Persiapkan Data Dasar
+        $dataToSave = [
+            'id_user' => $transaksi->order->user->id,
             'kurir' => $validated['kurir'],
             'layanan_kurir' => $validated['layanan_kurir'],
-            'biaya_ongkir' => $validated['biaya_ongkir'],
-            'alamat_tujuan' => $validated['alamat_tujuan'],
             'catatan' => $validated['catatan'],
-            'status' => 'pending', // Default awal
-        ]);
+            'tgl_dikirim' => now(), // Set tanggal kirim sekarang
+            'no_resi' => $validated['no_resi'],
+        ];
 
-        return redirect()->route('admin.pengiriman.index')->with('success', 'Data pengiriman berhasil dibuat manual.');
+        // 4. Handle Logika Alamat & Ongkir
+        // Cek apakah data pengiriman untuk transaksi ini sudah ada sebelumnya?
+        $existingPengiriman = Pengiriman::where('id_transaksi', $request->id_transaksi)->first();
+
+        if (!$existingPengiriman) {
+            // JIKA DATA BARU (Create):
+            // Kita wajib mengisi alamat & ongkir. Ambil dari data Transaksi/User.
+            // Sesuaikan 'alamat_pengiriman' & 'total_ongkir' dengan nama kolom di tabel Transaksi Anda.
+            $dataToSave['alamat_tujuan'] = $transaksi->alamat_pengiriman ?? $transaksi->user->alamat ?? '-';
+            $dataToSave['biaya_ongkir'] = $transaksi->total_ongkir ?? 0;
+            $dataToSave['status'] = 'diproses'; // Status awal default
+        }
+        // Jika update, kita biarkan alamat & ongkir apa adanya (tidak ditimpa),
+        // kecuali Anda ingin meresetnya dari data transaksi setiap kali update.
+
+        // 5. Handle Upload Foto Bukti
+        if ($request->hasFile('foto_bukti')) {
+            // Hapus file lama jika ada (agar server tidak penuh sampah file)
+            if ($existingPengiriman && $existingPengiriman->foto_bukti) {
+                Storage::disk('public')->delete($existingPengiriman->foto_bukti);
+            }
+
+            // Simpan file baru
+            $path = $request->file('foto_bukti')->store('bukti_pengiriman', 'public');
+            $dataToSave['foto_bukti'] = $path;
+
+            // Opsional: Jika admin upload resi/bukti, otomatis ubah status jadi 'dikirim'
+            $dataToSave['status'] = 'dikirim';
+        }
+
+        // 6. Simpan ke Database (Update or Create)
+        // Mencari berdasarkan id_transaksi, lalu update/buat data sesuai array $dataToSave
+        Pengiriman::updateOrCreate(
+            ['id_transaksi' => $request->id_transaksi],
+            $dataToSave
+        );
+
+        return redirect()->route('admin.pengiriman.index')->with('success', 'Data pengiriman berhasil diperbarui.');
+    }
+
+    public function confirmReceived($id)
+    {
+        $pengiriman = Pengiriman::findOrFail($id);
+
+        // Update status menjadi 'diterima' dan set tanggal diterima
+        $pengiriman->status = 'diterima';
+        $pengiriman->tgl_diterima = now();
+        $pengiriman->save();
+
+        return back()->with('success', 'Pengiriman telah dikonfirmasi diterima.');
+
     }
 
     // --- 4. EDIT (Form Edit) ---

@@ -22,7 +22,7 @@ return new class extends Migration {
             $table->foreign('id_user')->references('id')->on('users')->onDelete('cascade');
 
             // Data Kurir & Resi
-            $table->string('kurir'); // Contoh: JNE, J&T, Internal Courier
+            $table->string('kurir')->nullable(); // Contoh: JNE, J&T, Internal Courier
             $table->string('layanan_kurir')->nullable(); // Contoh: REG, YES, OKE (Opsional tapi berguna)
             $table->string('no_resi')->nullable(); // Nullable, karena saat status 'pending' resi belum ada
 

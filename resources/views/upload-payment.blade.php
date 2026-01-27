@@ -18,9 +18,8 @@
                             {{ number_format($transaction->total_bayar, 0, ',', '.') }}</span>
                     </div>
                     <div class="flex justify-between text-sm text-gray-600 dark:text-gray-400">
-                        <span>Total Price</span>
-                        <span class="font-medium text-gray-900 dark:text-white">IDR
-                            {{ number_format($transaction->total_bayar, 0, ',', '.') }}</span>
+                        <span>Transport Fee</span>
+                        <span class="font-medium text-gray-900 dark:text-white">IDR 25.000</span>
                     </div>
                     <div class="flex justify-between text-sm text-gray-600 dark:text-gray-400">
                         <span>Total Item</span>
@@ -29,7 +28,7 @@
                     <div
                         class="flex justify-between text-lg font-bold text-gray-900 dark:text-white border-t pt-4 dark:border-gray-700">
                         <span>Total</span>
-                        <span>IDR {{ number_format($transaction->total_bayar, 0, ',', '.') }}</span>
+                        <span>IDR {{ number_format($transaction->total_bayar + 25000, 0, ',', '.') }}</span>
                     </div>
                     <div class="mt-4">
                         <div class="bg-blue-50 dark:bg-gray-900 rounded-xl p-6 shadow flex flex-col gap-4">
@@ -87,7 +86,8 @@
 
                 <input type="hidden" name="id" value="{{ $transaction->id }}">
                 <input type="hidden" name="total_qty_item" value="{{ $transaction->total_qty_item }}">
-                <input type="hidden" name="total_bayar" value="{{ $transaction->total_bayar }}">
+                <input type="hidden" name="total_bayar" value="{{ $transaction->total_bayar + 25000 }}">
+                <input type="hidden" name="biaya_ongkir" value="25000">
 
                 <div class="flex flex-col gap-3">
                     <button type="button" onclick="confirmPayment(event)"

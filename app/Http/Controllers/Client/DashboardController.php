@@ -20,6 +20,7 @@ use App\Models\Wishlist;
 use App\Models\HomeContent;
 use App\Models\CartDetailSize;
 use App\Models\DetailOrderSize;
+use App\Models\Pengiriman;
 
 class DashboardController extends Controller
 {
@@ -667,7 +668,7 @@ class DashboardController extends Controller
                     $orderDetail = DetailOrder::create([
                         'id_order' => $order->id,
                         'id_produk' => $item['produk_id'],
-                        'harga' => (int)$item['harga'],
+                        'harga' => (int) $item['harga'],
                         'qty' => $item['qty'],
                     ]);
                 } else {
@@ -755,6 +756,8 @@ class DashboardController extends Controller
             $validatedData = $request->validate([
                 'bukti_pembayaran' => 'required|image|mimes:jpeg,png,jpg|max:2048',
                 'alamat' => 'required|string|max:255',
+                'total_bayar' => 'required|numeric|min:1',
+                'biaya_ongkir' => 'nullable',
             ]);
 
             $transaksi = Transaksi::find($request->id);
@@ -774,7 +777,17 @@ class DashboardController extends Controller
                 'bukti_pembayaran' => $validatedData['bukti_pembayaran'],
                 'status_pembayaran' => 'waiting',
                 'alamat' => $validatedData['alamat'],
+                'total_bayar' => $validatedData['total_bayar'],
             ]);
+
+            $pengiriman = Pengiriman::create([
+                'id_transaksi' => $transaksi->id,
+                'id_user' => auth()->user()->id,
+                'status_pengiriman' => 'pending',
+                'alamat_tujuan' => $validatedData['alamat'],
+                'biaya_ongkir' => $validatedData['biaya_ongkir'] ?? 0,
+            ]);
+
             $products = $transaksi->order->detailOrder;
 
             foreach ($products as $detail) {

@@ -167,18 +167,27 @@
                                                         </div>
                                                         <a href="{{ route('admin.transaction.detail', $item->id) }}"
                                                             class="btn-primary">Detail</a>
-                                                        <button type="button" onclick="openShippingModal(this)"
-                                                            data-id="{{ $item->id }}"
-                                                            data-invoice="{{ $item->invoice_id }}"
-                                                            data-user="{{ $item->order->user->name ?? 'Guest' }}"
-                                                            data-address="{{ $item->alamat_pengiriman ?? ($item->user->alamat ?? '') }}"
-                                                            class="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 text-xs">
-                                                            + Pengiriman
-                                                        </button>
+                                                        @if ($item->pengiriman)
+                                                            @if ($item->pengiriman->status === 'pending')
+                                                                <button type="button" onclick="openShippingModal(this)"
+                                                                    data-id="{{ $item->id }}"
+                                                                    data-invoice="{{ $item->invoice_id ?? '-' }}"
+                                                                    data-user="{{ $item->order->user->name ?? 'Guest' }}"
+                                                                    data-address="{{ $item->pengiriman->alamat_tujuan ?? '' }}"
+                                                                    data-ongkir="{{ $item->pengiriman->biaya_ongkir ?? 0 }}"
+                                                                    data-kurir="{{ $item->pengiriman->kurir ?? '' }}"
+                                                                    data-layanan="{{ $item->pengiriman->layanan_kurir ?? '' }}"
+                                                                    data-catatan="{{ $item->pengiriman->catatan ?? '' }}"
+                                                                    class="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 text-xs">
+                                                                    + Pengiriman
+                                                                </button>
+                                                            @endif
+                                                        @endif
                                                     </div>
                                                 @endif
                                             @endif
                                         </td>
+                                        {{ $item->pengiriman ? '' : '' }}
                                     </tr>
                                 @empty
                                     <tr>
@@ -200,9 +209,10 @@
         <div class="relative p-4 w-full max-w-2xl h-auto">
             <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
 
+                {{-- Header --}}
                 <div class="flex justify-between items-start p-4 rounded-t border-b dark:border-gray-600">
                     <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                        Buat Pengiriman: <span id="modal_invoice_title"></span>
+                        Update Pengiriman: <span id="modal_invoice_title"></span>
                     </h3>
                     <button type="button" onclick="closeShippingModal()"
                         class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center">
@@ -214,55 +224,91 @@
                     </button>
                 </div>
 
-                <form action="{{ route('admin.pengiriman.store') }}" method="POST" class="p-6 space-y-6">
+                {{-- Form dengan Multipart untuk File Upload --}}
+                <form action="{{ route('admin.pengiriman.store') }}" method="POST" enctype="multipart/form-data"
+                    class="p-6 space-y-6">
                     @csrf
-
                     <input type="hidden" name="id_transaksi" id="modal_id_transaksi">
 
+                    {{-- Bagian Informasi (Read Only) --}}
+                    <div
+                        class="bg-blue-50 dark:bg-gray-600 p-4 rounded-lg mb-4 border border-blue-100 dark:border-gray-500">
+                        <h4 class="text-sm font-bold text-blue-800 dark:text-blue-100 mb-3 uppercase tracking-wide">
+                            Informasi Pengiriman</h4>
+                        <div class="grid grid-cols-6 gap-4">
+                            {{-- Nama Penerima (Info) --}}
+                            <div class="col-span-6 sm:col-span-3">
+                                <span
+                                    class="block text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Penerima</span>
+                                <div id="text_user_name" class="text-sm font-semibold text-gray-900 dark:text-white mt-1">
+                                </div>
+                            </div>
+
+                            {{-- Biaya Ongkir (Info) --}}
+                            <div class="col-span-6 sm:col-span-3">
+                                <span class="block text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Biaya
+                                    Ongkir</span>
+                                <div id="text_ongkir" class="text-sm font-semibold text-gray-900 dark:text-white mt-1">
+                                </div>
+                            </div>
+
+                            {{-- Alamat Tujuan (Info) --}}
+                            <div class="col-span-6">
+                                <span class="block text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Alamat
+                                    Tujuan</span>
+                                <div id="text_alamat"
+                                    class="text-sm text-gray-800 dark:text-gray-200 mt-1 bg-white dark:bg-gray-700 p-2 rounded border border-gray-200 dark:border-gray-600">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="border-gray-200 dark:border-gray-600">
+
+                    {{-- Bagian Input (Editable) --}}
                     <div class="grid grid-cols-6 gap-6">
-
+                        {{-- Kurir --}}
                         <div class="col-span-6 sm:col-span-3">
-                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama
-                                Penerima</label>
-                            <input type="text" id="modal_user_name"
-                                class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
-                                disabled>
-                        </div>
-
-                        <div class="col-span-6 sm:col-span-3">
-                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kurir</label>
-                            <input type="text" name="kurir" required
+                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kurir <span
+                                    class="text-red-500">*</span></label>
+                            <input type="text" name="kurir" id="modal_kurir" required
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                placeholder="JNE / J&T / Gojek">
+                                placeholder="Contoh: JNE / J&T">
                         </div>
 
+                        {{-- Layanan --}}
                         <div class="col-span-6 sm:col-span-3">
                             <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Layanan
                                 (Opsional)</label>
-                            <input type="text" name="layanan_kurir"
+                            <input type="text" name="layanan_kurir" id="modal_layanan"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                placeholder="REG / YES">
+                                placeholder="Contoh: REG / YES">
                         </div>
 
-                        <div class="col-span-6 sm:col-span-3">
-                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Biaya
-                                Ongkir</label>
-                            <input type="number" name="biaya_ongkir" value="0" required
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                        </div>
-
+                        {{-- Bukti Pembayaran / Resi Foto --}}
                         <div class="col-span-6">
-                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Alamat
-                                Tujuan</label>
-                            <textarea name="alamat_tujuan" id="modal_alamat" rows="3" required
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"></textarea>
+                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nomor Resi</label>
+                            <input type="text" name="no_resi" id="modal_no_resi"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                placeholder="Contoh: REG / YES">
                         </div>
 
+                        {{-- Bukti Pembayaran / Resi Foto --}}
+                        <div class="col-span-6">
+                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Bukti Pembayaran /
+                                Foto Resi</label>
+                            <input type="file" name="foto_bukti" accept="image/*"
+                                class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400">
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Format: JPG, PNG, JPEG (Max 2MB).</p>
+                        </div>
+
+                        {{-- Catatan --}}
                         <div class="col-span-6">
                             <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Catatan
                                 (Opsional)</label>
-                            <textarea name="catatan" rows="2"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"></textarea>
+                            <textarea name="catatan" id="modal_catatan" rows="2"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                placeholder="Tambahkan catatan pengiriman..."></textarea>
                         </div>
                     </div>
 
@@ -283,30 +329,67 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.7.0/jspdf.plugin.autotable.min.js"></script>
     <script>
-        // Fungsi Buka Modal & Isi Data
         function openShippingModal(button) {
-            // 1. Ambil data dari atribut tombol
+            // --- 1. AMBIL DATA DARI TOMBOL ---
             const id = button.getAttribute('data-id');
             const invoice = button.getAttribute('data-invoice');
             const user = button.getAttribute('data-user');
             const address = button.getAttribute('data-address');
+            const ongkir = button.getAttribute('data-ongkir');
+            const kurir = button.getAttribute('data-kurir');
+            const layanan = button.getAttribute('data-layanan');
+            const catatan = button.getAttribute('data-catatan');
 
-            // 2. Isi nilai ke dalam Input Form Modal
-            document.getElementById('modal_id_transaksi').value = id; // ID Transaksi Masuk Sini
-            document.getElementById('modal_invoice_title').innerText = invoice;
-            document.getElementById('modal_user_name').value = user;
-            document.getElementById('modal_alamat').value = address;
+            // --- 2. SET DATA KE INPUT HIDDEN & JUDUL ---
+            // Pastikan input hidden ini ada di HTML: <input type="hidden" id="modal_id_transaksi">
+            const inputId = document.getElementById('modal_id_transaksi');
+            if (inputId) inputId.value = id;
 
-            // 3. Tampilkan Modal (Hapus class hidden)
-            document.getElementById('shippingModal').classList.remove('hidden');
+            const titleInvoice = document.getElementById('modal_invoice_title');
+            if (titleInvoice) titleInvoice.innerText = invoice;
+
+            // --- 3. SET DATA KE INFORMASI TEXT (READ ONLY) ---
+            // Perhatikan ID-nya diawali dengan 'text_', bukan 'modal_'
+            // Dan kita menggunakan .innerText karena ini DIV/SPAN, bukan INPUT
+
+            const textUser = document.getElementById('text_user_name');
+            if (textUser) textUser.innerText = user;
+
+            const textAlamat = document.getElementById('text_alamat');
+            if (textAlamat) textAlamat.innerText = address;
+
+            const textOngkir = document.getElementById('text_ongkir');
+            if (textOngkir) {
+                let ongkirVal = parseFloat(ongkir);
+                textOngkir.innerText = isNaN(ongkirVal) ? 'Rp 0' : 'Rp ' + ongkirVal.toLocaleString('id-ID');
+            }
+
+            // --- 4. SET DATA KE INPUT FORM (EDITABLE) ---
+            // Ini masih menggunakan .value karena elemennya adalah INPUT/TEXTAREA
+
+            const inputKurir = document.getElementById('modal_kurir');
+            if (inputKurir) inputKurir.value = kurir;
+
+            const inputLayanan = document.getElementById('modal_layanan');
+            if (inputLayanan) inputLayanan.value = layanan;
+
+            const inputCatatan = document.getElementById('modal_catatan');
+            if (inputCatatan) inputCatatan.value = catatan;
+
+            // Reset Input File
+            const inputFile = document.querySelector('input[name="foto_bukti"]');
+            if (inputFile) inputFile.value = '';
+
+            // --- 5. TAMPILKAN MODAL ---
+            const modal = document.getElementById('shippingModal');
+            if (modal) modal.classList.remove('hidden');
         }
 
-        // Fungsi Tutup Modal
         function closeShippingModal() {
-            document.getElementById('shippingModal').classList.add('hidden');
+            const modal = document.getElementById('shippingModal');
+            if (modal) modal.classList.add('hidden');
         }
 
-        // Tutup modal jika klik di luar area modal (Overlay)
         window.onclick = function(event) {
             const modal = document.getElementById('shippingModal');
             if (event.target == modal) {

@@ -20,4 +20,8 @@ class Transaksi extends Model
     {
         return $this->belongsTo(Order::class, 'id_order');
     }
+
+    public function pengiriman(){
+        return $this->hasOne(Pengiriman::class, 'id_transaksi', 'id');
+    }
 }
