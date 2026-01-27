@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\ProductController as AdminProductDashboardControl
 use App\Http\Controllers\Admin\TransactionController as AdminTransactionDashboardController;
 use App\Http\Controllers\Admin\ReviewController as AdminReviewDashboardController;
 use App\Http\Controllers\HomeContentController as HomeContentController;
+use App\Http\Controllers\Admin\PengirimanController as PengirimanController;
 
 // Client Controller
 use App\Http\Controllers\Client\DashboardController as ClientDashboardController;
@@ -65,6 +66,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::get('/admin/admin/edit/{id}', [AdminAdminDashboardController::class, 'edit'])->name('admin.admin.edit');
     Route::put('/admin/admin/update', [AdminAdminDashboardController::class, 'update'])->name('admin.admin.update');
     Route::delete('/admin/admin/delete', [AdminAdminDashboardController::class, 'destroy'])->name('admin.admin.destroy');
+    Route::get('admin/{id}/log', [AdminAdminDashboardController::class, 'logHistory'])->name('admin.admin.log');
 
     // Admin Pelanggan Routes
     Route::get('/admin/pelanggan', [AdminPelangganDashboardController::class, 'index'])->name('admin.pelanggan.index');
@@ -73,6 +75,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::get('/admin/pelanggan/edit/{id}', [AdminPelangganDashboardController::class, 'edit'])->name('admin.pelanggan.edit');
     Route::put('/admin/pelanggan/update', [AdminPelangganDashboardController::class, 'update'])->name('admin.pelanggan.update');
     Route::delete('/admin/pelanggan/delete', [AdminPelangganDashboardController::class, 'destroy'])->name('admin.pelanggan.destroy');
+    Route::get('admin/pelanggan/{id}/log', [AdminPelangganDashboardController::class, 'logHistory'])->name('admin.pelanggan.log');
 
     // Admin Category Routes
     Route::get('/admin/category', [AdminCategoryController::class, 'index'])->name('admin.category.index');
@@ -81,6 +84,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::get('/admin/category/edit/{id}', [AdminCategoryController::class, 'edit'])->name('admin.category.edit');
     Route::put('/admin/category/update', [AdminCategoryController::class, 'update'])->name('admin.category.update');
     Route::delete('/admin/category/delete', [AdminCategoryController::class, 'destroy'])->name('admin.category.destroy');
+    Route::get('admin/category/{id}/log', [AdminCategoryController::class, 'logHistory'])->name('admin.category.log');
 
     // Admin Product Routes
     Route::get('/admin/product', [AdminProductDashboardController::class, 'index'])->name('admin.product.index');
@@ -90,6 +94,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::put('/admin/product/update', [AdminProductDashboardController::class, 'update'])->name('admin.product.update');
     Route::delete('/admin/product/delete', [AdminProductDashboardController::class, 'destroy'])->name('admin.product.destroy');
     Route::delete('/admin/product/delete-image', [AdminProductDashboardController::class, 'deleteImage'])->name('admin.product.delete.image');
+    Route::get('admin/product/{id}/log', [AdminProductDashboardController::class, 'logHistory'])->name('admin.product.log');
 
     // Admin Review Routes
     Route::get('/admin/review', [AdminReviewDashboardController::class, 'index'])->name('admin.review.index');
@@ -104,6 +109,24 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::get('/admin/transaction/{id}', [AdminTransactionDashboardController::class, 'show'])->name('admin.transaction.detail');
     Route::put('/admin/transaction/update-status', [AdminTransactionDashboardController::class, 'updateStatus'])->name('admin.transaction.update.status');
     Route::get('/admin/transaction/proof/{id}', [AdminTransactionDashboardController::class, 'getTransactionProof'])->name('admin.transaction.proof');
+
+    // --- CRUD PENGIRIMAN ---
+
+    // 1. Read (Index)
+    Route::get('/pengiriman', [PengirimanController::class, 'index'])->name('admin.pengiriman.index');
+
+    // 2. Create (Form & Action)
+    Route::get('/pengiriman/create', [PengirimanController::class, 'create'])->name('admin.pengiriman.create');
+    Route::post('/pengiriman', [PengirimanController::class, 'store'])->name('admin.pengiriman.store');
+    // 3. Update (Form & Action)
+    Route::get('/pengiriman/{id}/edit', [PengirimanController::class, 'edit'])->name('admin.pengiriman.edit');
+    Route::put('/pengiriman/{id}', [PengirimanController::class, 'update'])->name('admin.pengiriman.update');
+
+    // 4. Delete (Action)
+    Route::delete('/pengiriman/{id}', [PengirimanController::class, 'destroy'])->name('admin.pengiriman.destroy');
+    // 5. Detail (Optional)
+    Route::get('/pengiriman/{id}', [PengirimanController::class, 'show'])->name('admin.pengiriman.show');
+
 });
 
 

@@ -84,6 +84,7 @@
                                             <small class="text-muted">{{ $item->updated_at->format('d M Y H:i') }}</small>
                                         </td>
                                         <td>
+                                            <a href="{{ route('admin.admin.log', $item->id) }}" class="btn-green">Log</a>
                                             <a href="{{ route('admin.admin.edit', $item->id) }}" class="btn-yellow">Edit</a>
                                             @if ($item->id != 1)
                                                 <form action="{{ route('admin.admin.destroy') }}" method="POST"

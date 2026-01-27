@@ -22,6 +22,9 @@
                             </svg>
                             <span>Date: {{ $transaction->created_at->format('d M Y, H:i') }}</span>
                         </div>
+                        <div class="flex items-center gap-2 mt-2 text-gray-600 dark:text-gray-300 text-sm">
+                            <span>Address: {{ $transaction->alamat ?? "-" }}</span>
+                        </div>
                     </div>
 
                     <div class="overflow-x-auto">

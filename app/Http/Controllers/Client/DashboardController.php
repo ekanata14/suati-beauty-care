@@ -754,6 +754,7 @@ class DashboardController extends Controller
 
             $validatedData = $request->validate([
                 'bukti_pembayaran' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+                'alamat' => 'required|string|max:255',
             ]);
 
             $transaksi = Transaksi::find($request->id);
@@ -772,6 +773,7 @@ class DashboardController extends Controller
             $transaksi->update([
                 'bukti_pembayaran' => $validatedData['bukti_pembayaran'],
                 'status_pembayaran' => 'waiting',
+                'alamat' => $validatedData['alamat'],
             ]);
             $products = $transaksi->order->detailOrder;
 

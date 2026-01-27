@@ -37,6 +37,9 @@
                         <x-nav-link :href="route('admin.transaction.index')" :active="request()->routeIs('admin.transaction*')">
                             {{ __('Transaksi') }}
                         </x-nav-link>
+                        <x-nav-link :href="route('admin.pengiriman.index')" :active="request()->routeIs('admin.pengiriman*')">
+                            {{ __('Pengiriman') }}
+                        </x-nav-link>
                         {{-- <x-nav-link :href="route('admin.review.index')" :active="request()->routeIs('admin.review*')">
                             {{ __('Review') }}
                         </x-nav-link> --}}

@@ -13,10 +13,11 @@ class Transaksi extends Model
         'total_bayar',
         'bukti_pembayaran',
         'status_pembayaran',
+        'alamat'
     ];
 
     public function order()
     {
         return $this->belongsTo(Order::class, 'id_order');
-    } 
+    }
 }

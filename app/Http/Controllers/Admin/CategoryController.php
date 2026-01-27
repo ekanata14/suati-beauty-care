@@ -121,6 +121,23 @@ class CategoryController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error', 'Failed to delete category: ' . $e->getMessage());
-        } 
+        }
+    }
+
+    public function logHistory($id)
+    {
+        // Cari data pengiriman
+        $category = Kategori::findOrFail($id);
+
+        // Ambil log aktivitas dari Spatie (otomatis terurut dari terbaru)
+        $activities = $category->activities()->with('causer')->get();
+
+        $viewData = [
+            'title' => 'Log History for ' . $category->name,
+            'item' => $category,
+            'activities' => $activities,
+        ];
+
+        return view('admin.log', $viewData);
     }
 }

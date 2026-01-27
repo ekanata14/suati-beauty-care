@@ -18,6 +18,11 @@
                             {{ number_format($transaction->total_bayar, 0, ',', '.') }}</span>
                     </div>
                     <div class="flex justify-between text-sm text-gray-600 dark:text-gray-400">
+                        <span>Total Price</span>
+                        <span class="font-medium text-gray-900 dark:text-white">IDR
+                            {{ number_format($transaction->total_bayar, 0, ',', '.') }}</span>
+                    </div>
+                    <div class="flex justify-between text-sm text-gray-600 dark:text-gray-400">
                         <span>Total Item</span>
                         <span class="font-medium text-gray-900 dark:text-white">{{ $transaction->total_qty_item }}</span>
                     </div>
@@ -40,7 +45,8 @@
                             </div>
                             <div class="flex items-center gap-2">
                                 <span class="text-gray-700 dark:text-gray-200 text-sm">Nomor Rekening:</span>
-                                <span id="account-number" class="text-lg font-mono font-semibold text-blue-700 dark:text-blue-200 select-all">1234567890</span>
+                                <span id="account-number"
+                                    class="text-lg font-mono font-semibold text-blue-700 dark:text-blue-200 select-all">1234567890</span>
                                 <button type="button" onclick="copyAccountNumber()"
                                     class="ml-2 px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-800 transition">
                                     Copy
@@ -61,6 +67,14 @@
                                 });
                             }
                         </script>
+                    </div>
+                    <div>
+                        <label for="alamat_input"
+                            class="block text-sm font-medium text-gray-900 dark:text-white mb-2">Alamat</label>
+                        <textarea id="alamat_input" name="alamat" required
+                            class="block w-full text-sm text-gray-900 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 p-3"
+                            rows="4" placeholder="Masukkan alamat lengkap Anda"></textarea>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-300">Masukkan alamat pengiriman</p>
                     </div>
                     <div>
                         <label for="file_input" class="block text-sm font-medium text-gray-900 dark:text-white mb-2">Upload

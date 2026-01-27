@@ -17,6 +17,12 @@
 
                     <div class="mt-4 md:mt-0 md:text-center">
                         <p class="text-sm text-gray-500 dark:text-gray-400">
+                            <span class="font-medium text-gray-900 dark:text-white">Address: {{ $item->alamat ?? "-" }}</span>
+                        </p>
+                    </div>
+
+                    <div class="mt-4 md:mt-0 md:text-center">
+                        <p class="text-sm text-gray-500 dark:text-gray-400">
                             <span class="font-medium text-gray-900 dark:text-white">{{ $item->total_qty_item }}</span> items
                         </p>
                         <p class="text-sm text-gray-500 dark:text-gray-400">

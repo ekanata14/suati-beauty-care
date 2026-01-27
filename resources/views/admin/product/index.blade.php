@@ -89,6 +89,7 @@
                                             <small class="text-muted">{{ $item->updated_at->format('d M Y H:i') }}</small>
                                         </td>
                                         <td class="flex justify-start items-center mt-2">
+                                            <a href="{{ route('admin.product.log', $item->id) }}" class="btn-green">Log</a>
                                             <a href="{{ route('admin.product.edit', $item->id) }}"
                                                 class="btn-yellow">Edit</a>
                                             @if ($item->DetailOrder->isEmpty())

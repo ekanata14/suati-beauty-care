@@ -32,7 +32,7 @@ class Pengiriman extends Model
         'foto_bukti',
         'tgl_dikirim',
         'tgl_diterima',
-        'created_by'
+        'created_by',
         'updated_by'
     ];
 

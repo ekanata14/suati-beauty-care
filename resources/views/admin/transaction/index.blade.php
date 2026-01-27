@@ -48,6 +48,7 @@
                                     <th scope="col" class="px-6 py-3">Total Payment</th>
                                     <th scope="col" class="px-6 py-3">Payment Proof</th>
                                     <th scope="col" class="px-6 py-3">Payment Status</th>
+                                    <th scope="col" class="px-6 py-3">Address</th>
                                     <th scope="col" class="px-6 py-3">Created At</th>
                                     <th scope="col" class="px-6 py-3">Actions</th>
                                 </tr>
@@ -90,6 +91,9 @@
                                             <span class="px-2 py-1 rounded text-xs font-semibold {{ $class }}">
                                                 {{ ucfirst($item->status_pembayaran) }}
                                             </span>
+                                        </td>
+                                        <td class="px-4 py-2">
+                                            {{ $item->alamat }}
                                         </td>
                                         <td class="px-4 py-2">
                                             {{ $item->created_at->format('d M Y H:i') }}
@@ -163,6 +167,14 @@
                                                         </div>
                                                         <a href="{{ route('admin.transaction.detail', $item->id) }}"
                                                             class="btn-primary">Detail</a>
+                                                        <button type="button" onclick="openShippingModal(this)"
+                                                            data-id="{{ $item->id }}"
+                                                            data-invoice="{{ $item->invoice_id }}"
+                                                            data-user="{{ $item->order->user->name ?? 'Guest' }}"
+                                                            data-address="{{ $item->alamat_pengiriman ?? ($item->user->alamat ?? '') }}"
+                                                            class="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 text-xs">
+                                                            + Pengiriman
+                                                        </button>
                                                     </div>
                                                 @endif
                                             @endif
@@ -182,11 +194,126 @@
             </div>
         </div>
     </div>
+    <div id="shippingModal" tabindex="-1" aria-hidden="true"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center w-full h-full bg-gray-900 bg-opacity-50">
+
+        <div class="relative p-4 w-full max-w-2xl h-auto">
+            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+
+                <div class="flex justify-between items-start p-4 rounded-t border-b dark:border-gray-600">
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                        Buat Pengiriman: <span id="modal_invoice_title"></span>
+                    </h3>
+                    <button type="button" onclick="closeShippingModal()"
+                        class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <form action="{{ route('admin.pengiriman.store') }}" method="POST" class="p-6 space-y-6">
+                    @csrf
+
+                    <input type="hidden" name="id_transaksi" id="modal_id_transaksi">
+
+                    <div class="grid grid-cols-6 gap-6">
+
+                        <div class="col-span-6 sm:col-span-3">
+                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama
+                                Penerima</label>
+                            <input type="text" id="modal_user_name"
+                                class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+                                disabled>
+                        </div>
+
+                        <div class="col-span-6 sm:col-span-3">
+                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kurir</label>
+                            <input type="text" name="kurir" required
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                placeholder="JNE / J&T / Gojek">
+                        </div>
+
+                        <div class="col-span-6 sm:col-span-3">
+                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Layanan
+                                (Opsional)</label>
+                            <input type="text" name="layanan_kurir"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                placeholder="REG / YES">
+                        </div>
+
+                        <div class="col-span-6 sm:col-span-3">
+                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Biaya
+                                Ongkir</label>
+                            <input type="number" name="biaya_ongkir" value="0" required
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                        </div>
+
+                        <div class="col-span-6">
+                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Alamat
+                                Tujuan</label>
+                            <textarea name="alamat_tujuan" id="modal_alamat" rows="3" required
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"></textarea>
+                        </div>
+
+                        <div class="col-span-6">
+                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Catatan
+                                (Opsional)</label>
+                            <textarea name="catatan" rows="2"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200 dark:border-gray-600">
+                        <button type="submit"
+                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Simpan
+                            Data</button>
+                        <button type="button" onclick="closeShippingModal()"
+                            class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10">Batal</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <!-- SheetJS for Excel Export -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <!-- jsPDF for PDF Export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.7.0/jspdf.plugin.autotable.min.js"></script>
+    <script>
+        // Fungsi Buka Modal & Isi Data
+        function openShippingModal(button) {
+            // 1. Ambil data dari atribut tombol
+            const id = button.getAttribute('data-id');
+            const invoice = button.getAttribute('data-invoice');
+            const user = button.getAttribute('data-user');
+            const address = button.getAttribute('data-address');
+
+            // 2. Isi nilai ke dalam Input Form Modal
+            document.getElementById('modal_id_transaksi').value = id; // ID Transaksi Masuk Sini
+            document.getElementById('modal_invoice_title').innerText = invoice;
+            document.getElementById('modal_user_name').value = user;
+            document.getElementById('modal_alamat').value = address;
+
+            // 3. Tampilkan Modal (Hapus class hidden)
+            document.getElementById('shippingModal').classList.remove('hidden');
+        }
+
+        // Fungsi Tutup Modal
+        function closeShippingModal() {
+            document.getElementById('shippingModal').classList.add('hidden');
+        }
+
+        // Tutup modal jika klik di luar area modal (Overlay)
+        window.onclick = function(event) {
+            const modal = document.getElementById('shippingModal');
+            if (event.target == modal) {
+                closeShippingModal();
+            }
+        }
+    </script>
     <script>
         // Filtering logic with date range
         function filterTable() {

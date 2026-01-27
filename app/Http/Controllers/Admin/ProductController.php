@@ -254,4 +254,21 @@ class ProductController extends Controller
             ], 500);
         }
     }
+
+    public function logHistory($id)
+    {
+        // Cari data pengiriman
+        $product = Produk::findOrFail($id);
+
+        // Ambil log aktivitas dari Spatie (otomatis terurut dari terbaru)
+        $activities = $product->activities()->with('causer')->get();
+
+        $viewData = [
+            'title' => 'Log History for ' . $product->name,
+            'item' => $product,
+            'activities' => $activities,
+        ];
+
+        return view('admin.log', $viewData);
+    }
 }

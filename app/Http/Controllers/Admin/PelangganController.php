@@ -191,4 +191,21 @@ class PelangganController extends Controller
             return redirect()->back()->withErrors(['error' => 'Failed to delete admin: ' . $e->getMessage()]);
         }
     }
+
+    public function logHistory($id)
+    {
+        // Cari data pengiriman
+        $user = User::findOrFail($id);
+
+        // Ambil log aktivitas dari Spatie (otomatis terurut dari terbaru)
+        $activities = $user->activities()->with('causer')->get();
+
+        $viewData = [
+            'title' => 'Log History for ' . $user->name,
+            'item' => $user,
+            'activities' => $activities,
+        ];
+
+        return view('admin.log', $viewData);
+    }
 }
