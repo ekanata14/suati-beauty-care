@@ -11,7 +11,7 @@
                         <div class="flex flex-col gap-4">
                             <!-- Main Image -->
                             <div class="rounded-xl overflow-hidden bg-gray-100">
-                                <img id="main-image" class="w-full h-80 object-cover cursor-pointer"
+                                <img id="main-image" class="w-full h-full object-cover cursor-pointer"
                                     src="{{ asset('storage/' . $product->produkPhotos->first()?->url ?? $product->foto_produk) }}"
                                     alt="{{ $product->nama }}" />
                             </div>

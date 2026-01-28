@@ -3,10 +3,8 @@
 @section('content')
     <section class="py-12 bg-gradient-to-b from-white to-blue-100 min-h-screen">
         @php
-            // Pastikan relasi pengiriman ada
             $pengiriman = $transaction->pengiriman;
         @endphp
-
         @if ($pengiriman)
             @php
                 // --- LOGIKA STEPPER ---
@@ -36,16 +34,17 @@
                             Informasi Pengiriman
                         </h3>
                         <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                            Update terakhir: {{ $pengiriman->updated_at->format('d M Y H:i') }}
+                            Update terakhir:
+                            {{ $pengiriman->updated_at ? $pengiriman->updated_at->format('d M Y H:i') : '-' }}
                         </p>
                     </div>
                     <div class="mt-3 sm:mt-0">
                         <span
                             class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider
-                    {{ $currentStatus == 'diterima' ? 'bg-green-100 text-green-800 border border-green-200' : '' }}
-                    {{ $currentStatus == 'dikembalikan' ? 'bg-red-100 text-red-800 border border-red-200' : '' }}
-                    {{ in_array($currentStatus, ['pending', 'diproses', 'dikirim']) ? 'bg-blue-100 text-blue-800 border border-blue-200' : '' }}">
-                            {{ $currentStatus }}
+    {{ $currentStatus == 'diterima' ? 'bg-green-100 text-green-800 border border-green-200' : '' }}
+    {{ $currentStatus == 'dikembalikan' ? 'bg-red-100 text-red-800 border border-red-200' : '' }}
+    {{ in_array($currentStatus, ['pending', 'diproses', 'dikirim']) ? 'bg-blue-100 text-blue-800 border border-blue-200' : '' }}">
+                            {{ $currentStatus ?? '-' }}
                         </span>
                     </div>
                 </div>
@@ -125,8 +124,11 @@
                                     </div>
                                     <div>
                                         <p class="text-sm font-bold text-gray-900 dark:text-white">
-                                            {{ $pengiriman->kurir ?? '-' }}</p>
-                                        <p class="text-xs text-gray-500">{{ $pengiriman->layanan_kurir ?? 'Regular' }}</p>
+                                            {{ $pengiriman->kurir ?? '-' }}
+                                        </p>
+                                        <p class="text-xs text-gray-500">
+                                            {{ $pengiriman->layanan_kurir ?? '-' }}
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -138,9 +140,9 @@
                                 <div class="flex items-center gap-2">
                                     <span id="text_resi"
                                         class="text-base font-mono font-semibold text-gray-900 dark:text-white select-all">
-                                        {{ $pengiriman->no_resi ?? 'Belum tersedia' }}
+                                        {{ $pengiriman->no_resi ?? '-' }}
                                     </span>
-                                    @if ($pengiriman->no_resi)
+                                    @if (!empty($pengiriman->no_resi))
                                         <button onclick="copyResi('{{ $pengiriman->no_resi }}')"
                                             class="text-gray-400 hover:text-blue-600 transition" title="Copy Resi">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -158,7 +160,11 @@
                                     class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
                                     Biaya Ongkir</h4>
                                 <p class="text-sm font-semibold text-gray-900 dark:text-white">
-                                    Rp {{ number_format($pengiriman->biaya_ongkir, 0, ',', '.') }}
+                                    @if (isset($pengiriman->biaya_ongkir))
+                                        Rp {{ number_format($pengiriman->biaya_ongkir, 0, ',', '.') }}
+                                    @else
+                                        -
+                                    @endif
                                 </p>
                             </div>
                         </div>
@@ -180,20 +186,24 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                         </svg>
-                                        {{ $pengiriman->alamat_tujuan }}
+                                        {{ $pengiriman->alamat_tujuan ?? '-' }}
                                     </p>
                                 </div>
                             </div>
 
-                            @if ($pengiriman->catatan)
-                                <div>
-                                    <h4
-                                        class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
-                                        Catatan Pengiriman</h4>
-                                    <p class="text-sm text-gray-600 dark:text-gray-300 italic">"{{ $pengiriman->catatan }}"
-                                    </p>
-                                </div>
-                            @endif
+                            {{-- Catatan (Selalu tampil, jika kosong isi '-') --}}
+                            <div>
+                                <h4
+                                    class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
+                                    Catatan Pengiriman</h4>
+                                <p class="text-sm text-gray-600 dark:text-gray-300 italic">
+                                    @if (!empty($pengiriman->catatan))
+                                        "{{ $pengiriman->catatan }}"
+                                    @else
+                                        -
+                                    @endif
+                                </p>
+                            </div>
                         </div>
 
                         {{-- Kolom Kanan: Tanggal & Bukti --}}
@@ -221,7 +231,8 @@
                                     class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
                                     Bukti Pengiriman</h4>
                                 @if ($pengiriman->foto_bukti)
-                                    <a href="{{ Storage::url($pengiriman->foto_bukti) }}" target="_blank"
+                                    <button type="button"
+                                        onclick="openModal('{{ Storage::url($pengiriman->foto_bukti) }}')"
                                         class="block group relative overflow-hidden rounded-lg border border-gray-200 dark:border-gray-600 w-full h-32 bg-gray-100">
                                         <img src="{{ Storage::url($pengiriman->foto_bukti) }}" alt="Bukti Resi"
                                             class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
@@ -231,7 +242,30 @@
                                                 class="text-white opacity-0 group-hover:opacity-100 text-xs font-bold bg-black/50 px-2 py-1 rounded">Lihat
                                                 Foto</span>
                                         </div>
-                                    </a>
+                                    </button>
+
+                                    <!-- Modal -->
+                                    <div id="image-modal"
+                                        class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-50">
+                                        <div class="bg-white rounded shadow-lg max-w-md mx-auto p-4 relative">
+                                            <button type="button"
+                                                class="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+                                                onclick="closeModal()">&times;</button>
+                                            <img src="" alt="Bukti Resi" class="max-w-full rounded"
+                                                id="modal-image" style="object-fit: contain;">
+                                        </div>
+                                    </div>
+
+                                    <script>
+                                        function openModal(imageUrl) {
+                                            document.getElementById('modal-image').src = imageUrl;
+                                            document.getElementById('image-modal').classList.remove('hidden');
+                                        }
+
+                                        function closeModal() {
+                                            document.getElementById('image-modal').classList.add('hidden');
+                                        }
+                                    </script>
                                 @else
                                     <div
                                         class="w-full h-24 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex flex-col items-center justify-center text-gray-400 text-xs">
@@ -246,16 +280,22 @@
                                 @endif
                             </div>
                         </div>
+
                         {{-- Kolom Konfirmasi Penerimaan --}}
                         @if ($currentStatus !== 'diterima' && $currentStatus !== 'dikembalikan')
                             <div class="md:col-span-3">
-                                <div class="p-4 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 rounded-lg">
-                                    <h4 class="text-sm font-bold text-amber-900 dark:text-amber-100 mb-3">Konfirmasi Penerimaan</h4>
-                                    <p class="text-sm text-amber-800 dark:text-amber-200 mb-4">Sudah menerima paket? Konfirmasi penerimaan untuk menyelesaikan transaksi ini.</p>
+                                <div
+                                    class="p-4 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 rounded-lg">
+                                    <h4 class="text-sm font-bold text-amber-900 dark:text-amber-100 mb-3">Konfirmasi
+                                        Penerimaan
+                                    </h4>
+                                    <p class="text-sm text-amber-800 dark:text-amber-200 mb-4">Sudah menerima paket?
+                                        Konfirmasi penerimaan untuk menyelesaikan transaksi ini.</p>
                                     <button type="button" onclick="confirmReceived({{ $pengiriman->id }})"
                                         class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition duration-200 flex items-center gap-2">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M5 13l4 4L19 7"></path>
                                         </svg>
                                         Konfirmasi Diterima
                                     </button>
@@ -276,6 +316,7 @@
                                     cancelButtonText: 'Batal'
                                 }).then((result) => {
                                     if (result.isConfirmed) {
+                                        // Pastikan route 'confirm.received' sudah didefinisikan di web.php
                                         window.location.href = `{{ route('confirm.received', '') }}/${pengirimanId}`;
                                     }
                                 });
@@ -299,8 +340,8 @@
         @else
             <div class="p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400"
                 role="alert">
-                <span class="font-medium">Info!</span> Data pengiriman belum tersedia untuk transaksi ini. Silakan buat
-                pengiriman baru.
+                <span class="font-medium">Info!</span> Data pengiriman belum tersedia untuk transaksi ini. Silakan
+                selesaikan transaksi.
             </div>
         @endif
         <form action="{{ route('upload.payment.store') }}" method="POST" enctype="multipart/form-data">
@@ -410,7 +451,7 @@
                         <div class="flex justify-between">
                             <span class="text-gray-600 dark:text-gray-300">Transport Fee</span>
                             <span class="font-medium text-gray-900 dark:text-white"> IDR
-                                {{ number_format($transaction->pengiriman->biaya_ongkir, 0, ',', '.') }}</span>
+                                {{ number_format($transaction->pengiriman->biaya_ongkir ?? 25000, 0, ',', '.') }}</span>
                         </div>
                     </div>
                     <div class="space-y-2">
@@ -423,7 +464,7 @@
                         <div class="flex justify-between">
                             <span class="text-lg font-bold text-gray-900 dark:text-white">Total</span>
                             <span class="text-lg font-bold text-gray-900 dark:text-white">IDR
-                                {{ number_format($transaction->total_bayar, 0, ',', '.') }}</span>
+                                {{ number_format(($transaction->pengiriman->biaya_ongkir ?? 0) == 0 ? $transaction->total_bayar + 25000 : $totalPrice + ($transaction->pengiriman->biaya_ongkir ?? 25000), 0, ',', '.') }}</span>
                         </div>
                     </div>
                     @if ($transaction->status_pembayaran == 'pending')
@@ -475,79 +516,119 @@
                     </script>
                     @if ($transaction->status_pembayaran == 'pending')
                         <div>
-                            <label for="file_input"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Upload
-                                file</label>
-                            <input type="file" name="bukti_pembayaran" accept="image/*" required
-                                class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400">
-                            <p class="mt-1 text-sm text-gray-500 dark:text-gray-300">PNG, JPG, JPEG (MAX. 2MB)</p>
-
-                            <input type="hidden" name="id" value="{{ $transaction->id }}">
-                            <input type="hidden" name="total_qty_item" value="{{ $transaction->total_qty_item }}">
-                            <input type="hidden" name="total_bayar" value="{{ $transaction->total_bayar }}">
-
-                            <button type="submit" class="w-full mt-4 btn-primary">Upload Payment</button>
+                            <label for="alamat_input"
+                                class="block text-sm font-medium text-gray-900 dark:text-white mb-2">Alamat <span
+                                    class="text-red-500">*</span></label>
+                            <textarea id="alamat_input" name="alamat" required
+                                class="block w-full text-sm text-gray-900 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 p-3"
+                                rows="4" placeholder="Masukkan alamat lengkap Anda"></textarea>
+                            <p class="mt-1 text-sm text-gray-500 dark:text-gray-300">Masukkan alamat pengiriman</p>
                         </div>
-                    @elseif ($transaction->status_pembayaran == 'waiting')
-                        <div class="mt-4 btn-yellow w-full text-center">Waiting for confirmation</div>
-                    @elseif ($transaction->status_pembayaran == 'denied')
-                        <div class="mt-4 btn-red w-full text-center">Denied</div>
-                    @elseif ($transaction->status_pembayaran == 'paid')
-                        <div class="mt-4 btn-green w-full text-center">Payment Confirmed</div>
-                    @endif
+                        <div>
+                            <label for="file_input"
+                                class="block text-sm font-medium text-gray-900 dark:text-white mb-2">Upload
+                                File <span class="text-red-500">*</span></label>
+                            <input id="file_input" name="bukti_pembayaran" type="file" accept="image/*" required
+                                class="block w-full text-sm text-gray-900 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 focus:outline-none">
+                            <p class="mt-1 text-sm text-gray-500 dark:text-gray-300">PNG, JPG, JPEG (MAX. 2MB)</p>
+                        </div>
+                </div>
 
-                    @if ($transaction->bukti_pembayaran)
-                        {{-- <button type="button" class="btn-primary w-full view-proof-btn"
+                <input type="hidden" name="id" value="{{ $transaction->id }}">
+                <input type="hidden" name="total_qty_item" value="{{ $transaction->total_qty_item }}">
+                <input type="hidden" name="total_bayar" value="{{ $transaction->total_bayar + 25000 }}">
+                <input type="hidden" name="biaya_ongkir" value="25000">
+
+                <div class="flex flex-col gap-3">
+                    <button type="submit" id="checkout-btn" onclick="confirmPayment(event)"
+                        class="btn-primary w-full px-5 py-2.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled>
+                        Checkout
+                    </button>
+                </div>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const alamatInput = document.getElementById('alamat_input');
+                        const fileInput = document.getElementById('file_input');
+                        const checkoutBtn = document.getElementById('checkout-btn');
+
+                        function checkFormValidity() {
+                            const hasAlamat = alamatInput.value.trim() !== '';
+                            const hasFile = fileInput.files.length > 0;
+                            checkoutBtn.disabled = !(hasAlamat && hasFile);
+                        }
+
+                        alamatInput.addEventListener('input', checkFormValidity);
+                        fileInput.addEventListener('change', checkFormValidity);
+                    });
+
+                    function confirmPayment(event) {
+                        event.preventDefault();
+                        event.target.form.submit();
+                    }
+                </script>
+            </div>
+        @elseif ($transaction->status_pembayaran == 'waiting')
+            <div class="mt-4 btn-yellow w-full text-center">Waiting for confirmation</div>
+        @elseif ($transaction->status_pembayaran == 'denied')
+            <div class="mt-4 btn-red w-full text-center">Denied</div>
+        @elseif ($transaction->status_pembayaran == 'paid')
+            <div class="mt-4 btn-green w-full text-center">Payment Confirmed</div>
+            @endif
+
+            @if ($transaction->bukti_pembayaran)
+                <button type="button" class="btn-primary w-full view-proof-btn"
                             data-url="{{ route('user.transaction.proof', $transaction->id) }}">
                             View Proof
-                        </button> --}}
-                    @else
-                        <span class="text-gray-400">No Proof</span>
-                    @endif
+                        </button>
+            @else
+                <span class="text-gray-400">No Proof</span>
+            @endif
 
-                    <!-- Modal for Payment Proof -->
-                    <div id="proof-modal-{{ $transaction->id }}"
-                        class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-50">
-                        <div class="bg-white rounded shadow-lg max-w-md mx-auto p-4 relative flex flex-col"
-                            style="max-height: 90vh;">
-                            <button type="button"
-                                class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 close-proof-modal">&times;</button>
-                            <h3 class="text-lg font-semibold mb-2">Payment Proof</h3>
-                            <div class="flex-1 flex items-center justify-center">
-                                <img src="" alt="Payment Proof" class="max-w-full max-h-[70vh] rounded proof-img"
-                                    style="object-fit: contain;">
-                            </div>
-                        </div>
+            <!-- Modal for Payment Proof -->
+            <div id="proof-modal-{{ $transaction->id }}"
+                class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-50">
+                <div class="bg-white rounded shadow-lg max-w-md mx-auto p-4 relative flex flex-col"
+                    style="max-height: 90vh;">
+                    <button type="button"
+                        class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 close-proof-modal">&times;</button>
+                    <h3 class="text-lg font-semibold mb-2">Payment Proof</h3>
+                    <div class="flex-1 flex items-center justify-center">
+                        <img src="" alt="Payment Proof" class="max-w-full max-h-[70vh] rounded proof-img"
+                            style="object-fit: contain;">
                     </div>
-                    <script>
-                        document.addEventListener('DOMContentLoaded', function() {
-                            document.querySelectorAll('.view-proof-btn').forEach(function(btn) {
-                                btn.addEventListener('click', function() {
-                                    const url = btn.getAttribute('data-url');
-                                    const modal = document.getElementById('proof-modal-{{ $transaction->id }}');
-                                    if (modal) {
-                                        const img = modal.querySelector('.proof-img');
-                                        img.src = url;
-                                        modal.classList.remove('hidden');
-                                        modal.classList.add('flex');
-                                    }
-                                });
-                            });
-                            document.querySelectorAll('.close-proof-modal').forEach(function(btn) {
-                                btn.addEventListener('click', function() {
-                                    const modal = btn.closest('[id^="proof-modal-"]');
-                                    modal.classList.add('hidden');
-                                    modal.classList.remove('flex');
-                                });
-                            });
-                        });
-                    </script>
-
-                    <a href="{{ route('history') }}"
-                        class="block text-center w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                        Back
-                    </a>
                 </div>
+            </div>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    document.querySelectorAll('.view-proof-btn').forEach(function(btn) {
+                        btn.addEventListener('click', function() {
+                            const url = btn.getAttribute('data-url');
+                            const modal = document.getElementById('proof-modal-{{ $transaction->id }}');
+                            if (modal) {
+                                const img = modal.querySelector('.proof-img');
+                                img.src = url;
+                                modal.classList.remove('hidden');
+                                modal.classList.add('flex');
+                            }
+                        });
+                    });
+                    document.querySelectorAll('.close-proof-modal').forEach(function(btn) {
+                        btn.addEventListener('click', function() {
+                            const modal = btn.closest('[id^="proof-modal-"]');
+                            modal.classList.add('hidden');
+                            modal.classList.remove('flex');
+                        });
+                    });
+                });
+            </script>
+
+            <a href="{{ route('history') }}"
+                class="block text-center w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                Back
+            </a>
+            </div>
             </div>
         </form>
     </section>

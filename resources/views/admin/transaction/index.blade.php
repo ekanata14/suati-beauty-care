@@ -226,7 +226,7 @@
 
                 {{-- Form dengan Multipart untuk File Upload --}}
                 <form action="{{ route('admin.pengiriman.store') }}" method="POST" enctype="multipart/form-data"
-                    class="p-6 space-y-6">
+                    class="p-6 space-y-6" id="shipping-form">
                     @csrf
                     <input type="hidden" name="id_transaksi" id="modal_id_transaksi">
 
@@ -272,33 +272,34 @@
                             <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kurir <span
                                     class="text-red-500">*</span></label>
                             <input type="text" name="kurir" id="modal_kurir" required
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                placeholder="Contoh: JNE / J&T">
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                         </div>
 
                         {{-- Layanan --}}
                         <div class="col-span-6 sm:col-span-3">
-                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Layanan
-                                (Opsional)</label>
+                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Layanan<span
+                                    class="text-red-500">*</span></label>
                             <input type="text" name="layanan_kurir" id="modal_layanan"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                placeholder="Contoh: REG / YES">
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                         </div>
 
                         {{-- Bukti Pembayaran / Resi Foto --}}
                         <div class="col-span-6">
-                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nomor Resi</label>
+                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nomor Resi<span
+                                    class="text-red-500">*</span></label>
                             <input type="text" name="no_resi" id="modal_no_resi"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                placeholder="Nomor Resi Pengiriman">
+                                placeholder="Nomor Resi Pengiriman" required>
                         </div>
 
                         {{-- Bukti Pembayaran / Resi Foto --}}
                         <div class="col-span-6">
                             <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Bukti Pembayaran /
-                                Foto Resi</label>
+                                Foto Resi<span
+                                    class="text-red-500">*</span></label>
                             <input type="file" name="foto_bukti" accept="image/*"
-                                class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400">
+                                class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                                required>
                             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Format: JPG, PNG, JPEG (Max 2MB).</p>
                         </div>
 
@@ -313,13 +314,27 @@
                     </div>
 
                     <div class="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200 dark:border-gray-600">
-                        <button type="submit"
-                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Simpan
+                        <button type="submit" id="submit-button"
+                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                            disabled style="opacity: 0.5;">Simpan
                             Data</button>
                         <button type="button" onclick="closeShippingModal()"
                             class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10">Batal</button>
                     </div>
                 </form>
+
+                <script>
+                    const form = document.getElementById('shipping-form');
+                    const submitButton = document.getElementById('submit-button');
+
+                    form.addEventListener('input', function() {
+                        const isValid = [...form.elements].every(input => {
+                            return input.checkValidity() || input.type === 'hidden';
+                        });
+                        submitButton.disabled = !isValid;
+                        submitButton.style.opacity = isValid ? '1' : '0.5'; // Change opacity based on validity
+                    });
+                </script>
             </div>
         </div>
     </div>

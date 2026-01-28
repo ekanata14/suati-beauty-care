@@ -69,7 +69,7 @@
                     </div>
                     <div>
                         <label for="alamat_input"
-                            class="block text-sm font-medium text-gray-900 dark:text-white mb-2">Alamat</label>
+                            class="block text-sm font-medium text-gray-900 dark:text-white mb-2">Alamat <span class="text-red-500">*</span></label>
                         <textarea id="alamat_input" name="alamat" required
                             class="block w-full text-sm text-gray-900 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 p-3"
                             rows="4" placeholder="Masukkan alamat lengkap Anda"></textarea>
@@ -77,7 +77,7 @@
                     </div>
                     <div>
                         <label for="file_input" class="block text-sm font-medium text-gray-900 dark:text-white mb-2">Upload
-                            File</label>
+                            File <span class="text-red-500">*</span></label>
                         <input id="file_input" name="bukti_pembayaran" type="file" accept="image/*" required
                             class="block w-full text-sm text-gray-900 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 focus:outline-none">
                         <p class="mt-1 text-sm text-gray-500 dark:text-gray-300">PNG, JPG, JPEG (MAX. 2MB)</p>
@@ -90,10 +90,23 @@
                 <input type="hidden" name="biaya_ongkir" value="25000">
 
                 <div class="flex flex-col gap-3">
-                    <button type="button" onclick="confirmPayment(event)"
-                        class="btn-primary w-full px-5 py-2.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-800">
+                    <button type="button" id="checkout-btn" onclick="confirmPayment(event)"
+                        class="btn-primary w-full px-5 py-2.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled>
                         Checkout
                     </button>
+                    <script>
+                        const alamatInput = document.getElementById('alamat_input');
+                        const fileInput = document.getElementById('file_input');
+                        const checkoutBtn = document.getElementById('checkout-btn');
+
+                        function validateInputs() {
+                            checkoutBtn.disabled = !alamatInput.value.trim() || !fileInput.value;
+                        }
+
+                        alamatInput.addEventListener('input', validateInputs);
+                        fileInput.addEventListener('change', validateInputs);
+                    </script>
                     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
                     <script>
                         function confirmPayment(e) {
